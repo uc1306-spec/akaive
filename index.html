@@ -187,7 +187,7 @@
 
     <!-- Category Manager Modal -->
     <div id="categoryModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-[#171c24] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 my-auto max-h-[70vh] flex flex-col">
+        <div class="bg-white dark:bg-[#171c24] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 my-auto max-h-[65vh] flex flex-col">
             <div class="flex justify-between items-center shrink-0">
                 <h3 class="font-bold text-xl text-[#191f28] dark:text-white">카테고리 관리</h3>
                 <button onclick="closeCategoryModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white">
@@ -417,6 +417,33 @@
             renderCategoryManageList();
         };
 
+        window.moveBookmarkOrder = function(id, direction) {
+            let filtered = state.bookmarks.filter(bm => {
+                if (state.currentCategory === '전체') return true;
+                if (state.currentCategory === '📌 즐겨찾기') return bm.pinned;
+                return bm.category === state.currentCategory;
+            });
+            filtered.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+
+            const curIdxInFiltered = filtered.findIndex(b => b.id === id);
+            if (curIdxInFiltered === -1) return;
+            const targetIdxInFiltered = curIdxInFiltered + direction;
+            if (targetIdxInFiltered < 0 || targetIdxInFiltered >= filtered.length) return;
+
+            const targetBmId = filtered[targetIdxInFiltered].id;
+            const realIdx1 = state.bookmarks.findIndex(b => b.id === id);
+            const realIdx2 = state.bookmarks.findIndex(b => b.id === targetBmId);
+
+            if (realIdx1 !== -1 && realIdx2 !== -1) {
+                const temp = state.bookmarks[realIdx1];
+                state.bookmarks[realIdx1] = state.bookmarks[realIdx2];
+                state.bookmarks[realIdx2] = temp;
+
+                saveData();
+                renderBookmarks();
+            }
+        };
+
         window.renameCategory = function(oldName) {
             if (oldName === '전체') return;
             const newName = prompt(`'${oldName}' 카테고리의 새로운 이름을 입력하세요:`, oldName);
@@ -581,7 +608,7 @@
                 const isFirst = idx === 0;
                 const isLast = idx === userCategories.length - 1;
                 return `
-                    <div class="flex items-center justify-between py-2 px-3.5 bg-[#f9fafb] dark:bg-[#202632] rounded-xl border border-[#e5e8eb] dark:border-transparent">
+                    <div class="flex items-center justify-between py-1.5 px-3.5 bg-[#f9fafb] dark:bg-[#202632] rounded-xl border border-[#e5e8eb] dark:border-transparent">
                         <span class="text-xs font-bold text-[#191f28] dark:text-white">${cat}</span>
                         <div class="flex items-center space-x-1">
                             <button onclick="moveCategoryOrder(${idx}, -1)" ${isFirst ? 'disabled class="p-1 text-[#b0b8c1]/40 cursor-not-allowed"' : 'class="p-1 text-[#8b95a1] hover:text-brand-500 hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-lg transition"'} title="위로 이동">
@@ -680,16 +707,29 @@
                 empty.classList.remove('flex');
             }
 
-            /* Compact & Elegant Bookmark Cards */
-            grid.innerHTML = filtered.map((bm, idx) => `
-                <div data-id="${bm.id}" data-index="${idx}" draggable="true" 
-                    class="bm-card group bg-white dark:bg-[#171c24] rounded-2xl p-3 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between cursor-grab active:cursor-grabbing border-2 border-transparent select-none">
+            const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+            grid.innerHTML = filtered.map((bm, idx) => {
+                const isFirst = idx === 0;
+                const isLast = idx === filtered.length - 1;
+                return `
+                <div data-id="${bm.id}" data-index="${idx}" ${isTouchDevice ? '' : 'draggable="true"'} 
+                    class="bm-card group bg-white dark:bg-[#171c24] rounded-2xl p-3 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between ${isTouchDevice ? '' : 'cursor-grab active:cursor-grabbing'} border-2 border-transparent select-none">
                     <div>
                         <div class="flex items-center justify-between mb-1.5">
                             <span class="text-[10px] font-bold px-2 py-0.5 bg-brand-50 dark:bg-brand-500/10 text-brand-500 rounded-lg pointer-events-none">
                                 ${bm.category}
                             </span>
                             <div class="flex items-center space-x-0.5">
+                                ${isTouchDevice ? `
+                                    <button onclick="moveBookmarkOrder('${bm.id}', -1)" ${isFirst ? 'disabled class="p-1 text-[#b0b8c1]/30 cursor-not-allowed"' : 'class="p-1 text-[#8b95a1] hover:text-brand-500 transition"'} title="위로 이동">
+                                        <i data-lucide="chevron-up" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                    <button onclick="moveBookmarkOrder('${bm.id}', 1)" ${isLast ? 'disabled class="p-1 text-[#b0b8c1]/30 cursor-not-allowed"' : 'class="p-1 text-[#8b95a1] hover:text-brand-500 transition"'} title="아래로 이동">
+                                        <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                    <div class="w-[1px] h-3 bg-[#b0b8c1]/30 mx-0.5"></div>
+                                ` : ''}
                                 <button onclick="togglePin('${bm.id}')" class="p-1 text-[#b0b8c1] hover:text-amber-500 transition" title="즐겨찾기">
                                     <i data-lucide="pin" class="w-3.5 h-3.5 ${bm.pinned ? 'fill-amber-500 text-amber-500' : ''}"></i>
                                 </button>
@@ -702,18 +742,21 @@
                             </div>
                         </div>
                         <h4 class="font-bold text-[#191f28] dark:text-white text-sm mb-1 group-hover:text-brand-500 transition line-clamp-1 pointer-events-none">${bm.title}</h4>
-                        <p class="text-xs font-medium text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-2.5 min-h-[1.75rem] leading-relaxed pointer-events-none">${bm.desc || '메모가 없습니다.'}</p>
+                        <p class="text-[13px] font-medium text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-2.5 min-h-[1.75rem] leading-relaxed pointer-events-none">${bm.desc || '메모가 없습니다.'}</p>
                     </div>
                     <a href="${bm.url}" target="_blank" rel="noopener" class="w-full py-2 bg-[#f2f4f6] dark:bg-[#202632] hover:bg-brand-500 hover:text-white text-[#4e5968] dark:text-[#b0b8c1] text-xs font-bold rounded-xl flex items-center justify-center space-x-1 transition active:scale-[0.98]">
                         <span>방문하기</span>
                         <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
                     </a>
                 </div>
-            `).join('');
+            `;
+            }).join('');
 
             if (window.lucide) lucide.createIcons();
 
-            initBookmarkDragAndDrop();
+            if (!isTouchDevice) {
+                initBookmarkDragAndDrop();
+            }
         };
 
         let draggedBookmarkId = null;
