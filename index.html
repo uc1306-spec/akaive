@@ -33,6 +33,9 @@
     <style>
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .dragging { opacity: 0.4; scale: 0.98; }
+        .drop-indicator-top { border-top: 3px solid #ff6b00 !important; }
+        .drop-indicator-bottom { border-bottom: 3px solid #ff6b00 !important; }
     </style>
 </head>
 <body class="bg-[#f2f4f6] dark:bg-[#101318] text-[#191f28] dark:text-[#f9fafb] min-h-screen flex flex-col font-sans transition-colors duration-200 antialiased">
@@ -41,9 +44,9 @@
     <header class="bg-white/80 dark:bg-[#171c24]/80 backdrop-blur-md sticky top-0 z-30 transition-colors duration-200">
         <div class="max-w-5xl mx-auto px-5 sm:px-8">
             <div class="flex items-center justify-between h-16 sm:h-20">
-                <!-- Logo & Title -->
+                <!-- Logo & Subtitle -->
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-brand-500/10 dark:bg-brand-500/20 text-brand-500 rounded-2xl flex items-center justify-center font-bold">
+                    <div class="w-10 h-10 bg-brand-500/10 dark:bg-brand-500/20 text-brand-500 rounded-2xl flex items-center justify-center font-bold shrink-0">
                         <i data-lucide="bookmark" class="w-5 h-5 stroke-[2.5]"></i>
                     </div>
                     <div>
@@ -66,12 +69,6 @@
                         <span class="hidden sm:inline">로그아웃</span>
                     </button>
 
-                    <!-- Add Bookmark Button -->
-                    <button onclick="openAddModal()" class="flex items-center space-x-1.5 px-4 py-2 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-2xl shadow-sm transition active:scale-95">
-                        <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i>
-                        <span class="hidden sm:inline">링크 추가</span>
-                    </button>
-
                     <!-- Dark Mode Toggle -->
                     <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 text-[#8b95a1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-2xl transition">
                         <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
@@ -83,21 +80,45 @@
     </header>
 
     <!-- Main Container -->
-    <main class="flex-1 max-w-5xl w-full mx-auto px-5 sm:px-8 py-6 space-y-6">
-        <!-- Toss Style Category Filter Bar (Seamless background) -->
-        <div class="flex items-center justify-between gap-2">
-            <div id="categoryTabs" class="flex items-center gap-2 overflow-x-auto py-1 no-scrollbar">
-                <!-- Dynamically generated -->
+    <main class="flex-1 max-w-5xl w-full mx-auto px-5 sm:px-8 py-6 space-y-5">
+        <!-- Category Filter Row with Action Buttons on the Right -->
+        <div>
+            <div class="text-[11px] font-bold text-[#8b95a1] mb-1.5 px-1 flex items-center gap-1">
+                <i data-lucide="filter" class="w-3 h-3"></i>
+                <span>카테고리 필터</span>
             </div>
-            <button onclick="openCategoryModal()" class="shrink-0 px-3.5 py-2 text-xs font-semibold bg-white dark:bg-[#171c24] text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white rounded-2xl shadow-sm hover:shadow transition flex items-center gap-1.5 border border-[#e5e8eb]/60 dark:border-transparent">
-                <i data-lucide="folder-cog" class="w-4 h-4"></i>
-                <span class="hidden sm:inline">카테고리 수정</span>
-            </button>
+            
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                <!-- Category Container: Fixed Tabs + Scrollable User Tabs -->
+                <div class="flex-1 flex items-center gap-1.5 p-1.5 bg-[#e5e8eb]/70 dark:bg-[#171c24] rounded-2xl border border-[#e5e8eb] dark:border-transparent min-w-0">
+                    <!-- Fixed Tabs ('전체', '📌 즐겨찾기') -->
+                    <div id="fixedCategoryTabs" class="flex items-center gap-1.5 shrink-0"></div>
+                    
+                    <!-- Vertical Divider -->
+                    <div id="categoryDivider" class="w-[1.5px] h-4 bg-[#b0b8c1]/40 dark:bg-[#2c3442] mx-0.5 shrink-0"></div>
+                    
+                    <!-- Scrollable User Categories -->
+                    <div id="scrollableCategoryTabs" class="flex-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth min-w-0"></div>
+                </div>
+
+                <!-- Action Buttons: Positioned on the Far Right -->
+                <div class="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+                    <button onclick="openAddModal()" class="flex items-center space-x-1.5 px-4 py-2.5 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-2xl shadow-md shadow-brand-500/20 transition active:scale-95 shrink-0">
+                        <i data-lucide="plus-circle" class="w-4 h-4 stroke-[2.5]"></i>
+                        <span>링크 추가</span>
+                    </button>
+
+                    <button onclick="openCategoryModal()" class="flex items-center space-x-1.5 px-3.5 py-2.5 text-xs font-semibold bg-white dark:bg-[#171c24] text-[#4e5968] dark:text-[#b0b8c1] hover:text-[#191f28] dark:hover:text-white rounded-2xl transition border border-dashed border-[#b0b8c1]/60 dark:border-[#2c3442] hover:bg-[#f2f4f6] dark:hover:bg-[#202632] shrink-0">
+                        <i data-lucide="settings-2" class="w-4 h-4"></i>
+                        <span>카테고리 수정</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- Bookmarks Grid -->
-        <div id="bookmarkGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <!-- Dynamically generated -->
+        <div id="bookmarkGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-1">
+            <!-- Dynamically generated bookmarks -->
         </div>
 
         <!-- Empty State -->
@@ -163,13 +184,15 @@
                 </button>
             </div>
             
+            <p class="text-xs text-[#8b95a1]">우측 햄버거 아이콘(=)을 잡고 드래그하면 순서를 바꿀 수 있습니다. 연필 아이콘으로 이름을 수정하거나 삭제할 수 있습니다.</p>
+
             <div class="flex space-x-2">
                 <input type="text" id="newCategoryInput" placeholder="새 카테고리 이름" class="flex-1 px-4 py-2.5 text-sm bg-[#f9fafb] dark:bg-[#202632] border-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
                 <button onclick="handleAddCategory()" class="px-4 py-2.5 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-2xl transition">추가</button>
             </div>
 
-            <div id="categoryManageList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
-                <!-- Dynamically generated -->
+            <div id="categoryManageList" class="space-y-2 max-h-64 overflow-y-auto pr-1">
+                <!-- Dynamically generated with drag handle, edit, delete -->
             </div>
         </div>
     </div>
@@ -370,12 +393,32 @@
             }
         };
 
+        // Category Rename Functionality
+        window.renameCategory = function(oldName) {
+            if (oldName === '전체') return;
+            const newName = prompt(`'${oldName}' 카테고리의 새로운 이름을 입력하세요:`, oldName);
+            if (newName && newName.trim() !== '' && newName.trim() !== oldName) {
+                const trimmed = newName.trim();
+                if (state.categories.includes(trimmed)) {
+                    alert('이미 존재하는 카테고리 이름입니다.');
+                    return;
+                }
+                
+                state.categories = state.categories.map(c => c === oldName ? trimmed : c);
+                state.bookmarks = state.bookmarks.map(b => b.category === oldName ? {...b, category: trimmed} : b);
+                if (state.currentCategory === oldName) state.currentCategory = trimmed;
+
+                saveData();
+                renderCategories();
+                renderBookmarks();
+                renderCategoryManageList();
+            }
+        };
+
         window.deleteCategory = function(catName) {
             if (catName === '전체') return;
 
             const remainingCats = state.categories.filter(c => c !== catName && c !== '전체');
-            
-            // Allow deleting any category including '기타'
             let fallbackCat = remainingCats.length > 0 ? remainingCats[0] : '일반';
             
             if (confirm(`'${catName}' 카테고리를 삭제하시겠습니까?\n해당 카테고리의 링크는 '${fallbackCat}'(으)로 이동합니다.`)) {
@@ -506,39 +549,211 @@
             }
         }
 
+        // Drag and Drop reordering for categories inside manage list
+        let draggedIndex = null;
+
         function renderCategoryManageList() {
             const list = document.getElementById('categoryManageList');
-            list.innerHTML = state.categories.map(cat => {
-                if (cat === '전체') return '';
+            if (!list) return;
+            const userCategories = state.categories.filter(cat => cat !== '전체');
+
+            list.innerHTML = userCategories.map((cat, idx) => {
                 return `
-                    <div class="flex items-center justify-between p-3 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl">
-                        <span class="text-sm font-bold text-[#191f28] dark:text-white">${cat}</span>
-                        <button onclick="deleteCategory('${cat}')" class="text-xs text-rose-500 font-bold hover:underline">삭제</button>
+                    <div data-index="${idx}" draggable="true" class="cat-item flex items-center justify-between p-3 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl border border-[#e5e8eb] dark:border-transparent cursor-grab active:cursor-grabbing transition-all duration-150 relative">
+                        <span class="text-sm font-bold text-[#191f28] dark:text-white pointer-events-none">${cat}</span>
+                        <div class="flex items-center space-x-1">
+                            <!-- Edit Button (Pencil) -->
+                            <button onclick="renameCategory('${cat}')" class="p-1.5 text-[#8b95a1] hover:text-brand-500 hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-xl transition" title="이름 수정">
+                                <i data-lucide="pencil" class="w-4 h-4"></i>
+                            </button>
+                            <!-- Delete Button (Trash) -->
+                            <button onclick="deleteCategory('${cat}')" class="p-1.5 text-[#8b95a1] hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl transition" title="삭제">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                            <!-- Drag Handle (Hamburger/Menu Icon) -->
+                            <div class="drag-handle p-1.5 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white cursor-grab active:cursor-grabbing" title="드래그하여 순서 변경">
+                                <i data-lucide="menu" class="w-4 h-4"></i>
+                            </div>
+                        </div>
                     </div>
                 `;
             }).join('');
+
+            if (window.lucide) lucide.createIcons();
+
+            // Clear drop indicators helper
+            const clearDropIndicators = () => {
+                items.forEach(el => {
+                    el.classList.remove('drop-indicator-top', 'drop-indicator-bottom');
+                });
+            };
+
+            // Attach Drag and Drop Event Listeners with Orange Drop Line
+            const items = list.querySelectorAll('.cat-item');
+            items.forEach(item => {
+                item.addEventListener('dragstart', (e) => {
+                    draggedIndex = parseInt(item.getAttribute('data-index'));
+                    item.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                item.addEventListener('dragend', () => {
+                    item.classList.remove('dragging');
+                    clearDropIndicators();
+                    draggedIndex = null;
+                });
+
+                item.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+
+                    const rect = item.getBoundingClientRect();
+                    const offset = e.clientY - rect.top;
+                    const isTopHalf = offset < rect.height / 2;
+
+                    clearDropIndicators();
+
+                    if (isTopHalf) {
+                        item.classList.add('drop-indicator-top');
+                        item.dataset.dropPosition = 'before';
+                    } else {
+                        item.classList.add('drop-indicator-bottom');
+                        item.dataset.dropPosition = 'after';
+                    }
+                });
+
+                item.addEventListener('dragleave', () => {
+                    item.classList.remove('drop-indicator-top', 'drop-indicator-bottom');
+                });
+
+                item.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const targetIndex = parseInt(item.getAttribute('data-index'));
+                    const dropPosition = item.dataset.dropPosition || 'after';
+
+                    clearDropIndicators();
+
+                    if (draggedIndex !== null) {
+                        const userCategories = state.categories.filter(c => c !== '전체');
+                        const [movedCat] = userCategories.splice(draggedIndex, 1);
+
+                        let newIndex = targetIndex;
+                        if (draggedIndex < targetIndex && dropPosition === 'before') {
+                            newIndex = targetIndex - 1;
+                        } else if (draggedIndex > targetIndex && dropPosition === 'after') {
+                            newIndex = targetIndex + 1;
+                        } else if (dropPosition === 'after') {
+                            newIndex = targetIndex;
+                        }
+
+                        userCategories.splice(newIndex, 0, movedCat);
+
+                        state.categories = ['전체', ...userCategories];
+                        saveData();
+                        renderCategories();
+                        renderCategoryManageList();
+                    }
+                });
+            });
         }
 
         window.renderCategories = function() {
-            const container = document.getElementById('categoryTabs');
+            const fixedContainer = document.getElementById('fixedCategoryTabs');
+            const scrollableContainer = document.getElementById('scrollableCategoryTabs');
+            const divider = document.getElementById('categoryDivider');
             const select = document.getElementById('bmCategory');
-            if (!container || !select) return;
+            if (!fixedContainer || !scrollableContainer || !select) return;
 
-            // '전체'와 '📌 즐겨찾기'를 내장 탭으로 제공
             const builtInTabs = ['전체', '📌 즐겨찾기'];
             const userCategories = state.categories.filter(cat => cat !== '전체');
-            const allTabs = [...builtInTabs, ...userCategories];
 
-            container.innerHTML = allTabs.map(cat => `
+            // Render Fixed Tabs
+            fixedContainer.innerHTML = builtInTabs.map(cat => `
                 <button onclick="selectCategory('${cat}')" 
-                    class="px-4 py-2 text-xs font-bold rounded-2xl whitespace-nowrap transition shadow-sm border ${
+                    class="px-3.5 py-1.5 text-xs font-bold rounded-xl whitespace-nowrap transition-all duration-150 ${
                         state.currentCategory === cat 
-                        ? 'bg-brand-500 text-white border-brand-500' 
-                        : 'bg-white dark:bg-[#171c24] text-[#4e5968] dark:text-[#b0b8c1] border-[#e5e8eb]/60 dark:border-transparent hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442]'
+                        ? 'bg-white dark:bg-[#202632] text-brand-500 dark:text-brand-500 shadow-sm font-extrabold' 
+                        : 'text-[#4e5968] dark:text-[#b0b8c1] hover:text-[#191f28] dark:hover:text-white hover:bg-white/50 dark:hover:bg-[#202632]/50'
                     }">
                     ${cat}
                 </button>
             `).join('');
+
+            // Render Scrollable User Tabs
+            scrollableContainer.innerHTML = userCategories.map(cat => `
+                <button onclick="selectCategory('${cat}')" 
+                    class="px-3.5 py-1.5 text-xs font-bold rounded-xl whitespace-nowrap transition-all duration-150 ${
+                        state.currentCategory === cat 
+                        ? 'bg-white dark:bg-[#202632] text-brand-500 dark:text-brand-500 shadow-sm font-extrabold' 
+                        : 'text-[#4e5968] dark:text-[#b0b8c1] hover:text-[#191f28] dark:hover:text-white hover:bg-white/50 dark:hover:bg-[#202632]/50'
+                    }">
+                    ${cat}
+                </button>
+            `).join('');
+
+            if (divider) {
+                divider.style.display = userCategories.length > 0 ? 'block' : 'none';
+            }
+
+            // Mouse wheel scroll support for desktop users
+            if (!scrollableContainer.dataset.wheelInit) {
+                scrollableContainer.dataset.wheelInit = 'true';
+                scrollableContainer.addEventListener('wheel', (e) => {
+                    if (e.deltaY !== 0) {
+                        e.preventDefault();
+                        scrollableContainer.scrollLeft += e.deltaY;
+                    }
+                }, { passive: false });
+            }
+
+            // Mouse drag scroll support for desktop users
+            if (!scrollableContainer.dataset.dragInit) {
+                scrollableContainer.dataset.dragInit = 'true';
+                let isDown = false;
+                let startX, scrollLeft;
+                let hasDragged = false;
+
+                scrollableContainer.style.cursor = 'grab';
+
+                scrollableContainer.addEventListener('mousedown', (e) => {
+                    isDown = true;
+                    hasDragged = false;
+                    startX = e.pageX - scrollableContainer.offsetLeft;
+                    scrollLeft = scrollableContainer.scrollLeft;
+                    scrollableContainer.style.cursor = 'grabbing';
+                    scrollableContainer.style.userSelect = 'none';
+                });
+
+                scrollableContainer.addEventListener('mouseleave', () => {
+                    isDown = false;
+                    scrollableContainer.style.cursor = 'grab';
+                    scrollableContainer.style.removeProperty('user-select');
+                });
+
+                scrollableContainer.addEventListener('mouseup', () => {
+                    isDown = false;
+                    scrollableContainer.style.cursor = 'grab';
+                    scrollableContainer.style.removeProperty('user-select');
+                });
+
+                scrollableContainer.addEventListener('mousemove', (e) => {
+                    if (!isDown) return;
+                    const x = e.pageX - scrollableContainer.offsetLeft;
+                    const walk = (x - startX) * 1.5;
+                    if (Math.abs(x - startX) > 5) {
+                        hasDragged = true;
+                    }
+                    scrollableContainer.scrollLeft = scrollLeft - walk;
+                });
+
+                scrollableContainer.addEventListener('click', (e) => {
+                    if (hasDragged) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        hasDragged = false;
+                    }
+                }, true);
+            }
 
             select.innerHTML = userCategories
                 .map(cat => `<option value="${cat}">${cat}</option>`)
