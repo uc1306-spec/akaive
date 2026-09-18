@@ -13,11 +13,11 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#f0f7ff',
-                            100: '#e0effe',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
                         }
                     }
                 }
@@ -65,7 +65,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
             <!-- Logo / Brand Title -->
             <div class="flex items-center space-x-3 cursor-pointer" onclick="resetFilter()">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-md shadow-orange-500/20">
                     <i class="fa-solid font-bold fa-bookmark text-lg"></i>
                 </div>
                 <div>
@@ -78,7 +78,7 @@
             <div class="flex-1 max-w-md relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                 <input type="text" id="searchInput" placeholder="사이트명, 태그 또는 URL 검색... (단축키 '/')" 
-                    class="w-full pl-10 pr-10 py-2 bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                    class="w-full pl-10 pr-10 py-2 bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all">
                 <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs">
                     <i class="fa-solid fa-circle-xmark"></i>
                 </button>
@@ -88,7 +88,7 @@
             <div class="flex items-center space-x-2 sm:space-x-3">
                 <!-- Theme Toggle Button -->
                 <button onclick="toggleTheme()" class="p-2.5 text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800 rounded-xl transition-colors" title="테마 변경">
-                    <i class="fa-solid fa-sun text-yellow-500 hidden dark:inline"></i>
+                    <i class="fa-solid fa-sun text-amber-500 hidden dark:inline"></i>
                     <i class="fa-solid fa-moon text-slate-600 inline dark:hidden"></i>
                 </button>
 
@@ -98,7 +98,7 @@
                 </button>
 
                 <!-- Add New Bookmark Button -->
-                <button onclick="openAddModal()" class="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm px-4 py-2 rounded-xl shadow-md shadow-blue-500/20 transition-all active:scale-95">
+                <button onclick="openAddModal()" class="flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white font-medium text-sm px-4 py-2 rounded-xl shadow-md shadow-orange-500/20 transition-all active:scale-95">
                     <i class="fa-solid fa-plus text-xs"></i>
                     <span class="hidden sm:inline">링크 추가</span>
                 </button>
@@ -111,14 +111,20 @@
 
         <!-- Category Filter & Stats Banner -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <!-- Category Chips -->
-            <div class="flex items-center space-x-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar" id="categoryFilterContainer">
-                <!-- Category buttons injected by JS -->
+            <!-- Category Chips & Manager Button -->
+            <div class="flex items-center space-x-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
+                <div class="flex items-center space-x-2" id="categoryFilterContainer">
+                    <!-- Category buttons injected by JS -->
+                </div>
+                <button onclick="openCategoryModal()" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border border-dashed border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-orange-50 dark:hover:bg-orange-950/40 hover:text-orange-600 dark:hover:text-orange-400 flex items-center gap-1.5" title="카테고리 관리">
+                    <i class="fa-solid fa-gear text-xs"></i>
+                    <span>카테고리 관리</span>
+                </button>
             </div>
 
             <!-- View Options & Counter -->
             <div class="flex items-center justify-between md:justify-end gap-3 text-xs text-slate-500 dark:text-slate-400 border-t md:border-t-0 border-slate-200 dark:border-slate-800 pt-3 md:pt-0">
-                <span>총 <strong id="linkCount" class="text-blue-600 dark:text-blue-400 font-bold">0</strong>개 링크</span>
+                <span>총 <strong id="linkCount" class="text-orange-600 dark:text-orange-400 font-bold">0</strong>개 링크</span>
                 <div class="h-3 w-[1px] bg-slate-300 dark:bg-slate-700"></div>
                 <button onclick="togglePinnedOnly()" id="pinnedOnlyBtn" class="px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-800 transition">
                     <i class="fa-solid fa-thumbtack mr-1 text-amber-500"></i> 즐겨찾기만 보기
@@ -132,23 +138,23 @@
         </div>
 
         <!-- Empty State Message -->
-        <div id="emptyState" class="hidden flex-col items-center justify-center py-20 text-center">
-            <div class="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center mb-4 text-slate-400 text-2xl">
-                <i class="fa-solid fa-folder-open"></i>
-            </div>
-            <h3 class="font-semibold text-lg text-slate-700 dark:text-slate-300 mb-1">등록된 링크가 없거나 검색 결과가 없습니다</h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400 max-w-sm mb-6">새로운 버튼을 추가하여 자주 가는 웹사이트를 편리하게 등록해 보세요.</p>
-            <button onclick="openAddModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm px-5 py-2.5 rounded-xl transition">
-                첫 번째 링크 추가하기
-            </button>
+    <div id="emptyState" class="hidden flex-col items-center justify-center py-20 text-center">
+        <div class="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center mb-4 text-slate-400 text-2xl">
+            <i class="fa-solid fa-folder-open"></i>
         </div>
+        <h3 class="font-semibold text-lg text-slate-700 dark:text-slate-300 mb-1">등록된 링크가 없거나 검색 결과가 없습니다</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 max-w-sm mb-6">새로운 버튼을 추가하여 자주 가는 웹사이트를 편리하게 등록해 보세요.</p>
+        <button onclick="openAddModal()" class="bg-orange-600 hover:bg-orange-700 text-white font-medium text-sm px-5 py-2.5 rounded-xl transition shadow-md shadow-orange-500/20">
+            첫 번째 링크 추가하기
+        </button>
+    </div>
 
     </main>
 
     <!-- Footer -->
     <footer class="border-t border-slate-200 dark:border-slate-800 py-6 text-center text-xs text-slate-500 dark:text-slate-500">
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <p>© My Personal Web Archive — GitHub Pages 호스팅에 최적화된 index.html</p>
+            <p>© 김망고. All rights reserved. — My Personal Web Archive</p>
             <div class="flex space-x-4">
                 <button onclick="exportJSON()" class="hover:underline">JSON 백업 다운로드</button>
                 <span>•</span>
@@ -174,33 +180,32 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">사이트 이름 <span class="text-rose-500">*</span></label>
                     <input type="text" id="formTitle" required placeholder="예: 네이버, GitHub, 유용한 사이트" 
-                        class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:outline-none">
                 </div>
 
                 <!-- URL -->
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">웹사이트 URL 주소 <span class="text-rose-500">*</span></label>
                     <input type="url" id="formUrl" required placeholder="https://example.com" 
-                        class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:outline-none">
                 </div>
 
                 <!-- Category & Emoji Picker -->
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">카테고리</label>
-                        <select id="formCategory" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                            <option value="포털/포럼">포털/포럼</option>
-                            <option value="개발/IT">개발/IT</option>
-                            <option value="미디어/영상">미디어/영상</option>
-                            <option value="생산성/도구">생산성/도구</option>
-                            <option value="기타">기타</option>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400">카테고리</label>
+                            <button type="button" onclick="openCategoryModal()" class="text-[11px] text-orange-600 dark:text-orange-400 hover:underline">+ 관리</button>
+                        </div>
+                        <select id="formCategory" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:outline-none">
+                            <!-- Dynamic category options injected by JS -->
                         </select>
                     </div>
 
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">아이콘 (이모지 또는 FontAwesome)</label>
                         <input type="text" id="formIcon" placeholder="예: 🚀 또는 fa-globe" 
-                            class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:outline-none">
                     </div>
                 </div>
 
@@ -208,19 +213,19 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">간단 메모 (선택사항)</label>
                     <input type="text" id="formDesc" placeholder="예: 자주 쓰는 검색 포털 사이트" 
-                        class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:outline-none">
                 </div>
 
                 <!-- Pin checkbox -->
                 <div class="flex items-center space-x-2 pt-1">
-                    <input type="checkbox" id="formPinned" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                    <input type="checkbox" id="formPinned" class="w-4 h-4 text-orange-600 rounded border-slate-300 focus:ring-orange-500">
                     <label for="formPinned" class="text-xs text-slate-700 dark:text-slate-300 font-medium">상단에 즐겨찾기로 고정</label>
                 </div>
 
                 <!-- Actions -->
                 <div class="flex justify-end space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800">
                     <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition">취소</button>
-                    <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 transition">저장하기</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-md shadow-orange-500/20 transition">저장하기</button>
                 </div>
             </form>
         </div>
@@ -240,14 +245,14 @@
 
             <div class="space-y-3">
                 <button onclick="exportJSON()" class="w-full py-2.5 px-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-sm font-medium rounded-xl flex items-center justify-between transition">
-                    <span><i class="fa-solid fa-download mr-2 text-blue-500"></i> 현재 데이터 JSON 파일 저장</span>
+                    <span><i class="fa-solid fa-download mr-2 text-orange-500"></i> 현재 데이터 JSON 파일 저장</span>
                     <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
                 </button>
 
                 <div class="relative">
                     <input type="file" id="importFileInput" accept=".json" onchange="importJSON(event)" class="hidden">
                     <button onclick="document.getElementById('importFileInput').click()" class="w-full py-2.5 px-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-sm font-medium rounded-xl flex items-center justify-between transition">
-                        <span><i class="fa-solid fa-upload mr-2 text-emerald-500"></i> JSON 파일에서 가져오기</span>
+                        <span><i class="fa-solid fa-upload mr-2 text-amber-500"></i> JSON 파일에서 가져오기</span>
                         <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
                     </button>
                 </div>
@@ -255,6 +260,36 @@
 
             <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
                 <button onclick="closeDataModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 text-xs font-medium rounded-xl">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Manager Modal -->
+    <div id="categoryModalOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">카테고리 관리</h3>
+                <button onclick="closeCategoryModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Add Category Input -->
+            <form onsubmit="handleAddCategory(event)" class="flex gap-2 mb-4">
+                <input type="text" id="newCategoryInput" placeholder="새 카테고리 이름 입력..." required
+                    class="flex-1 px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:outline-none">
+                <button type="submit" class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white font-medium text-xs rounded-xl shadow-md transition whitespace-nowrap">
+                    <i class="fa-solid fa-plus mr-1"></i> 추가
+                </button>
+            </form>
+
+            <!-- Categories List -->
+            <div class="max-h-60 overflow-y-auto space-y-2 pr-1" id="categoryManagerList">
+                <!-- Managed categories injected by JS -->
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                <button onclick="closeCategoryModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 text-xs font-medium rounded-xl">완료</button>
             </div>
         </div>
     </div>
@@ -278,8 +313,11 @@
             { id: '8', title: 'Velog', url: 'https://velog.io', category: '개발/IT', icon: '⚡', desc: '개발자 블로그 및 기술 아티클', pinned: false }
         ];
 
+        const DEFAULT_CATEGORIES = ['포털/포럼', '개발/IT', '미디어/영상', '생산성/도구', '기타'];
+
         // App State
         let bookmarks = [];
+        let customCategories = [];
         let currentCategory = '전체';
         let searchQuery = '';
         let pinnedOnly = false;
@@ -296,6 +334,7 @@
         // Init App
         window.addEventListener('DOMContentLoaded', () => {
             loadTheme();
+            loadCategories();
             loadBookmarks();
             setupSearchListener();
             setupKeyboardShortcuts();
@@ -318,6 +357,25 @@
                 document.documentElement.classList.add('dark');
                 localStorage.setItem('theme', 'dark');
             }
+        }
+
+        // LocalStorage & Category Handling
+        function loadCategories() {
+            const savedCat = localStorage.getItem('my_web_archive_categories');
+            if (savedCat) {
+                try {
+                    customCategories = JSON.parse(savedCat);
+                } catch (e) {
+                    customCategories = [...DEFAULT_CATEGORIES];
+                }
+            } else {
+                customCategories = [...DEFAULT_CATEGORIES];
+                saveCategories();
+            }
+        }
+
+        function saveCategories() {
+            localStorage.setItem('my_web_archive_categories', JSON.stringify(customCategories));
         }
 
         // LocalStorage & Data Handling
@@ -343,6 +401,8 @@
         function resetToDefaults() {
             if (confirmModal("초기 데이터로 복원하시겠습니까? 현재 작성된 데이터가 대체됩니다.")) {
                 bookmarks = [...DEFAULT_BOOKMARKS];
+                customCategories = [...DEFAULT_CATEGORIES];
+                saveCategories();
                 saveBookmarks();
                 render();
                 showToast("기본 데이터로 복원되었습니다.", "info");
@@ -351,13 +411,17 @@
 
         // Categories List Generator
         function getCategories() {
-            const cats = new Set(bookmarks.map(b => b.category || '기타'));
-            return ['전체', ...Array.from(cats)];
+            // Merge custom categories and any categories dynamically present in bookmarks
+            const bookmarkCats = bookmarks.map(b => b.category || '기타');
+            const merged = Array.from(new Set([...customCategories, ...bookmarkCats]));
+            if (!merged.includes('기타')) merged.push('기타');
+            return ['전체', ...merged];
         }
 
         // Render Function
         function render() {
             renderCategoryFilter();
+            populateFormCategories();
             
             // Filter bookmarks
             let filtered = bookmarks.filter(item => {
@@ -385,18 +449,18 @@
                 emptyState.classList.remove('flex');
 
                 bookmarkGrid.innerHTML = filtered.map(item => `
-                    <div class="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-500/50 dark:hover:border-blue-500/50 rounded-2xl p-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/5 flex flex-col justify-between">
+                    <div class="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-orange-500/50 dark:hover:border-orange-500/50 rounded-2xl p-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-500/5 flex flex-col justify-between">
                         <div>
                             <!-- Top Header of Card -->
                             <div class="flex items-start justify-between mb-3">
-                                <div class="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xl shadow-inner group-hover:bg-blue-50 dark:group-hover:bg-blue-950/40 transition-colors">
+                                <div class="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xl shadow-inner group-hover:bg-orange-50 dark:group-hover:bg-orange-950/40 transition-colors">
                                     ${renderIcon(item.icon)}
                                 </div>
                                 <div class="flex items-center space-x-1">
                                     <button onclick="togglePin('${item.id}')" class="p-1.5 text-slate-400 hover:text-amber-500 transition" title="${item.pinned ? '즐겨찾기 해제' : '즐겨찾기 고정'}">
                                         <i class="fa-${item.pinned ? 'solid' : 'regular'} fa-bookmark ${item.pinned ? 'text-amber-500' : ''}"></i>
                                     </button>
-                                    <button onclick="openEditModal('${item.id}')" class="p-1.5 text-slate-400 hover:text-blue-500 transition" title="수정">
+                                    <button onclick="openEditModal('${item.id}')" class="p-1.5 text-slate-400 hover:text-orange-500 transition" title="수정">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </button>
                                     <button onclick="deleteBookmark('${item.id}')" class="p-1.5 text-slate-400 hover:text-rose-500 transition" title="삭제">
@@ -406,7 +470,7 @@
                             </div>
 
                             <!-- Card Title & Domain -->
-                            <h3 class="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 text-base line-clamp-1 mb-1 transition-colors">
+                            <h3 class="font-bold text-slate-900 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 text-base line-clamp-1 mb-1 transition-colors">
                                 ${escapeHtml(item.title)}
                             </h3>
                             <p class="text-xs text-slate-400 dark:text-slate-500 truncate mb-2">
@@ -422,7 +486,7 @@
                             </span>
                             
                             <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" 
-                                class="inline-flex items-center space-x-1 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">
+                                class="inline-flex items-center space-x-1 text-xs font-semibold text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300">
                                 <span>이동</span>
                                 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
                             </a>
@@ -436,7 +500,7 @@
         function renderIcon(icon) {
             if (!icon) return '🔗';
             if (icon.startsWith('fa-')) {
-                return `<i class="fa-solid ${icon} text-blue-500"></i>`;
+                return `<i class="fa-solid ${icon} text-orange-500"></i>`;
             }
             return icon;
         }
@@ -456,15 +520,123 @@
             const categories = getCategories();
             categoryFilterContainer.innerHTML = categories.map(cat => `
                 <button onclick="setCategory('${cat}')" 
-                    class="px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${currentCategory === cat ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'}">
+                    class="px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${currentCategory === cat ? 'bg-orange-600 text-white shadow-md shadow-orange-500/20' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'}">
                     ${cat}
                 </button>
+            `).join('');
+        }
+
+        function populateFormCategories() {
+            const formCatSelect = document.getElementById('formCategory');
+            const categories = getCategories().filter(c => c !== '전체');
+            formCatSelect.innerHTML = categories.map(cat => `
+                <option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>
             `).join('');
         }
 
         function setCategory(cat) {
             currentCategory = cat;
             render();
+        }
+
+        // Category Management Functions
+        const categoryModalOverlay = document.getElementById('categoryModalOverlay');
+        const categoryManagerList = document.getElementById('categoryManagerList');
+        const newCategoryInput = document.getElementById('newCategoryInput');
+
+        function openCategoryModal() {
+            renderCategoryManagerList();
+            categoryModalOverlay.classList.remove('hidden');
+        }
+
+        function closeCategoryModal() {
+            categoryModalOverlay.classList.add('hidden');
+        }
+
+        function renderCategoryManagerList() {
+            const categories = getCategories().filter(c => c !== '전체');
+            categoryManagerList.innerHTML = categories.map(cat => `
+                <div class="flex items-center justify-between p-2.5 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/60">
+                    <span class="text-sm font-medium text-slate-800 dark:text-slate-200">${escapeHtml(cat)}</span>
+                    <div class="flex items-center space-x-1">
+                        <button onclick="renameCategoryPrompt('${escapeHtml(cat)}')" class="p-1.5 text-slate-400 hover:text-orange-500 text-xs transition" title="이름 수정">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        ${cat !== '기타' ? `
+                        <button onclick="deleteCategoryPrompt('${escapeHtml(cat)}')" class="p-1.5 text-slate-400 hover:text-rose-500 text-xs transition" title="삭제">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleAddCategory(e) {
+            e.preventDefault();
+            const catName = newCategoryInput.value.trim();
+            if (!catName) return;
+
+            if (customCategories.includes(catName)) {
+                showToast("이미 존재하는 카테고리입니다.", "rose");
+                return;
+            }
+
+            customCategories.push(catName);
+            saveCategories();
+            newCategoryInput.value = '';
+            renderCategoryManagerList();
+            render();
+            showToast(`'${catName}' 카테고리가 추가되었습니다.`);
+        }
+
+        function renameCategoryPrompt(oldName) {
+            const newName = prompt(`'${oldName}' 카테고리의 새 이름을 입력하세요:`, oldName);
+            if (!newName || newName.trim() === '' || newName.trim() === oldName) return;
+
+            const trimmedNewName = newName.trim();
+
+            // Update in customCategories list
+            const index = customCategories.indexOf(oldName);
+            if (index !== -1) {
+                customCategories[index] = trimmedNewName;
+            } else {
+                customCategories.push(trimmedNewName);
+            }
+
+            // Update all matching bookmarks to the new category name
+            bookmarks = bookmarks.map(b => b.category === oldName ? { ...b, category: trimmedNewName } : b);
+
+            if (currentCategory === oldName) {
+                currentCategory = trimmedNewName;
+            }
+
+            saveCategories();
+            saveBookmarks();
+            renderCategoryManagerList();
+            render();
+            showToast("카테고리 이름이 변경되었습니다.");
+        }
+
+        function deleteCategoryPrompt(catName) {
+            if (catName === '기타') {
+                showToast("'기타' 카테고리는 삭제할 수 없습니다.", "rose");
+                return;
+            }
+
+            if (confirmModal(`'${catName}' 카테고리를 삭제하시겠습니까?\n속해 있는 링크는 '기타' 카테고리로 이동합니다.`)) {
+                customCategories = customCategories.filter(c => c !== catName);
+                bookmarks = bookmarks.map(b => b.category === catName ? { ...b, category: '기타' } : b);
+                
+                if (currentCategory === catName) {
+                    currentCategory = '전체';
+                }
+
+                saveCategories();
+                saveBookmarks();
+                renderCategoryManagerList();
+                render();
+                showToast("카테고리가 삭제되었습니다.", "rose");
+            }
         }
 
         function togglePinnedOnly() {
@@ -629,7 +801,11 @@
         }
 
         function exportJSON() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(bookmarks, null, 2));
+            const exportData = {
+                bookmarks: bookmarks,
+                categories: customCategories
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
             downloadAnchor.setAttribute("download", `my_web_archive_backup_${new Date().toISOString().slice(0,10)}.json`);
@@ -648,14 +824,17 @@
                 try {
                     const imported = JSON.parse(e.target.result);
                     if (Array.isArray(imported)) {
+                        // Older backup file format
                         bookmarks = imported;
-                        saveBookmarks();
-                        render();
-                        closeDataModal();
-                        showToast("성공적으로 데이터 복원되었습니다.");
-                    } else {
-                        showToast("올바르지 않은 JSON 데이터입니다.", "rose");
+                    } else if (imported && typeof imported === 'object') {
+                        if (Array.isArray(imported.bookmarks)) bookmarks = imported.bookmarks;
+                        if (Array.isArray(imported.categories)) customCategories = imported.categories;
                     }
+                    saveCategories();
+                    saveBookmarks();
+                    render();
+                    closeDataModal();
+                    showToast("성공적으로 데이터가 복원되었습니다.");
                 } catch(err) {
                     showToast("파일을 읽는 중 오류가 발생했습니다.", "rose");
                 }
@@ -686,7 +865,6 @@
         }
 
         function confirmModal(msg) {
-            // Standard browser confirm fallback (non-blocking simulation or window.confirm inside safe wrapper)
             return window.confirm(msg);
         }
 
