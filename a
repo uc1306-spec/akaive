@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나만의 웹 아카이브</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+        h1 {
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+            color: #2c3e50;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+        }
+        .bookmark-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px 15px;
+            background-color: #ffffff;
+            color: #2c3e50;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .bookmark-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            background-color: #357abd;
+            color: #ffffff;
+            border-color: #357abd;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📌 Quick Link Archive</h1>
+
+    <div class="container">
+        <!-- 버튼 수정 구역: href에 주소, 태그 사이에 이름 입력 -->
+        <a href="https://www.google.com" target="_blank" class="bookmark-btn">구글</a>
+        <a href="https://www.naver.com" target="_blank" class="bookmark-btn">네이버</a>
+        <a href="https://www.youtube.com" target="_blank" class="bookmark-btn">유튜브</a>
+        <a href="https://www.github.com" target="_blank" class="bookmark-btn">GitHub</a>
+        <a href="https://news.google.com" target="_blank" class="bookmark-btn">구글 뉴스</a>
+        <!-- 필요할 때 아래 줄을 복사해서 추가하세요 -->
+        <!-- <a href="원하는URL" target="_blank" class="bookmark-btn">버튼이름</a> -->
+    </div>
+
+</body>
+</html>
