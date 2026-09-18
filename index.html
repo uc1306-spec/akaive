@@ -901,32 +901,33 @@
                 empty.classList.remove('flex');
             }
 
+            /* 카드 크기를 컴팩트하게 조정 (padding, min-h, text size 최적화) */
             grid.innerHTML = filtered.map((bm, idx) => `
                 <div data-id="${bm.id}" data-index="${idx}" draggable="true" 
-                    class="bm-card group bg-white dark:bg-[#171c24] rounded-3xl p-5 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between cursor-grab active:cursor-grabbing border-2 border-transparent">
+                    class="bm-card group bg-white dark:bg-[#171c24] rounded-2xl p-3.5 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between cursor-grab active:cursor-grabbing border-2 border-transparent select-none">
                     <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-[11px] font-bold px-2.5 py-1 bg-brand-50 dark:bg-brand-500/10 text-brand-500 rounded-xl pointer-events-none">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[10px] font-bold px-2 py-0.5 bg-brand-50 dark:bg-brand-500/10 text-brand-500 rounded-lg pointer-events-none">
                                 ${bm.category}
                             </span>
-                            <div class="flex items-center space-x-1">
-                                <button onclick="togglePin('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-amber-500 transition" title="즐겨찾기">
-                                    <i data-lucide="pin" class="w-4 h-4 ${bm.pinned ? 'fill-amber-500 text-amber-500' : ''}"></i>
+                            <div class="flex items-center space-x-0.5">
+                                <button onclick="togglePin('${bm.id}')" class="p-1 text-[#b0b8c1] hover:text-amber-500 transition" title="즐겨찾기">
+                                    <i data-lucide="pin" class="w-3.5 h-3.5 ${bm.pinned ? 'fill-amber-500 text-amber-500' : ''}"></i>
                                 </button>
-                                <button onclick="openEditModal('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-brand-500 transition" title="수정">
-                                    <i data-lucide="pencil" class="w-4 h-4"></i>
+                                <button onclick="openEditModal('${bm.id}')" class="p-1 text-[#b0b8c1] hover:text-brand-500 transition" title="수정">
+                                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                                 </button>
-                                <button onclick="deleteBookmark('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-rose-500 transition" title="삭제">
-                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                <button onclick="deleteBookmark('${bm.id}')" class="p-1 text-[#b0b8c1] hover:text-rose-500 transition" title="삭제">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
                         </div>
-                        <h4 class="font-bold text-[#191f28] dark:text-white text-base mb-1 group-hover:text-brand-500 transition line-clamp-1 pointer-events-none">${bm.title}</h4>
-                        <p class="text-[13px] text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-4 min-h-[2.25rem] font-medium leading-relaxed pointer-events-none">${bm.desc || '메모가 없습니다.'}</p>
+                        <h4 class="font-bold text-[#191f28] dark:text-white text-sm mb-1 group-hover:text-brand-500 transition line-clamp-1 pointer-events-none">${bm.title}</h4>
+                        <p class="text-xs text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-3 min-h-[2rem] font-medium leading-relaxed pointer-events-none">${bm.desc || '메모가 없습니다.'}</p>
                     </div>
-                    <a href="${bm.url}" target="_blank" rel="noopener" class="w-full py-3 bg-[#f2f4f6] dark:bg-[#202632] hover:bg-brand-500 hover:text-white text-[#4e5968] dark:text-[#b0b8c1] text-xs font-bold rounded-2xl flex items-center justify-center space-x-1.5 transition active:scale-[0.98]">
+                    <a href="${bm.url}" target="_blank" rel="noopener" class="w-full py-2 bg-[#f2f4f6] dark:bg-[#202632] hover:bg-brand-500 hover:text-white text-[#4e5968] dark:text-[#b0b8c1] text-xs font-bold rounded-xl flex items-center justify-center space-x-1 transition active:scale-[0.98]">
                         <span>방문하기</span>
-                        <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
                     </a>
                 </div>
             `).join('');
@@ -1019,41 +1020,60 @@
                     }
                 });
 
-                // Touch Events for Mobile / Tablet Support
+                // Touch Events with Long Press (0.3s) for Mobile / Tablet Support
                 let touchStartX = 0;
                 let touchStartY = 0;
                 let ghostEl = null;
+                let longPressTimer = null;
+                let isLongPressActive = false;
 
                 card.addEventListener('touchstart', (e) => {
-                    // Do not initiate drag if target is a button or link
                     if (e.target.closest('button') || e.target.closest('a')) return;
                     
                     const touch = e.touches[0];
                     touchStartX = touch.clientX;
                     touchStartY = touch.clientY;
                     draggedBookmarkId = card.getAttribute('data-id');
+                    isLongPressActive = false;
 
-                    // Create ghost element for smooth touch dragging
-                    ghostEl = card.cloneNode(true);
-                    ghostEl.style.position = 'fixed';
-                    ghostEl.style.zIndex = '1000';
-                    ghostEl.style.width = `${card.offsetWidth}px`;
-                    ghostEl.style.opacity = '0.85';
-                    ghostEl.style.pointerEvents = 'none';
-                    ghostEl.style.boxShadow = '0 10px 25px rgba(0,0,0,0.2)';
-                    const rect = card.getBoundingClientRect();
-                    ghostEl.style.left = `${rect.left}px`;
-                    ghostEl.style.top = `${rect.top}px`;
-                    document.body.appendChild(ghostEl);
+                    // Set long press timer (300ms)
+                    longPressTimer = setTimeout(() => {
+                        isLongPressActive = true;
+                        
+                        // Haptic feedback if supported
+                        if (navigator.vibrate) navigator.vibrate(40);
 
-                    card.classList.add('opacity-40');
+                        // Create ghost element
+                        ghostEl = card.cloneNode(true);
+                        ghostEl.style.position = 'fixed';
+                        ghostEl.style.zIndex = '1000';
+                        ghostEl.style.width = `${card.offsetWidth}px`;
+                        ghostEl.style.opacity = '0.85';
+                        ghostEl.style.pointerEvents = 'none';
+                        ghostEl.style.boxShadow = '0 10px 25px rgba(0,0,0,0.2)';
+                        const rect = card.getBoundingClientRect();
+                        ghostEl.style.left = `${rect.left}px`;
+                        ghostEl.style.top = `${rect.top}px`;
+                        document.body.appendChild(ghostEl);
+
+                        card.classList.add('opacity-40');
+                    }, 300);
                 }, { passive: true });
 
                 card.addEventListener('touchmove', (e) => {
-                    if (!draggedBookmarkId) return;
-                    e.preventDefault(); // Prevent background scrolling
-
                     const touch = e.touches[0];
+                    
+                    // If user moves finger before long press completes, cancel it (allows normal page scroll)
+                    if (!isLongPressActive) {
+                        const moveDist = Math.hypot(touch.clientX - touchStartX, touch.clientY - touchStartY);
+                        if (moveDist > 10) {
+                            clearTimeout(longPressTimer);
+                        }
+                        return;
+                    }
+
+                    e.preventDefault(); // Prevent scrolling once drag mode is active
+
                     if (ghostEl) {
                         const deltaX = touch.clientX - touchStartX;
                         const deltaY = touch.clientY - touchStartY;
@@ -1062,7 +1082,6 @@
                         ghostEl.style.top = `${rect.top + deltaY}px`;
                     }
 
-                    // Find element under touch position
                     const elemBelow = document.elementFromPoint(touch.clientX, touch.clientY);
                     const targetCard = elemBelow ? elemBelow.closest('.bm-card') : null;
 
@@ -1096,7 +1115,12 @@
                 }, { passive: false });
 
                 card.addEventListener('touchend', (e) => {
-                    if (!draggedBookmarkId) return;
+                    clearTimeout(longPressTimer);
+                    if (!isLongPressActive) {
+                        draggedBookmarkId = null;
+                        return;
+                    }
+
                     if (ghostEl) {
                         ghostEl.remove();
                         ghostEl = null;
@@ -1110,7 +1134,7 @@
 
                     if (targetCard) {
                         const targetId = targetCard.getAttribute('data-id');
-                        if (draggedBookmarkId !== targetId) {
+                        if (draggedBookmarkId && draggedBookmarkId !== targetId) {
                             const fromIndex = state.bookmarks.findIndex(b => b.id === draggedBookmarkId);
                             const toIndex = state.bookmarks.findIndex(b => b.id === targetId);
 
@@ -1124,6 +1148,7 @@
                         }
                     }
                     draggedBookmarkId = null;
+                    isLongPressActive = false;
                 });
             });
         }
