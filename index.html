@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>웹 아카이브 - 스마트 북마크</title>
+    <title>김망고 다이렉트 링크 - 인터넷 링크 정리 사이트</title>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Tailwind CSS -->
@@ -18,55 +18,62 @@
                             50: '#fff7ed',
                             100: '#ffedd5',
                             200: '#fed7aa',
-                            500: '#f97316',
+                            500: '#ff6b00', /* 토스 스타일 시그니처 오렌지 */
                             600: '#ea580c',
                             700: '#c2410c',
                         }
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', '"Apple SD Gothic Neo"', '"Pretendard"', '"Noto Sans KR"', 'sans-serif']
                     }
                 }
             }
         }
     </script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+<body class="bg-[#f2f4f6] dark:bg-[#101318] text-[#191f28] dark:text-[#f9fafb] min-h-screen flex flex-col font-sans transition-colors duration-200 antialiased">
 
     <!-- Header -->
-    <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 transition-colors duration-200 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
+    <header class="bg-white/80 dark:bg-[#171c24]/80 backdrop-blur-md sticky top-0 z-30 transition-colors duration-200">
+        <div class="max-w-5xl mx-auto px-5 sm:px-8">
+            <div class="flex items-center justify-between h-16 sm:h-20">
                 <!-- Logo & Title -->
                 <div class="flex items-center space-x-3">
-                    <div class="p-2 bg-gradient-to-br from-brand-500 to-amber-500 text-white rounded-xl shadow-md shadow-brand-500/20">
-                        <i data-lucide="bookmark" class="w-6 h-6"></i>
+                    <div class="w-10 h-10 bg-brand-500/10 dark:bg-brand-500/20 text-brand-500 rounded-2xl flex items-center justify-center font-bold">
+                        <i data-lucide="bookmark" class="w-5 h-5 stroke-[2.5]"></i>
                     </div>
                     <div>
-                        <h1 class="font-bold text-lg leading-tight text-slate-900 dark:text-white">Quick Link Archive</h1>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">나만의 웹 링크 보관소</p>
+                        <h1 class="font-bold text-lg sm:text-xl tracking-tight text-[#191f28] dark:text-white">김망고 다이렉트 링크</h1>
+                        <p class="text-[11px] text-[#8b95a1] hidden md:block">자주 가거나 기억해야 할 인터넷 링크 주소를 정리하는 사이트 · 로그인하면 데이터가 안전하게 저장됩니다</p>
                     </div>
                 </div>
 
                 <!-- Right Controls -->
-                <div class="flex items-center space-x-2 sm:space-x-3">
-                    <!-- Sync Account Info Button -->
-                    <button id="authBtn" onclick="openAuthModal()" class="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-brand-200 dark:border-slate-700 bg-brand-50/50 dark:bg-slate-700/50 hover:bg-brand-100 dark:hover:bg-slate-700 text-brand-700 dark:text-brand-500 transition">
-                        <span id="syncStatusDot" class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
-                        <span id="authBtnText">동기화 연동됨</span>
+                <div class="flex items-center space-x-2">
+                    <!-- Login / Account Button -->
+                    <button id="authBtn" onclick="openAuthModal()" class="flex items-center space-x-2 px-3.5 py-2 text-xs font-semibold rounded-2xl bg-[#f2f4f6] dark:bg-[#202632] text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] transition">
+                        <i data-lucide="user" class="w-4 h-4"></i>
+                        <span id="authBtnText">로그인</span>
                     </button>
 
-                    <!-- Category Manager Button -->
-                    <button onclick="openCategoryModal()" class="flex items-center space-x-1 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-700/60 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition">
-                        <i data-lucide="folder-cog" class="w-3.5 h-3.5"></i>
-                        <span class="hidden sm:inline">카테고리 관리</span>
+                    <!-- Logout Button (Shown when logged in) -->
+                    <button id="logoutBtn" onclick="handleLogout()" class="hidden flex items-center space-x-1.5 px-3.5 py-2 text-xs font-semibold text-rose-500 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 rounded-2xl transition">
+                        <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                        <span class="hidden sm:inline">로그아웃</span>
                     </button>
 
                     <!-- Add Bookmark Button -->
-                    <button onclick="openAddModal()" class="flex items-center space-x-1 px-3 py-1.5 text-xs font-semibold text-white bg-brand-500 hover:bg-brand-600 rounded-lg shadow-sm transition shadow-brand-500/10">
-                        <i data-lucide="plus" class="w-4 h-4"></i>
+                    <button onclick="openAddModal()" class="flex items-center space-x-1.5 px-4 py-2 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-2xl shadow-sm transition active:scale-95">
+                        <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i>
                         <span class="hidden sm:inline">링크 추가</span>
                     </button>
 
                     <!-- Dark Mode Toggle -->
-                    <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition">
+                    <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 text-[#8b95a1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-2xl transition">
                         <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
                         <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
                     </button>
@@ -76,93 +83,89 @@
     </header>
 
     <!-- Main Container -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-        <!-- Search & Filter Controls -->
-        <div class="flex flex-col md:flex-row gap-4 justify-between items-center">
-            <!-- Category Tabs -->
-            <div id="categoryTabs" class="flex flex-wrap gap-1.5 w-full md:w-auto">
+    <main class="flex-1 max-w-5xl w-full mx-auto px-5 sm:px-8 py-6 space-y-6">
+        <!-- Toss Style Category Filter Bar (Seamless background) -->
+        <div class="flex items-center justify-between gap-2">
+            <div id="categoryTabs" class="flex items-center gap-2 overflow-x-auto py-1 no-scrollbar">
                 <!-- Dynamically generated -->
             </div>
-
-            <!-- Search Bar -->
-            <div class="relative w-full md:w-64">
-                <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input type="text" id="searchInput" oninput="renderBookmarks()" placeholder="링크 또는 태그 검색..." 
-                    class="w-full pl-9 pr-4 py-1.5 text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
-            </div>
+            <button onclick="openCategoryModal()" class="shrink-0 px-3.5 py-2 text-xs font-semibold bg-white dark:bg-[#171c24] text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white rounded-2xl shadow-sm hover:shadow transition flex items-center gap-1.5 border border-[#e5e8eb]/60 dark:border-transparent">
+                <i data-lucide="folder-cog" class="w-4 h-4"></i>
+                <span class="hidden sm:inline">카테고리 수정</span>
+            </button>
         </div>
 
         <!-- Bookmarks Grid -->
-        <div id="bookmarkGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div id="bookmarkGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <!-- Dynamically generated -->
         </div>
 
         <!-- Empty State -->
-        <div id="emptyState" class="hidden flex-col items-center justify-center py-16 text-center">
-            <div class="p-4 bg-brand-50 dark:bg-slate-800 text-brand-500 rounded-full mb-3">
+        <div id="emptyState" class="hidden flex-col items-center justify-center py-20 text-center bg-white dark:bg-[#171c24] rounded-3xl shadow-sm">
+            <div class="w-16 h-16 bg-brand-50 dark:bg-brand-500/10 text-brand-500 rounded-full flex items-center justify-center mb-4">
                 <i data-lucide="bookmark-x" class="w-8 h-8"></i>
             </div>
-            <h3 class="font-semibold text-slate-700 dark:text-slate-300">표시할 링크가 없습니다</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">새로운 웹사이트를 등록해보세요.</p>
+            <h3 class="font-bold text-lg text-[#191f28] dark:text-white">등록된 링크가 없어요</h3>
+            <p class="text-sm text-[#8b95a1] mt-1">자주 사용하는 링크를 더하여 편리하게 이동해 보세요.</p>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 mt-auto transition-colors duration-200">
-        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 dark:text-slate-400 space-y-1">
-            <p>© 김망고. All rights reserved. — My Personal Web Archive</p>
+    <footer class="py-8 mt-auto border-t border-[#e5e8eb] dark:border-[#202632]">
+        <div class="max-w-5xl mx-auto px-5 text-center text-xs font-medium text-[#8b95a1]">
+            <p>© 김망고. All rights reserved. — 다이렉트 링크 (Direct Link)</p>
         </div>
     </footer>
 
     <!-- Add/Edit Bookmark Modal -->
-    <div id="bookmarkModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 dark:border-slate-700 space-y-4">
+    <div id="bookmarkModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#171c24] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-5">
             <div class="flex justify-between items-center">
-                <h3 id="modalTitle" class="font-bold text-lg text-slate-900 dark:text-white">새 링크 추가</h3>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <h3 id="modalTitle" class="font-bold text-xl text-[#191f28] dark:text-white">새 링크 추가</h3>
+                <button onclick="closeModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white transition">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
-            <form id="bookmarkForm" onsubmit="handleSaveBookmark(event)" class="space-y-3">
+            <form id="bookmarkForm" onsubmit="handleSaveBookmark(event)" class="space-y-4">
                 <input type="hidden" id="editId">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">사이트 이름</label>
-                    <input type="text" id="bmTitle" required placeholder="예: 네이버" class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
+                    <label class="block text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] mb-1.5">사이트 이름</label>
+                    <input type="text" id="bmTitle" required placeholder="예: 네이버" class="w-full px-4 py-3 text-sm bg-[#f9fafb] dark:bg-[#202632] border-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">URL 주소</label>
-                    <input type="url" id="bmUrl" required placeholder="https://www.example.com" class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
+                    <label class="block text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] mb-1.5">URL 주소</label>
+                    <input type="url" id="bmUrl" required placeholder="https://www.example.com" class="w-full px-4 py-3 text-sm bg-[#f9fafb] dark:bg-[#202632] border-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">카테고리</label>
-                    <select id="bmCategory" class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
+                    <label class="block text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] mb-1.5">카테고리</label>
+                    <select id="bmCategory" class="w-full px-4 py-3 text-sm bg-[#f9fafb] dark:bg-[#202632] border-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">메모 (선택)</label>
-                    <input type="text" id="bmDesc" placeholder="간단한 사이트 설명..." class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
+                    <label class="block text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] mb-1.5">메모 (선택)</label>
+                    <input type="text" id="bmDesc" placeholder="간단한 메모를 적어보세요" class="w-full px-4 py-3 text-sm bg-[#f9fafb] dark:bg-[#202632] border-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
                 </div>
-                <div class="flex justify-end space-x-2 pt-2">
-                    <button type="button" onclick="closeModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition">취소</button>
-                    <button type="submit" class="px-4 py-2 text-xs font-semibold text-white bg-brand-500 hover:bg-brand-600 rounded-lg transition shadow-sm">저장하기</button>
+                <div class="flex justify-end space-x-2 pt-3">
+                    <button type="button" onclick="closeModal()" class="px-5 py-3 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-2xl transition">취소</button>
+                    <button type="submit" class="px-5 py-3 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-2xl transition shadow-sm">저장하기</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Category Manager Modal -->
-    <div id="categoryModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 dark:border-slate-700 space-y-4">
+    <div id="categoryModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#171c24] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div class="flex justify-between items-center">
-                <h3 class="font-bold text-lg text-slate-900 dark:text-white">카테고리 관리</h3>
-                <button onclick="closeCategoryModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <h3 class="font-bold text-xl text-[#191f28] dark:text-white">카테고리 관리</h3>
+                <button onclick="closeCategoryModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
             
             <div class="flex space-x-2">
-                <input type="text" id="newCategoryInput" placeholder="새 카테고리 이름" class="flex-1 px-3 py-1.5 text-sm bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
-                <button onclick="handleAddCategory()" class="px-3 py-1.5 text-xs font-semibold text-white bg-brand-500 hover:bg-brand-600 rounded-lg transition">추가</button>
+                <input type="text" id="newCategoryInput" placeholder="새 카테고리 이름" class="flex-1 px-4 py-2.5 text-sm bg-[#f9fafb] dark:bg-[#202632] border-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
+                <button onclick="handleAddCategory()" class="px-4 py-2.5 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-2xl transition">추가</button>
             </div>
 
             <div id="categoryManageList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
@@ -171,64 +174,48 @@
         </div>
     </div>
 
-    <!-- Auth & Sync Modal -->
-    <div id="authModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 dark:border-slate-700 space-y-4">
+    <!-- Login Modal (Email Only) -->
+    <div id="authModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#171c24] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-5">
             <div class="flex justify-between items-center">
-                <h3 class="font-bold text-lg text-slate-900 dark:text-white flex items-center space-x-2">
-                    <i data-lucide="cloud" class="w-5 h-5 text-brand-500"></i>
-                    <span>로그인 및 기기 동기화</span>
+                <h3 id="authModalTitle" class="font-bold text-xl text-[#191f28] dark:text-white flex items-center space-x-2">
+                    <i data-lucide="log-in" class="w-6 h-6 text-brand-500"></i>
+                    <span>로그인 / 회원가입</span>
                 </h3>
-                <button onclick="closeAuthModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <button onclick="closeAuthModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
-            <div class="p-3 bg-brand-50 dark:bg-slate-700/40 rounded-xl space-y-1 border border-brand-100 dark:border-slate-700">
-                <span class="text-xs font-semibold text-brand-600 dark:text-brand-500">현재 동기화 계정 정보</span>
-                <div class="flex items-center justify-between">
-                    <span id="currentSyncId" class="font-mono text-sm font-bold text-slate-800 dark:text-slate-200 truncate pr-2">계정 불러오는 중...</span>
-                    <button onclick="copySyncCode()" class="px-2 py-1 text-xs bg-brand-500 text-white font-semibold rounded hover:bg-brand-600 transition flex items-center space-x-1 shrink-0 shadow-sm">
-                        <i data-lucide="copy" class="w-3 h-3"></i>
-                        <span>코드 복사</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Tab Buttons -->
-            <div class="flex border-b border-slate-200 dark:border-slate-700">
-                <button id="tabSyncBtn" onclick="switchAuthTab('sync')" class="flex-1 py-2 text-xs font-semibold text-brand-500 border-b-2 border-brand-500">동기화 코드로 연결</button>
-                <button id="tabEmailBtn" onclick="switchAuthTab('email')" class="flex-1 py-2 text-xs font-semibold text-slate-400 border-b-2 border-transparent hover:text-slate-600">이메일 로그인 / 회원가입</button>
-            </div>
-
-            <!-- Tab 1: Sync Code -->
-            <div id="syncCodeSection" class="space-y-3">
-                <p class="text-xs text-slate-500 dark:text-slate-400">다른 기기의 동기화 코드를 입력하면 저장된 북마크를 그대로 가져옵니다.</p>
-                <div class="flex space-x-2">
-                    <input type="text" id="targetSyncCode" placeholder="동기화 코드 입력..." class="flex-1 px-3 py-2 text-sm font-mono bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
-                    <button onclick="applySyncCode()" class="px-3 py-2 text-xs font-semibold text-white bg-slate-800 hover:bg-slate-900 dark:bg-slate-600 dark:hover:bg-slate-500 rounded-lg transition">연결하기</button>
-                </div>
-            </div>
-
-            <!-- Tab 2: Email Auth -->
-            <div id="emailAuthSection" class="space-y-3 hidden">
+            <!-- Logged Out View -->
+            <div id="loggedOutView" class="space-y-4">
+                <p class="text-xs text-[#8b95a1] leading-relaxed">로그인하시면 작성한 북마크가 클라우드에 안전하게 보관되어 스마트폰, PC 등 다른 기기에서도 동일하게 사용할 수 있습니다.</p>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">이메일 주소</label>
-                    <input type="email" id="authEmail" placeholder="example@email.com" class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
+                    <label class="block text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] mb-1.5">이메일 주소</label>
+                    <input type="email" id="authEmail" placeholder="example@email.com" class="w-full px-4 py-3 text-sm bg-[#f9fafb] dark:bg-[#202632] border-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">비밀번호</label>
-                    <input type="password" id="authPassword" placeholder="••••••••" class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
+                    <label class="block text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] mb-1.5">비밀번호</label>
+                    <input type="password" id="authPassword" placeholder="••••••••" class="w-full px-4 py-3 text-sm bg-[#f9fafb] dark:bg-[#202632] border-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
                 </div>
-                <div class="flex space-x-2 pt-1">
-                    <button onclick="handleLogin()" class="flex-1 py-2 text-xs font-semibold text-white bg-brand-500 hover:bg-brand-600 rounded-lg transition shadow-sm">로그인</button>
-                    <button onclick="handleSignUp()" class="flex-1 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 rounded-lg transition">회원가입</button>
+                <div class="flex space-x-2 pt-2">
+                    <button onclick="handleLogin()" class="flex-1 py-3 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-2xl transition shadow-sm">로그인</button>
+                    <button onclick="handleSignUp()" class="flex-1 py-3 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] bg-[#f2f4f6] dark:bg-[#202632] hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-2xl transition">회원가입</button>
                 </div>
             </div>
 
-            <div class="flex justify-between items-center pt-2">
-                <button onclick="createNewSyncId()" class="text-xs text-slate-400 hover:text-slate-600 underline">내 전용 새 동기화 생성</button>
-                <button onclick="closeAuthModal()" class="px-3 py-1.5 text-xs font-semibold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg">닫기</button>
+            <!-- Logged In View -->
+            <div id="loggedInView" class="hidden space-y-4">
+                <div class="p-4 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl space-y-1">
+                    <span class="text-xs font-bold text-[#8b95a1]">현재 로그인된 계정</span>
+                    <p id="loggedInEmail" class="font-bold text-base text-brand-500 truncate"></p>
+                </div>
+                <p class="text-xs text-[#8b95a1]">현재 클라우드 동기화가 활성화되어 있습니다.</p>
+                <button onclick="handleLogout()" class="w-full py-3 text-xs font-bold text-rose-500 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-900/40 rounded-2xl transition">로그아웃</button>
+            </div>
+
+            <div class="flex justify-end pt-2">
+                <button onclick="closeAuthModal()" class="px-4 py-2 text-xs font-bold text-[#8b95a1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-xl">닫기</button>
             </div>
         </div>
     </div>
@@ -236,10 +223,30 @@
     <!-- Firebase SDK Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // 사용자님의 실제 Firebase Config 정보가 교체 적용되었습니다.
+        // Application Default Fallback
+        const DEFAULT_CATEGORIES = ['전체', '주요 사이트', '개발', '뉴스/정보', '기타'];
+        const DEFAULT_BOOKMARKS = [
+            { id: '1', title: '구글', url: 'https://www.google.com', category: '주요 사이트', desc: '검색 엔진', pinned: true },
+            { id: '2', title: '네이버', url: 'https://www.naver.com', category: '주요 사이트', desc: '포털 사이트', pinned: true },
+            { id: '3', title: '유튜브', url: 'https://www.youtube.com', category: '주요 사이트', desc: '동영상 시청', pinned: false },
+            { id: '4', title: 'GitHub', url: 'https://github.com', category: '개발', desc: '코드 저장소', pinned: false }
+        ];
+
+        // Load local fallback data
+        const localSavedBookmarks = localStorage.getItem('local_bookmarks');
+        const localSavedCategories = localStorage.getItem('local_categories');
+
+        let state = {
+            currentUser: null,
+            categories: localSavedCategories ? JSON.parse(localSavedCategories) : DEFAULT_CATEGORIES,
+            currentCategory: '전체',
+            bookmarks: localSavedBookmarks ? JSON.parse(localSavedBookmarks) : DEFAULT_BOOKMARKS
+        };
+
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyAmNtN_-QDODsWvlfutmvUzSUgksEUSMmE",
             authDomain: "kbookmark-26bd5.firebaseapp.com",
@@ -250,223 +257,22 @@
             measurementId: "G-B25B61BCNZ"
         };
 
-        // Firebase 초기화
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // State Variables
-        let state = {
-            userId: localStorage.getItem('my_sync_id') || null,
-            categories: ['전체', '주요 사이트', '개발', '뉴스/정보', '기타'],
-            currentCategory: '전체',
-            bookmarks: [
-                { id: '1', title: '구글', url: 'https://www.google.com', category: '주요 사이트', desc: '검색 엔진', pinned: true },
-                { id: '2', title: '네이버', url: 'https://www.naver.com', category: '주요 사이트', desc: '포털 사이트', pinned: true },
-                { id: '3', title: '유튜브', url: 'https://www.youtube.com', category: '주요 사이트', desc: '동영상 시청', pinned: false },
-                { id: '4', title: 'GitHub', url: 'https://github.com', category: '개발', desc: '코드 저장소', pinned: false }
-            ]
-        };
-
+        let app = null;
+        let auth = null;
+        let db = null;
+        let isFirebaseActive = false;
         let unsubscribeFirestore = null;
 
-        // Initialize Application
-        document.addEventListener('DOMContentLoaded', () => {
-            initAuth();
-            renderCategories();
-            renderBookmarks();
-            lucide.createIcons();
-        });
-
-        // Auth Listener
-        function initAuth() {
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    state.userId = user.email || user.uid;
-                    localStorage.setItem('my_sync_id', state.userId);
-                    updateAuthUI(true);
-                    listenToCloudData(state.userId);
-                } else {
-                    const savedId = localStorage.getItem('my_sync_id');
-                    if (savedId) {
-                        state.userId = savedId;
-                        listenToCloudData(savedId);
-                    } else {
-                        try {
-                            const anon = await signInAnonymously(auth);
-                            state.userId = anon.user.uid;
-                            localStorage.setItem('my_sync_id', state.userId);
-                            listenToCloudData(state.userId);
-                        } catch(e) {
-                            console.log("익명 로그인 사용 중:", e.message);
-                        }
-                    }
-                    updateAuthUI(false);
-                }
-            });
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            isFirebaseActive = true;
+        } catch (err) {
+            console.warn("Firebase Init Boundary Warning (Using Local Storage Mode):", err.message);
         }
 
-        function updateAuthUI(isEmailLoggedIn) {
-            const authBtnText = document.getElementById('authBtnText');
-            const syncIdText = document.getElementById('currentSyncId');
-            if (syncIdText) syncIdText.textContent = state.userId || '불러오는 중...';
-            if (authBtnText) authBtnText.textContent = isEmailLoggedIn ? state.userId.split('@')[0] : '동기화 연동됨';
-        }
-
-        // Firestore Realtime Listener
-        function listenToCloudData(syncId) {
-            if (unsubscribeFirestore) unsubscribeFirestore();
-            
-            const docRef = doc(db, 'user_archives', syncId);
-            unsubscribeFirestore = onSnapshot(docRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    if (data.bookmarks) state.bookmarks = data.bookmarks;
-                    if (data.categories) state.categories = data.categories;
-                    renderCategories();
-                    renderBookmarks();
-                } else {
-                    saveToCloud();
-                }
-            }, (err) => {
-                console.warn("Cloud Sync Notice:", err.message);
-            });
-        }
-
-        async function saveToCloud() {
-            if (!state.userId) return;
-            try {
-                const docRef = doc(db, 'user_archives', state.userId);
-                await setDoc(docRef, {
-                    bookmarks: state.bookmarks,
-                    categories: state.categories,
-                    updatedAt: new Date().toISOString()
-                }, { merge: true });
-            } catch (e) {
-                console.error("Save Error:", e);
-            }
-        }
-
-        // Global functions for inline HTML events
-        window.renderCategories = function() {
-            const container = document.getElementById('categoryTabs');
-            const select = document.getElementById('bmCategory');
-            
-            container.innerHTML = state.categories.map(cat => `
-                <button onclick="selectCategory('${cat}')" 
-                    class="px-3 py-1.5 text-xs font-semibold rounded-lg transition ${
-                        state.currentCategory === cat 
-                        ? 'bg-brand-500 text-white shadow-sm' 
-                        : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
-                    }">
-                    ${cat}
-                </button>
-            `).join('');
-
-            select.innerHTML = state.categories
-                .filter(cat => cat !== '전체')
-                .map(cat => `<option value="${cat}">${cat}</option>`)
-                .join('');
-        };
-
-        window.renderBookmarks = function() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const grid = document.getElementById('bookmarkGrid');
-            const empty = document.getElementById('emptyState');
-
-            let filtered = state.bookmarks.filter(bm => {
-                const matchCategory = state.currentCategory === '전체' || bm.category === state.currentCategory;
-                const matchSearch = bm.title.toLowerCase().includes(search) || 
-                                    bm.url.toLowerCase().includes(search) || 
-                                    (bm.desc && bm.desc.toLowerCase().includes(search));
-                return matchCategory && matchSearch;
-            });
-
-            filtered.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
-
-            if (filtered.length === 0) {
-                grid.innerHTML = '';
-                empty.classList.remove('hidden');
-                empty.classList.add('flex');
-                return;
-            }
-
-            empty.classList.add('hidden');
-            empty.classList.remove('flex');
-
-            grid.innerHTML = filtered.map(bm => `
-                <div class="group bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 hover:border-brand-500 dark:hover:border-brand-500 shadow-sm hover:shadow-md transition duration-200 relative flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-start justify-between mb-2">
-                            <span class="text-[10px] font-bold px-2 py-0.5 bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-500 rounded-md border border-brand-100 dark:border-brand-500/20">
-                                ${bm.category}
-                            </span>
-                            <div class="flex items-center space-x-1 opacity-80 group-hover:opacity-100 transition">
-                                <button onclick="togglePin('${bm.id}')" class="p-1 text-slate-400 hover:text-amber-500 transition">
-                                    <i data-lucide="pin" class="w-3.5 h-3.5 ${bm.pinned ? 'fill-amber-500 text-amber-500' : ''}"></i>
-                                </button>
-                                <button onclick="openEditModal('${bm.id}')" class="p-1 text-slate-400 hover:text-brand-500 transition">
-                                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
-                                </button>
-                                <button onclick="deleteBookmark('${bm.id}')" class="p-1 text-slate-400 hover:text-rose-500 transition">
-                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <h4 class="font-bold text-slate-800 dark:text-white text-base mb-1 group-hover:text-brand-600 dark:group-hover:text-brand-500 transition line-clamp-1">${bm.title}</h4>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mb-3 min-h-[2rem]">${bm.desc || '메모 없음'}</p>
-                    </div>
-                    <a href="${bm.url}" target="_blank" rel="noopener" class="mt-2 w-full py-2 bg-slate-50 dark:bg-slate-700/50 hover:bg-brand-500 hover:text-white text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-lg flex items-center justify-center space-x-1.5 transition">
-                        <span>방문하기</span>
-                        <i data-lucide="external-link" class="w-3 h-3"></i>
-                    </a>
-                </div>
-            `).join('');
-
-            lucide.createIcons();
-        };
-
-        window.selectCategory = function(cat) {
-            state.currentCategory = cat;
-            renderCategories();
-            renderBookmarks();
-        };
-
-        window.togglePin = function(id) {
-            state.bookmarks = state.bookmarks.map(b => b.id === id ? {...b, pinned: !b.pinned} : b);
-            saveToCloud();
-            renderBookmarks();
-        };
-
-        window.deleteBookmark = function(id) {
-            if (confirm('이 링크를 삭제하시겠습니까?')) {
-                state.bookmarks = state.bookmarks.filter(b => b.id !== id);
-                saveToCloud();
-                renderBookmarks();
-            }
-        };
-
-        window.handleSaveBookmark = function(e) {
-            e.preventDefault();
-            const editId = document.getElementById('editId').value;
-            const title = document.getElementById('bmTitle').value;
-            const url = document.getElementById('bmUrl').value;
-            const category = document.getElementById('bmCategory').value;
-            const desc = document.getElementById('bmDesc').value;
-
-            if (editId) {
-                state.bookmarks = state.bookmarks.map(b => b.id === editId ? {...b, title, url, category, desc} : b);
-            } else {
-                state.bookmarks.push({
-                    id: Date.now().toString(),
-                    title, url, category, desc, pinned: false
-                });
-            }
-            saveToCloud();
-            closeModal();
-            renderBookmarks();
-        };
-
+        // UI Modal Functions
         window.openAddModal = function() {
             document.getElementById('modalTitle').textContent = '새 링크 추가';
             document.getElementById('bookmarkForm').reset();
@@ -490,7 +296,6 @@
             document.getElementById('bookmarkModal').classList.add('hidden');
         };
 
-        // Category Modal Handlers
         window.openCategoryModal = function() {
             renderCategoryManageList();
             document.getElementById('categoryModal').classList.remove('hidden');
@@ -500,46 +305,6 @@
             document.getElementById('categoryModal').classList.add('hidden');
         };
 
-        window.handleAddCategory = function() {
-            const input = document.getElementById('newCategoryInput');
-            const name = input.value.trim();
-            if (name && !state.categories.includes(name)) {
-                state.categories.push(name);
-                input.value = '';
-                saveToCloud();
-                renderCategories();
-                renderCategoryManageList();
-            }
-        };
-
-        function renderCategoryManageList() {
-            const list = document.getElementById('categoryManageList');
-            list.innerHTML = state.categories.map(cat => {
-                if (cat === '전체') return '';
-                return `
-                    <div class="flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
-                        <span class="text-sm text-slate-700 dark:text-slate-200 font-medium">${cat}</span>
-                        ${cat !== '기타' ? `
-                            <button onclick="deleteCategory('${cat}')" class="text-xs text-rose-500 hover:text-rose-700 font-semibold">삭제</button>
-                        ` : ''}
-                    </div>
-                `;
-            }).join('');
-        }
-
-        window.deleteCategory = function(catName) {
-            if (confirm(`'${catName}' 카테고리를 삭제하시겠습니까? 해당 링크들은 '기타' 카테고리로 이동합니다.`)) {
-                state.categories = state.categories.filter(c => c !== catName);
-                state.bookmarks = state.bookmarks.map(b => b.category === catName ? {...b, category: '기타'} : b);
-                if (state.currentCategory === catName) state.currentCategory = '전체';
-                saveToCloud();
-                renderCategories();
-                renderBookmarks();
-                renderCategoryManageList();
-            }
-        };
-
-        // Auth Modal Handlers
         window.openAuthModal = function() {
             document.getElementById('authModal').classList.remove('hidden');
         };
@@ -548,60 +313,96 @@
             document.getElementById('authModal').classList.add('hidden');
         };
 
-        window.switchAuthTab = function(type) {
-            const syncSec = document.getElementById('syncCodeSection');
-            const emailSec = document.getElementById('emailAuthSection');
-            const tabSyncBtn = document.getElementById('tabSyncBtn');
-            const tabEmailBtn = document.getElementById('tabEmailBtn');
+        window.toggleTheme = function() {
+            document.documentElement.classList.toggle('dark');
+        };
 
-            if (type === 'sync') {
-                syncSec.classList.remove('hidden');
-                emailSec.classList.add('hidden');
-                tabSyncBtn.className = "flex-1 py-2 text-xs font-semibold text-brand-500 border-b-2 border-brand-500";
-                tabEmailBtn.className = "flex-1 py-2 text-xs font-semibold text-slate-400 border-b-2 border-transparent hover:text-slate-600";
+        window.selectCategory = function(cat) {
+            state.currentCategory = cat;
+            renderCategories();
+            renderBookmarks();
+        };
+
+        window.togglePin = function(id) {
+            state.bookmarks = state.bookmarks.map(b => b.id === id ? {...b, pinned: !b.pinned} : b);
+            saveData();
+            renderBookmarks();
+        };
+
+        window.deleteBookmark = function(id) {
+            if (confirm('이 링크를 삭제하시겠습니까?')) {
+                state.bookmarks = state.bookmarks.filter(b => b.id !== id);
+                saveData();
+                renderBookmarks();
+            }
+        };
+
+        window.handleSaveBookmark = function(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editId').value;
+            const title = document.getElementById('bmTitle').value;
+            const url = document.getElementById('bmUrl').value;
+            const category = document.getElementById('bmCategory').value;
+            const desc = document.getElementById('bmDesc').value;
+
+            if (editId) {
+                state.bookmarks = state.bookmarks.map(b => b.id === editId ? {...b, title, url, category, desc} : b);
             } else {
-                syncSec.classList.add('hidden');
-                emailSec.classList.remove('hidden');
-                tabEmailBtn.className = "flex-1 py-2 text-xs font-semibold text-brand-500 border-b-2 border-brand-500";
-                tabSyncBtn.className = "flex-1 py-2 text-xs font-semibold text-slate-400 border-b-2 border-transparent hover:text-slate-600";
+                state.bookmarks.push({
+                    id: Date.now().toString(),
+                    title, url, category, desc, pinned: false
+                });
+            }
+            saveData();
+            closeModal();
+            renderBookmarks();
+        };
+
+        window.handleAddCategory = function() {
+            const input = document.getElementById('newCategoryInput');
+            const name = input.value.trim();
+            if (name && !state.categories.includes(name)) {
+                state.categories.push(name);
+                input.value = '';
+                saveData();
+                renderCategories();
+                renderCategoryManageList();
             }
         };
 
-        window.copySyncCode = function() {
-            navigator.clipboard.writeText(state.userId);
-            alert('동기화 코드가 복사되었습니다!\n다른 기기에 이 코드를 입력하세요.');
-        };
+        window.deleteCategory = function(catName) {
+            if (catName === '전체') return;
 
-        window.applySyncCode = function() {
-            const code = document.getElementById('targetSyncCode').value.trim();
-            if (code) {
-                state.userId = code;
-                localStorage.setItem('my_sync_id', code);
-                listenToCloudData(code);
-                updateAuthUI(false);
-                closeAuthModal();
-                alert('해당 코드의 데이터로 연동되었습니다!');
+            const remainingCats = state.categories.filter(c => c !== catName && c !== '전체');
+            
+            // Allow deleting any category including '기타'
+            let fallbackCat = remainingCats.length > 0 ? remainingCats[0] : '일반';
+            
+            if (confirm(`'${catName}' 카테고리를 삭제하시겠습니까?\n해당 카테고리의 링크는 '${fallbackCat}'(으)로 이동합니다.`)) {
+                state.categories = state.categories.filter(c => c !== catName);
+                if (state.categories.length === 1 && state.categories[0] === '전체') {
+                    state.categories.push(fallbackCat);
+                }
+                
+                state.bookmarks = state.bookmarks.map(b => b.category === catName ? {...b, category: fallbackCat} : b);
+                if (state.currentCategory === catName) state.currentCategory = '전체';
+                
+                saveData();
+                renderCategories();
+                renderBookmarks();
+                renderCategoryManageList();
             }
-        };
-
-        window.createNewSyncId = function() {
-            const newId = 'sync_' + Math.random().toString(36).substr(2, 9);
-            state.userId = newId;
-            localStorage.setItem('my_sync_id', newId);
-            saveToCloud();
-            listenToCloudData(newId);
-            updateAuthUI(false);
-            alert('새 전용 동기화 코드가 생성되었습니다!');
         };
 
         window.handleSignUp = async function() {
+            if (!isFirebaseActive || !auth) return alert('Firebase 서비스를 사용할 수 없습니다.');
             const email = document.getElementById('authEmail').value.trim();
             const password = document.getElementById('authPassword').value.trim();
-            if (!email || !password) return alert('이메일과 비밀번호를 입력해주세요.');
+            if (!email || !password) return alert('이메일과 비밀번호를 입력해 주세요.');
 
             try {
                 await createUserWithEmailAndPassword(auth, email, password);
-                alert('회원가입 완료! 로그인되었습니다.');
+                alert('회원가입 완료! 자동 로그인되었습니다.');
                 closeAuthModal();
             } catch (err) {
                 alert('회원가입 오류: ' + err.message);
@@ -609,23 +410,225 @@
         };
 
         window.handleLogin = async function() {
+            if (!isFirebaseActive || !auth) return alert('Firebase 서비스를 사용할 수 없습니다.');
             const email = document.getElementById('authEmail').value.trim();
             const password = document.getElementById('authPassword').value.trim();
-            if (!email || !password) return alert('이메일과 비밀번호를 입력해주세요.');
+            if (!email || !password) return alert('이메일과 비밀번호를 입력해 주세요.');
 
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                alert('로그인 성공!');
+                alert('로그인되었습니다!');
                 closeAuthModal();
             } catch (err) {
                 alert('로그인 오류: ' + err.message);
             }
         };
 
-        // Theme Toggle
-        window.toggleTheme = function() {
-            document.documentElement.classList.toggle('dark');
+        window.handleLogout = async function() {
+            if (confirm('로그아웃 하시겠습니까?')) {
+                try {
+                    if (auth) await signOut(auth);
+                    state.currentUser = null;
+                    if (unsubscribeFirestore) unsubscribeFirestore();
+                    updateAuthUI(null);
+                    alert('로그아웃되었습니다.');
+                    location.reload();
+                } catch (err) {
+                    alert('로그아웃 오류: ' + err.message);
+                }
+            }
         };
+
+        function saveData() {
+            localStorage.setItem('local_bookmarks', JSON.stringify(state.bookmarks));
+            localStorage.setItem('local_categories', JSON.stringify(state.categories));
+            if (isFirebaseActive && db && state.currentUser) saveToCloud();
+        }
+
+        async function saveToCloud() {
+            if (!state.currentUser || !db) return;
+            try {
+                const docRef = doc(db, 'user_archives', state.currentUser.uid);
+                await setDoc(docRef, {
+                    bookmarks: state.bookmarks,
+                    categories: state.categories,
+                    email: state.currentUser.email,
+                    updatedAt: new Date().toISOString()
+                }, { merge: true });
+            } catch (e) {
+                console.error("Cloud Save Error:", e.message);
+            }
+        }
+
+        function listenToCloudData(uid) {
+            if (!db) return;
+            if (unsubscribeFirestore) unsubscribeFirestore();
+            try {
+                const docRef = doc(db, 'user_archives', uid);
+                unsubscribeFirestore = onSnapshot(docRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        if (data.bookmarks) state.bookmarks = data.bookmarks;
+                        if (data.categories) state.categories = data.categories;
+                        renderCategories();
+                        renderBookmarks();
+                    } else {
+                        saveToCloud();
+                    }
+                }, (err) => {
+                    console.warn("Cloud Sync Listener Notice:", err.message);
+                });
+            } catch (e) {
+                console.warn("Cloud listener error:", e.message);
+            }
+        }
+
+        function updateAuthUI(user) {
+            const authBtnText = document.getElementById('authBtnText');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const loggedOutView = document.getElementById('loggedOutView');
+            const loggedInView = document.getElementById('loggedInView');
+            const loggedInEmail = document.getElementById('loggedInEmail');
+
+            if (user) {
+                const emailPrefix = user.email ? user.email.split('@')[0] : '내 계정';
+                authBtnText.textContent = emailPrefix;
+                logoutBtn.classList.remove('hidden');
+                loggedOutView.classList.add('hidden');
+                loggedInView.classList.remove('hidden');
+                loggedInEmail.textContent = user.email;
+            } else {
+                authBtnText.textContent = '로그인';
+                logoutBtn.classList.add('hidden');
+                loggedOutView.classList.remove('hidden');
+                loggedInView.classList.add('hidden');
+                loggedInEmail.textContent = '';
+            }
+        }
+
+        function renderCategoryManageList() {
+            const list = document.getElementById('categoryManageList');
+            list.innerHTML = state.categories.map(cat => {
+                if (cat === '전체') return '';
+                return `
+                    <div class="flex items-center justify-between p-3 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl">
+                        <span class="text-sm font-bold text-[#191f28] dark:text-white">${cat}</span>
+                        <button onclick="deleteCategory('${cat}')" class="text-xs text-rose-500 font-bold hover:underline">삭제</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.renderCategories = function() {
+            const container = document.getElementById('categoryTabs');
+            const select = document.getElementById('bmCategory');
+            if (!container || !select) return;
+
+            // '전체'와 '📌 즐겨찾기'를 내장 탭으로 제공
+            const builtInTabs = ['전체', '📌 즐겨찾기'];
+            const userCategories = state.categories.filter(cat => cat !== '전체');
+            const allTabs = [...builtInTabs, ...userCategories];
+
+            container.innerHTML = allTabs.map(cat => `
+                <button onclick="selectCategory('${cat}')" 
+                    class="px-4 py-2 text-xs font-bold rounded-2xl whitespace-nowrap transition shadow-sm border ${
+                        state.currentCategory === cat 
+                        ? 'bg-brand-500 text-white border-brand-500' 
+                        : 'bg-white dark:bg-[#171c24] text-[#4e5968] dark:text-[#b0b8c1] border-[#e5e8eb]/60 dark:border-transparent hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442]'
+                    }">
+                    ${cat}
+                </button>
+            `).join('');
+
+            select.innerHTML = userCategories
+                .map(cat => `<option value="${cat}">${cat}</option>`)
+                .join('');
+        };
+
+        window.renderBookmarks = function() {
+            const grid = document.getElementById('bookmarkGrid');
+            const empty = document.getElementById('emptyState');
+            if (!grid || !empty) return;
+
+            let filtered = state.bookmarks.filter(bm => {
+                if (state.currentCategory === '전체') return true;
+                if (state.currentCategory === '📌 즐겨찾기') return bm.pinned;
+                return bm.category === state.currentCategory;
+            });
+
+            filtered.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                empty.classList.remove('hidden');
+                empty.classList.add('flex');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            empty.classList.remove('flex');
+
+            grid.innerHTML = filtered.map(bm => `
+                <div class="group bg-white dark:bg-[#171c24] rounded-3xl p-5 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-[11px] font-bold px-2.5 py-1 bg-brand-50 dark:bg-brand-500/10 text-brand-500 rounded-xl">
+                                ${bm.category}
+                            </span>
+                            <div class="flex items-center space-x-1">
+                                <button onclick="togglePin('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-amber-500 transition">
+                                    <i data-lucide="pin" class="w-4 h-4 ${bm.pinned ? 'fill-amber-500 text-amber-500' : ''}"></i>
+                                </button>
+                                <button onclick="openEditModal('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-brand-500 transition">
+                                    <i data-lucide="pencil" class="w-4 h-4"></i>
+                                </button>
+                                <button onclick="deleteBookmark('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-rose-500 transition">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <h4 class="font-bold text-[#191f28] dark:text-white text-base mb-1 group-hover:text-brand-500 transition line-clamp-1">${bm.title}</h4>
+                        <p class="text-xs text-[#8b95a1] line-clamp-2 mb-4 min-h-[2rem] font-normal leading-relaxed">${bm.desc || '등록된 메모가 없습니다.'}</p>
+                    </div>
+                    <a href="${bm.url}" target="_blank" rel="noopener" class="w-full py-3 bg-[#f2f4f6] dark:bg-[#202632] hover:bg-brand-500 hover:text-white text-[#4e5968] dark:text-[#b0b8c1] text-xs font-bold rounded-2xl flex items-center justify-center space-x-1.5 transition active:scale-[0.98]">
+                        <span>이동하기</span>
+                        <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            `).join('');
+
+            if (window.lucide) lucide.createIcons();
+        };
+
+        function initAuth() {
+            if (!isFirebaseActive || !auth) {
+                updateAuthUI(null);
+                return;
+            }
+
+            try {
+                onAuthStateChanged(auth, (user) => {
+                    if (user && !user.isAnonymous) {
+                        state.currentUser = user;
+                        updateAuthUI(user);
+                        listenToCloudData(user.uid);
+                    } else {
+                        state.currentUser = null;
+                        updateAuthUI(null);
+                    }
+                });
+            } catch (err) {
+                console.warn("Auth initialization notice:", err.message);
+                updateAuthUI(null);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initAuth();
+            renderCategories();
+            renderBookmarks();
+            if (window.lucide) lucide.createIcons();
+        });
     </script>
 </body>
 </html>
