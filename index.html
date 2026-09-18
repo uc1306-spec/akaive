@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>김망고 다이렉트 링크 - 인터넷 링크 정리 사이트</title>
+    <title>망고 다이렉트 링크 - 인터넷 링크 정리 사이트</title>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Tailwind CSS -->
@@ -36,12 +36,29 @@
         .dragging { opacity: 0.4; scale: 0.98; }
         .drop-indicator-top { border-top: 3px solid #ff6b00 !important; }
         .drop-indicator-bottom { border-bottom: 3px solid #ff6b00 !important; }
+        
+        /* Card Drag Shift Animation Utility Classes */
+        .bm-card {
+            transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .shift-left {
+            transform: translateX(-12px);
+        }
+        .shift-right {
+            transform: translateX(12px);
+        }
+        .shift-up {
+            transform: translateY(-8px);
+        }
+        .shift-down {
+            transform: translateY(8px);
+        }
     </style>
 </head>
 <body class="bg-[#f2f4f6] dark:bg-[#101318] text-[#191f28] dark:text-[#f9fafb] min-h-screen flex flex-col font-sans transition-colors duration-200 antialiased">
 
     <!-- Header -->
-    <header class="bg-white/80 dark:bg-[#171c24]/80 backdrop-blur-md sticky top-0 z-30 transition-colors duration-200">
+    <header class="bg-white/80 dark:bg-[#171c24]/80 backdrop-blur-md sticky top-0 z-30 transition-colors duration-200 border-b border-[#e5e8eb] dark:border-[#202632]">
         <div class="max-w-5xl mx-auto px-5 sm:px-8">
             <div class="flex items-center justify-between h-16 sm:h-20">
                 <!-- Logo & Subtitle -->
@@ -98,7 +115,7 @@
                     <div id="categoryDivider" class="w-[1.5px] h-4 bg-[#b0b8c1]/40 dark:bg-[#2c3442] mx-0.5 shrink-0"></div>
                     
                     <!-- Scrollable User Categories -->
-                    <div id="scrollableCategoryTabs" class="flex-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth min-w-0"></div>
+                    <div id="scrollableCategoryTabs" class="flex-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth min-w-0 cursor-grab active:cursor-grabbing"></div>
                 </div>
 
                 <!-- Action Buttons: Positioned on the Far Right -->
@@ -176,22 +193,22 @@
 
     <!-- Category Manager Modal -->
     <div id="categoryModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-[#171c24] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
-            <div class="flex justify-between items-center">
+        <div class="bg-white dark:bg-[#171c24] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 my-auto max-h-[85vh] flex flex-col">
+            <div class="flex justify-between items-center shrink-0">
                 <h3 class="font-bold text-xl text-[#191f28] dark:text-white">카테고리 관리</h3>
                 <button onclick="closeCategoryModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
             
-            <p class="text-xs text-[#8b95a1]">우측 햄버거 아이콘(=)을 잡고 드래그하면 순서를 바꿀 수 있습니다. 연필 아이콘으로 이름을 수정하거나 삭제할 수 있습니다.</p>
+            <p class="text-xs text-[#8b95a1] shrink-0">우측 햄버거 아이콘(=)을 잡고 드래그하면 순서를 바꿀 수 있습니다. 연필 아이콘으로 이름을 수정하거나 삭제할 수 있습니다.</p>
 
-            <div class="flex space-x-2">
+            <div class="flex space-x-2 shrink-0">
                 <input type="text" id="newCategoryInput" placeholder="새 카테고리 이름" class="flex-1 px-4 py-2.5 text-sm bg-[#f9fafb] dark:bg-[#202632] border-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
                 <button onclick="handleAddCategory()" class="px-4 py-2.5 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-2xl transition">추가</button>
             </div>
 
-            <div id="categoryManageList" class="space-y-2 max-h-64 overflow-y-auto pr-1">
+            <div id="categoryManageList" class="space-y-1.5 overflow-y-auto pr-1 flex-1 max-h-[60vh] sm:max-h-[65vh]">
                 <!-- Dynamically generated with drag handle, edit, delete -->
             </div>
         </div>
@@ -249,7 +266,6 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Application Default Fallback
         const DEFAULT_CATEGORIES = ['전체', '주요 사이트', '개발', '뉴스/정보', '기타'];
         const DEFAULT_BOOKMARKS = [
             { id: '1', title: '구글', url: 'https://www.google.com', category: '주요 사이트', desc: '검색 엔진', pinned: true },
@@ -258,7 +274,7 @@
             { id: '4', title: 'GitHub', url: 'https://github.com', category: '개발', desc: '코드 저장소', pinned: false }
         ];
 
-        // Load local fallback data
+        /* Load local fallback data */
         const localSavedBookmarks = localStorage.getItem('local_bookmarks');
         const localSavedCategories = localStorage.getItem('local_categories');
 
@@ -269,7 +285,7 @@
             bookmarks: localSavedBookmarks ? JSON.parse(localSavedBookmarks) : DEFAULT_BOOKMARKS
         };
 
-        // Firebase Config
+        /* Firebase Config */
         const firebaseConfig = {
             apiKey: "AIzaSyAmNtN_-QDODsWvlfutmvUzSUgksEUSMmE",
             authDomain: "kbookmark-26bd5.firebaseapp.com",
@@ -295,7 +311,6 @@
             console.warn("Firebase Init Boundary Warning (Using Local Storage Mode):", err.message);
         }
 
-        // UI Modal Functions
         window.openAddModal = function() {
             document.getElementById('modalTitle').textContent = '새 링크 추가';
             document.getElementById('bookmarkForm').reset();
@@ -393,7 +408,6 @@
             }
         };
 
-        // Category Rename Functionality
         window.renameCategory = function(oldName) {
             if (oldName === '전체') return;
             const newName = prompt(`'${oldName}' 카테고리의 새로운 이름을 입력하세요:`, oldName);
@@ -549,7 +563,6 @@
             }
         }
 
-        // Drag and Drop reordering for categories inside manage list
         let draggedIndex = null;
 
         function renderCategoryManageList() {
@@ -559,20 +572,17 @@
 
             list.innerHTML = userCategories.map((cat, idx) => {
                 return `
-                    <div data-index="${idx}" draggable="true" class="cat-item flex items-center justify-between p-3 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl border border-[#e5e8eb] dark:border-transparent cursor-grab active:cursor-grabbing transition-all duration-150 relative">
-                        <span class="text-sm font-bold text-[#191f28] dark:text-white pointer-events-none">${cat}</span>
-                        <div class="flex items-center space-x-1">
-                            <!-- Edit Button (Pencil) -->
-                            <button onclick="renameCategory('${cat}')" class="p-1.5 text-[#8b95a1] hover:text-brand-500 hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-xl transition" title="이름 수정">
-                                <i data-lucide="pencil" class="w-4 h-4"></i>
+                    <div data-index="${idx}" draggable="true" class="cat-item flex items-center justify-between py-1.5 px-3 bg-[#f9fafb] dark:bg-[#202632] rounded-xl border border-[#e5e8eb] dark:border-transparent cursor-grab active:cursor-grabbing transition-all duration-150 relative">
+                        <span class="text-xs font-bold text-[#191f28] dark:text-white pointer-events-none">${cat}</span>
+                        <div class="flex items-center space-x-0.5">
+                            <button onclick="renameCategory('${cat}')" class="p-1 text-[#8b95a1] hover:text-brand-500 hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-lg transition" title="이름 수정">
+                                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                             </button>
-                            <!-- Delete Button (Trash) -->
-                            <button onclick="deleteCategory('${cat}')" class="p-1.5 text-[#8b95a1] hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl transition" title="삭제">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            <button onclick="deleteCategory('${cat}')" class="p-1 text-[#8b95a1] hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition" title="삭제">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                             </button>
-                            <!-- Drag Handle (Hamburger/Menu Icon) -->
-                            <div class="drag-handle p-1.5 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white cursor-grab active:cursor-grabbing" title="드래그하여 순서 변경">
-                                <i data-lucide="menu" class="w-4 h-4"></i>
+                            <div class="drag-handle p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white cursor-grab active:cursor-grabbing" title="드래그하여 순서 변경">
+                                <i data-lucide="menu" class="w-3.5 h-3.5"></i>
                             </div>
                         </div>
                     </div>
@@ -581,14 +591,22 @@
 
             if (window.lucide) lucide.createIcons();
 
-            // Clear drop indicators helper
             const clearDropIndicators = () => {
                 items.forEach(el => {
                     el.classList.remove('drop-indicator-top', 'drop-indicator-bottom');
                 });
             };
 
-            // Attach Drag and Drop Event Listeners with Orange Drop Line
+            list.addEventListener('dragover', (e) => {
+                const listRect = list.getBoundingClientRect();
+                const edgeThreshold = 40;
+                if (e.clientY < listRect.top + edgeThreshold) {
+                    list.scrollTop -= 8;
+                } else if (e.clientY > listRect.bottom - edgeThreshold) {
+                    list.scrollTop += 8;
+                }
+            });
+
             const items = list.querySelectorAll('.cat-item');
             items.forEach(item => {
                 item.addEventListener('dragstart', (e) => {
@@ -659,111 +677,56 @@
 
         window.renderCategories = function() {
             const fixedContainer = document.getElementById('fixedCategoryTabs');
-            const scrollableContainer = document.getElementById('scrollableCategoryTabs');
+            const scrollContainer = document.getElementById('scrollableCategoryTabs');
             const divider = document.getElementById('categoryDivider');
             const select = document.getElementById('bmCategory');
-            if (!fixedContainer || !scrollableContainer || !select) return;
 
-            const builtInTabs = ['전체', '📌 즐겨찾기'];
-            const userCategories = state.categories.filter(cat => cat !== '전체');
+            const fixedTabs = ['전체', '📌 즐겨찾기'];
+            const userTabs = state.categories.filter(c => c !== '전체');
 
-            // Render Fixed Tabs
-            fixedContainer.innerHTML = builtInTabs.map(cat => `
-                <button onclick="selectCategory('${cat}')" 
-                    class="px-3.5 py-1.5 text-xs font-bold rounded-xl whitespace-nowrap transition-all duration-150 ${
-                        state.currentCategory === cat 
-                        ? 'bg-white dark:bg-[#202632] text-brand-500 dark:text-brand-500 shadow-sm font-extrabold' 
-                        : 'text-[#4e5968] dark:text-[#b0b8c1] hover:text-[#191f28] dark:hover:text-white hover:bg-white/50 dark:hover:bg-[#202632]/50'
-                    }">
-                    ${cat}
-                </button>
-            `).join('');
-
-            // Render Scrollable User Tabs
-            scrollableContainer.innerHTML = userCategories.map(cat => `
-                <button onclick="selectCategory('${cat}')" 
-                    class="px-3.5 py-1.5 text-xs font-bold rounded-xl whitespace-nowrap transition-all duration-150 ${
-                        state.currentCategory === cat 
-                        ? 'bg-white dark:bg-[#202632] text-brand-500 dark:text-brand-500 shadow-sm font-extrabold' 
-                        : 'text-[#4e5968] dark:text-[#b0b8c1] hover:text-[#191f28] dark:hover:text-white hover:bg-white/50 dark:hover:bg-[#202632]/50'
-                    }">
-                    ${cat}
-                </button>
-            `).join('');
+            if (fixedContainer) {
+                fixedContainer.innerHTML = fixedTabs.map(cat => `
+                    <button onclick="selectCategory('${cat}')" 
+                        class="px-3.5 py-2 text-xs font-bold rounded-xl whitespace-nowrap transition-all duration-150 ${
+                            state.currentCategory === cat 
+                            ? 'bg-white dark:bg-[#202632] text-brand-500 shadow-sm border border-[#e5e8eb] dark:border-transparent' 
+                            : 'text-[#4e5968] dark:text-[#b0b8c1] hover:text-[#191f28] dark:hover:text-white'
+                        }">
+                        ${cat}
+                    </button>
+                `).join('');
+            }
 
             if (divider) {
-                divider.style.display = userCategories.length > 0 ? 'block' : 'none';
+                if (userTabs.length > 0) {
+                    divider.classList.remove('hidden');
+                } else {
+                    divider.classList.add('hidden');
+                }
             }
 
-            // Mouse wheel scroll support for desktop users
-            if (!scrollableContainer.dataset.wheelInit) {
-                scrollableContainer.dataset.wheelInit = 'true';
-                scrollableContainer.addEventListener('wheel', (e) => {
-                    if (e.deltaY !== 0) {
-                        e.preventDefault();
-                        scrollableContainer.scrollLeft += e.deltaY;
-                    }
-                }, { passive: false });
+            if (scrollContainer) {
+                scrollContainer.innerHTML = userTabs.map(cat => `
+                    <button onclick="selectCategory('${cat}')" 
+                        class="px-3.5 py-2 text-xs font-bold rounded-xl whitespace-nowrap transition-all duration-150 shrink-0 ${
+                            state.currentCategory === cat 
+                            ? 'bg-white dark:bg-[#202632] text-brand-500 shadow-sm border border-[#e5e8eb] dark:border-transparent' 
+                            : 'text-[#4e5968] dark:text-[#b0b8c1] hover:text-[#191f28] dark:hover:text-white'
+                        }">
+                        ${cat}
+                    </button>
+                `).join('');
             }
 
-            // Mouse drag scroll support for desktop users
-            if (!scrollableContainer.dataset.dragInit) {
-                scrollableContainer.dataset.dragInit = 'true';
-                let isDown = false;
-                let startX, scrollLeft;
-                let hasDragged = false;
-
-                scrollableContainer.style.cursor = 'grab';
-
-                scrollableContainer.addEventListener('mousedown', (e) => {
-                    isDown = true;
-                    hasDragged = false;
-                    startX = e.pageX - scrollableContainer.offsetLeft;
-                    scrollLeft = scrollableContainer.scrollLeft;
-                    scrollableContainer.style.cursor = 'grabbing';
-                    scrollableContainer.style.userSelect = 'none';
-                });
-
-                scrollableContainer.addEventListener('mouseleave', () => {
-                    isDown = false;
-                    scrollableContainer.style.cursor = 'grab';
-                    scrollableContainer.style.removeProperty('user-select');
-                });
-
-                scrollableContainer.addEventListener('mouseup', () => {
-                    isDown = false;
-                    scrollableContainer.style.cursor = 'grab';
-                    scrollableContainer.style.removeProperty('user-select');
-                });
-
-                scrollableContainer.addEventListener('mousemove', (e) => {
-                    if (!isDown) return;
-                    const x = e.pageX - scrollableContainer.offsetLeft;
-                    const walk = (x - startX) * 1.5;
-                    if (Math.abs(x - startX) > 5) {
-                        hasDragged = true;
-                    }
-                    scrollableContainer.scrollLeft = scrollLeft - walk;
-                });
-
-                scrollableContainer.addEventListener('click', (e) => {
-                    if (hasDragged) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        hasDragged = false;
-                    }
-                }, true);
+            if (select) {
+                select.innerHTML = userTabs.map(cat => `<option value="${cat}">${cat}</option>`).join('');
             }
-
-            select.innerHTML = userCategories
-                .map(cat => `<option value="${cat}">${cat}</option>`)
-                .join('');
         };
 
         window.renderBookmarks = function() {
             const grid = document.getElementById('bookmarkGrid');
             const empty = document.getElementById('emptyState');
-            if (!grid || !empty) return;
+            if (!grid) return;
 
             let filtered = state.bookmarks.filter(bm => {
                 if (state.currentCategory === '전체') return true;
@@ -775,73 +738,192 @@
 
             if (filtered.length === 0) {
                 grid.innerHTML = '';
-                empty.classList.remove('hidden');
-                empty.classList.add('flex');
+                if (empty) {
+                    empty.classList.remove('hidden');
+                    empty.classList.add('flex');
+                }
                 return;
             }
 
-            empty.classList.add('hidden');
-            empty.classList.remove('flex');
+            if (empty) {
+                empty.classList.add('hidden');
+                empty.classList.remove('flex');
+            }
 
-            grid.innerHTML = filtered.map(bm => `
-                <div class="group bg-white dark:bg-[#171c24] rounded-3xl p-5 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between">
+            grid.innerHTML = filtered.map((bm, idx) => `
+                <div data-id="${bm.id}" data-index="${idx}" draggable="true" 
+                    class="bm-card group bg-white dark:bg-[#171c24] rounded-3xl p-5 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between cursor-grab active:cursor-grabbing border-2 border-transparent">
                     <div>
                         <div class="flex items-center justify-between mb-3">
-                            <span class="text-[11px] font-bold px-2.5 py-1 bg-brand-50 dark:bg-brand-500/10 text-brand-500 rounded-xl">
+                            <span class="text-[11px] font-bold px-2.5 py-1 bg-brand-50 dark:bg-brand-500/10 text-brand-500 rounded-xl pointer-events-none">
                                 ${bm.category}
                             </span>
                             <div class="flex items-center space-x-1">
-                                <button onclick="togglePin('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-amber-500 transition">
+                                <button onclick="togglePin('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-amber-500 transition" title="즐겨찾기">
                                     <i data-lucide="pin" class="w-4 h-4 ${bm.pinned ? 'fill-amber-500 text-amber-500' : ''}"></i>
                                 </button>
-                                <button onclick="openEditModal('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-brand-500 transition">
+                                <button onclick="openEditModal('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-brand-500 transition" title="수정">
                                     <i data-lucide="pencil" class="w-4 h-4"></i>
                                 </button>
-                                <button onclick="deleteBookmark('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-rose-500 transition">
+                                <button onclick="deleteBookmark('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-rose-500 transition" title="삭제">
                                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
                             </div>
                         </div>
-                        <h4 class="font-bold text-[#191f28] dark:text-white text-base mb-1 group-hover:text-brand-500 transition line-clamp-1">${bm.title}</h4>
-                        <p class="text-xs text-[#8b95a1] line-clamp-2 mb-4 min-h-[2rem] font-normal leading-relaxed">${bm.desc || '등록된 메모가 없습니다.'}</p>
+                        <h4 class="font-bold text-[#191f28] dark:text-white text-base mb-1 group-hover:text-brand-500 transition line-clamp-1 pointer-events-none">${bm.title}</h4>
+                        <p class="text-xs text-[#8b95a1] line-clamp-2 mb-4 min-h-[2rem] font-normal leading-relaxed pointer-events-none">${bm.desc || '메모가 없습니다.'}</p>
                     </div>
                     <a href="${bm.url}" target="_blank" rel="noopener" class="w-full py-3 bg-[#f2f4f6] dark:bg-[#202632] hover:bg-brand-500 hover:text-white text-[#4e5968] dark:text-[#b0b8c1] text-xs font-bold rounded-2xl flex items-center justify-center space-x-1.5 transition active:scale-[0.98]">
-                        <span>이동하기</span>
+                        <span>방문하기</span>
                         <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
                     </a>
                 </div>
             `).join('');
 
             if (window.lucide) lucide.createIcons();
+
+            initBookmarkDragAndDrop();
         };
 
-        function initAuth() {
-            if (!isFirebaseActive || !auth) {
-                updateAuthUI(null);
-                return;
-            }
+        let draggedBookmarkId = null;
 
-            try {
-                onAuthStateChanged(auth, (user) => {
-                    if (user && !user.isAnonymous) {
-                        state.currentUser = user;
-                        updateAuthUI(user);
-                        listenToCloudData(user.uid);
-                    } else {
-                        state.currentUser = null;
-                        updateAuthUI(null);
+        function initBookmarkDragAndDrop() {
+            const cards = Array.from(document.querySelectorAll('.bm-card'));
+            
+            const clearCardTransforms = () => {
+                cards.forEach(c => {
+                    c.classList.remove('shift-left', 'shift-right', 'shift-up', 'shift-down', 'border-brand-500');
+                    c.style.transform = '';
+                });
+            };
+
+            cards.forEach(card => {
+                card.addEventListener('dragstart', (e) => {
+                    draggedBookmarkId = card.getAttribute('data-id');
+                    card.classList.add('opacity-40', 'scale-95');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                card.addEventListener('dragend', () => {
+                    card.classList.remove('opacity-40', 'scale-95');
+                    clearCardTransforms();
+                    draggedBookmarkId = null;
+                });
+
+                card.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+
+                    const currentHoverId = card.getAttribute('data-id');
+                    if (draggedBookmarkId && currentHoverId !== draggedBookmarkId) {
+                        const draggedCard = cards.find(c => c.getAttribute('data-id') === draggedBookmarkId);
+                        if (!draggedCard) return;
+
+                        const draggedIndex = parseInt(draggedCard.getAttribute('data-index'));
+                        const targetIndex = parseInt(card.getAttribute('data-index'));
+
+                        clearCardTransforms();
+
+                        cards.forEach((c) => {
+                            const cIdx = parseInt(c.getAttribute('data-index'));
+                            if (draggedIndex < targetIndex) {
+                                if (cIdx > draggedIndex && cIdx <= targetIndex) {
+                                    c.classList.add('shift-left');
+                                }
+                            } else if (draggedIndex > targetIndex) {
+                                if (cIdx >= targetIndex && cIdx < draggedIndex) {
+                                    c.classList.add('shift-right');
+                                }
+                            }
+                        });
+
+                        card.classList.add('border-brand-500');
                     }
                 });
-            } catch (err) {
-                console.warn("Auth initialization notice:", err.message);
-                updateAuthUI(null);
-            }
+
+                card.addEventListener('dragleave', (e) => {
+                    if (!card.contains(e.relatedTarget)) {
+                        card.classList.remove('border-brand-500');
+                    }
+                });
+
+                card.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    clearCardTransforms();
+
+                    const targetId = card.getAttribute('data-id');
+
+                    if (draggedBookmarkId && draggedBookmarkId !== targetId) {
+                        const fromIndex = state.bookmarks.findIndex(b => b.id === draggedBookmarkId);
+                        const toIndex = state.bookmarks.findIndex(b => b.id === targetId);
+
+                        if (fromIndex !== -1 && toIndex !== -1) {
+                            const [movedItem] = state.bookmarks.splice(fromIndex, 1);
+                            state.bookmarks.splice(toIndex, 0, movedItem);
+
+                            saveData();
+                            renderBookmarks();
+                        }
+                    }
+                });
+            });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            initAuth();
-            renderCategories();
-            renderBookmarks();
+        function initDragScroll() {
+            const slider = document.getElementById('scrollableCategoryTabs');
+            if (!slider) return;
+
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            slider.addEventListener('mousedown', (e) => {
+                isDown = true;
+                slider.classList.add('cursor-grabbing');
+                slider.classList.remove('cursor-grab');
+                startX = e.pageX - slider.offsetLeft;
+                scrollLeft = slider.scrollLeft;
+            });
+
+            slider.addEventListener('mouseleave', () => {
+                isDown = false;
+                slider.classList.remove('cursor-grabbing');
+                slider.classList.add('cursor-grab');
+            });
+
+            slider.addEventListener('mouseup', () => {
+                isDown = false;
+                slider.classList.remove('cursor-grabbing');
+                slider.classList.add('cursor-grab');
+            });
+
+            slider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - slider.offsetLeft;
+                const walk = (x - startX) * 2;
+                slider.scrollLeft = scrollLeft - walk;
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (isFirebaseActive && auth) {
+                onAuthStateChanged(auth, (user) => {
+                    state.currentUser = user;
+                    updateAuthUI(user);
+                    if (user) {
+                        listenToCloudData(user.uid);
+                    } else {
+                        renderCategories();
+                        renderBookmarks();
+                    }
+                });
+            } else {
+                renderCategories();
+                renderBookmarks();
+            }
+
+            initDragScroll();
             if (window.lucide) lucide.createIcons();
         });
     </script>
