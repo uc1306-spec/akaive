@@ -42,7 +42,6 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
-        /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -57,6 +56,69 @@
             background: #475569;
         }
     </style>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInAnonymously, 
+            signInWithCustomToken, 
+            onAuthStateChanged,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            setDoc, 
+            onSnapshot 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Firebase Configuration
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'my-web-archive-default';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : { 
+                apiKey: "demo", 
+                authDomain: "demo", 
+                projectId: "demo", 
+                storageBucket: "demo", 
+                messagingSenderId: "315317394216", 
+                appId: "1:315317394216:web:538795d9951eded885ce1d" 
+              };
+
+        try {
+            window.app = initializeApp(firebaseConfig);
+            window.db = getFirestore(window.app);
+            window.auth = getAuth(window.app);
+            window.appId = appId;
+
+            window.fbSignInAnonymously = signInAnonymously;
+            window.fbSignInWithCustomToken = signInWithCustomToken;
+            window.fbCreateUserWithEmailAndPassword = createUserWithEmailAndPassword;
+            window.fbSignInWithEmailAndPassword = signInWithEmailAndPassword;
+            window.fbSignOut = signOut;
+            window.fbOnAuthStateChanged = onAuthStateChanged;
+            window.fbDoc = doc;
+            window.fbSetDoc = setDoc;
+            window.fbGetDoc = getDoc;
+            window.fbOnSnapshot = onSnapshot;
+
+            window.isFirebaseReady = true;
+        } catch(e) {
+            console.warn("Firebase fallback to localStorage mode", e);
+            window.isFirebaseReady = false;
+        }
+
+        // Initialize cloud sync when DOM is ready
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.initCloudSync) {
+                window.initCloudSync();
+            }
+        });
+    </script>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
 
@@ -86,6 +148,13 @@
 
             <!-- Action Controls -->
             <div class="flex items-center space-x-2 sm:space-x-3">
+                <!-- Cloud Sync Status Badge -->
+                <button onclick="openAuthModal()" id="cloudStatusBtn" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-900 text-orange-700 dark:text-orange-400 text-xs font-semibold hover:bg-orange-100 transition" title="계정 관리 및 동기화 설정">
+                    <span id="cloudStatusDot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span id="cloudStatusText" class="hidden sm:inline">동기화 준비중</span>
+                    <i class="fa-solid fa-user-gear ml-1"></i>
+                </button>
+
                 <!-- Theme Toggle Button -->
                 <button onclick="toggleTheme()" class="p-2.5 text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800 rounded-xl transition-colors" title="테마 변경">
                     <i class="fa-solid fa-sun text-amber-500 hidden dark:inline"></i>
@@ -138,16 +207,16 @@
         </div>
 
         <!-- Empty State Message -->
-    <div id="emptyState" class="hidden flex-col items-center justify-center py-20 text-center">
-        <div class="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center mb-4 text-slate-400 text-2xl">
-            <i class="fa-solid fa-folder-open"></i>
+        <div id="emptyState" class="hidden flex-col items-center justify-center py-20 text-center">
+            <div class="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center mb-4 text-slate-400 text-2xl">
+                <i class="fa-solid fa-folder-open"></i>
+            </div>
+            <h3 class="font-semibold text-lg text-slate-700 dark:text-slate-300 mb-1">등록된 링크가 없거나 검색 결과가 없습니다</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 max-w-sm mb-6">새로운 버튼을 추가하여 자주 가는 웹사이트를 편리하게 등록해 보세요.</p>
+            <button onclick="openAddModal()" class="bg-orange-600 hover:bg-orange-700 text-white font-medium text-sm px-5 py-2.5 rounded-xl transition shadow-md shadow-orange-500/20">
+                첫 번째 링크 추가하기
+            </button>
         </div>
-        <h3 class="font-semibold text-lg text-slate-700 dark:text-slate-300 mb-1">등록된 링크가 없거나 검색 결과가 없습니다</h3>
-        <p class="text-sm text-slate-500 dark:text-slate-400 max-w-sm mb-6">새로운 버튼을 추가하여 자주 가는 웹사이트를 편리하게 등록해 보세요.</p>
-        <button onclick="openAddModal()" class="bg-orange-600 hover:bg-orange-700 text-white font-medium text-sm px-5 py-2.5 rounded-xl transition shadow-md shadow-orange-500/20">
-            첫 번째 링크 추가하기
-        </button>
-    </div>
 
     </main>
 
@@ -156,12 +225,92 @@
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
             <p>© 김망고. All rights reserved. — My Personal Web Archive</p>
             <div class="flex space-x-4">
+                <button onclick="openAuthModal()" class="hover:underline text-orange-600 dark:text-orange-400">클라우드 동기화 설정</button>
+                <span>•</span>
                 <button onclick="exportJSON()" class="hover:underline">JSON 백업 다운로드</button>
                 <span>•</span>
                 <button onclick="resetToDefaults()" class="hover:underline text-rose-500">초기화</button>
             </div>
         </div>
     </footer>
+
+    <!-- User Login & Account Sync Modal -->
+    <div id="authModalOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-up text-orange-500"></i>
+                    <span>로그인 및 기기 동기화</span>
+                </h3>
+                <button onclick="closeAuthModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Current Account Status -->
+            <div class="bg-slate-100 dark:bg-slate-800/80 p-4 rounded-xl border border-slate-200 dark:border-slate-700 mb-5">
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">현재 동기화 계정 정보</p>
+                <div class="flex items-center justify-between gap-2">
+                    <span id="currentAccountLabel" class="text-sm font-semibold font-mono text-slate-800 dark:text-slate-200 truncate">계정 불러오는 중...</span>
+                    <button onclick="copyAccountKey()" class="px-2.5 py-1 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-xs font-semibold whitespace-nowrap transition">
+                        <i class="fa-regular fa-copy mr-1"></i> 코드 복사
+                    </button>
+                </div>
+                <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-2">이 동기화 코드를 다른 스마트폰이나 PC에 입력하면 동일한 링크 목록을 불러옵니다.</p>
+            </div>
+
+            <!-- Tab Switching: Sync Code vs Email Login -->
+            <div class="flex border-b border-slate-200 dark:border-slate-800 mb-4 text-xs font-semibold">
+                <button onclick="switchAuthTab('code')" id="tabBtnCode" class="pb-2.5 px-3 border-b-2 border-orange-500 text-orange-600 dark:text-orange-400 flex-1 text-center">
+                    동기화 코드로 연결
+                </button>
+                <button onclick="switchAuthTab('email')" id="tabBtnEmail" class="pb-2.5 px-3 border-b-2 border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 flex-1 text-center">
+                    이메일 로그인 / 회원가입
+                </button>
+            </div>
+
+            <!-- Tab 1: Sync Code Form -->
+            <div id="authTabCode" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">다른 기기의 동기화 코드 입력</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="syncCodeInput" placeholder="예: user-3a8f9c1b" 
+                            class="flex-1 px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm font-mono focus:ring-2 focus:ring-orange-500 focus:outline-none">
+                        <button onclick="applySyncCode()" class="px-4 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-medium text-xs rounded-xl shadow-md transition whitespace-nowrap">
+                            동기화하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Email Login / Register Form -->
+            <div id="authTabEmail" class="space-y-3 hidden">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">이메일 주소</label>
+                    <input type="email" id="authEmailInput" placeholder="example@email.com" 
+                        class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">비밀번호</label>
+                    <input type="password" id="authPasswordInput" placeholder="6자리 이상 비밀번호" 
+                        class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-2 pt-2">
+                    <button onclick="handleEmailLogin()" class="py-2.5 px-4 bg-orange-600 hover:bg-orange-700 text-white font-semibold text-xs rounded-xl transition">
+                        로그인
+                    </button>
+                    <button onclick="handleEmailRegister()" class="py-2.5 px-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-xs rounded-xl border border-slate-300 dark:border-slate-700 transition">
+                        회원가입
+                    </button>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                <button onclick="resetSyncToOwn()" class="text-xs text-slate-400 hover:text-rose-500 underline">내 전용 새 동기화 생성</button>
+                <button onclick="closeAuthModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 text-xs font-medium rounded-xl">닫기</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Add / Edit Bookmark Modal -->
     <div id="modalOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -322,6 +471,11 @@
         let searchQuery = '';
         let pinnedOnly = false;
 
+        // Firebase & Sync state
+        let currentUser = null;
+        let activeSyncId = null;
+        let unsubscribeSync = null;
+
         // Element References
         const bookmarkGrid = document.getElementById('bookmarkGrid');
         const emptyState = document.getElementById('emptyState');
@@ -334,11 +488,227 @@
         // Init App
         window.addEventListener('DOMContentLoaded', () => {
             loadTheme();
-            loadCategories();
-            loadBookmarks();
+            loadCategoriesLocally();
+            loadBookmarksLocally();
             setupSearchListener();
             setupKeyboardShortcuts();
         });
+
+        // Cloud Initialization & Realtime Sync
+        async function initCloudSync() {
+            if (!window.isFirebaseReady) {
+                updateCloudStatus('offline', '로컬저장 모드');
+                return;
+            }
+
+            try {
+                // Auth check
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    const cred = await window.fbSignInWithCustomToken(window.auth, __initial_auth_token);
+                    currentUser = cred.user;
+                } else {
+                    const cred = await window.fbSignInAnonymously(window.auth);
+                    currentUser = cred.user;
+                }
+
+                // Check stored custom sync ID
+                const savedSyncId = localStorage.getItem('my_web_archive_sync_id');
+                activeSyncId = savedSyncId || currentUser.uid;
+
+                updateAccountUI();
+                setupRealtimeListener();
+            } catch (err) {
+                console.warn("Cloud sync auth error:", err);
+                updateCloudStatus('offline', '로컬 저장 모드');
+            }
+        }
+
+        function setupRealtimeListener() {
+            if (!window.isFirebaseReady || !activeSyncId) return;
+
+            // Strict path rule: /artifacts/{appId}/users/{userId}/{collectionName}
+            const docRef = window.fbDoc(window.db, 'artifacts', window.appId, 'users', activeSyncId, 'user_store', 'my_archive');
+
+            if (unsubscribeSync) unsubscribeSync();
+
+            updateCloudStatus('saving', '동기화 연결 중...');
+
+            unsubscribeSync = window.fbOnSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.bookmarks) bookmarks = data.bookmarks;
+                    if (data.categories) customCategories = data.categories;
+                    saveBookmarksLocally();
+                    saveCategoriesLocally();
+                    updateCloudStatus('synced', '클라우드 연동됨');
+                } else {
+                    // Document doesn't exist yet for this ID, write initial data
+                    saveToCloud();
+                }
+                render();
+            }, (error) => {
+                console.error("Firestore sync error:", error);
+                updateCloudStatus('offline', '로컬 오프라인 모드');
+                render();
+            });
+        }
+
+        async function saveToCloud() {
+            saveBookmarksLocally();
+            saveCategoriesLocally();
+
+            if (!window.isFirebaseReady || !activeSyncId) return;
+
+            updateCloudStatus('saving', '저장 중...');
+            try {
+                const docRef = window.fbDoc(window.db, 'artifacts', window.appId, 'users', activeSyncId, 'user_store', 'my_archive');
+                await window.fbSetDoc(docRef, {
+                    bookmarks: bookmarks,
+                    categories: customCategories,
+                    updatedAt: new Date().toISOString()
+                }, { merge: true });
+                updateCloudStatus('synced', '클라우드 연동됨');
+            } catch (e) {
+                console.error("Cloud save failed:", e);
+                updateCloudStatus('offline', '로컬 저장됨');
+            }
+        }
+
+        function updateCloudStatus(state, msg) {
+            const dot = document.getElementById('cloudStatusDot');
+            const txt = document.getElementById('cloudStatusText');
+            if (txt) txt.textContent = msg;
+
+            if (!dot) return;
+            if (state === 'synced') {
+                dot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
+            } else if (state === 'saving') {
+                dot.className = "w-2 h-2 rounded-full bg-amber-500 animate-spin";
+            } else {
+                dot.className = "w-2 h-2 rounded-full bg-slate-400";
+            }
+        }
+
+        function updateAccountUI() {
+            const label = document.getElementById('currentAccountLabel');
+            if (label && activeSyncId) {
+                label.textContent = activeSyncId;
+            }
+        }
+
+        // Account / Sync Modals
+        const authModalOverlay = document.getElementById('authModalOverlay');
+
+        function openAuthModal() {
+            updateAccountUI();
+            authModalOverlay.classList.remove('hidden');
+        }
+
+        function closeAuthModal() {
+            authModalOverlay.classList.add('hidden');
+        }
+
+        function copyAccountKey() {
+            if (!activeSyncId) return;
+            const temp = document.createElement('textarea');
+            temp.value = activeSyncId;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            showToast("동기화 코드가 복사되었습니다!");
+        }
+
+        function switchAuthTab(tab) {
+            const codeTab = document.getElementById('authTabCode');
+            const emailTab = document.getElementById('authTabEmail');
+            const btnCode = document.getElementById('tabBtnCode');
+            const btnEmail = document.getElementById('tabBtnEmail');
+
+            if (tab === 'code') {
+                codeTab.classList.remove('hidden');
+                emailTab.classList.add('hidden');
+                btnCode.className = "pb-2.5 px-3 border-b-2 border-orange-500 text-orange-600 dark:text-orange-400 flex-1 text-center";
+                btnEmail.className = "pb-2.5 px-3 border-b-2 border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 flex-1 text-center";
+            } else {
+                codeTab.classList.add('hidden');
+                emailTab.classList.remove('hidden');
+                btnEmail.className = "pb-2.5 px-3 border-b-2 border-orange-500 text-orange-600 dark:text-orange-400 flex-1 text-center";
+                btnCode.className = "pb-2.5 px-3 border-b-2 border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 flex-1 text-center";
+            }
+        }
+
+        function applySyncCode() {
+            const input = document.getElementById('syncCodeInput').value.trim();
+            if (!input) {
+                showToast("동기화 코드를 입력해주세요.", "rose");
+                return;
+            }
+            activeSyncId = input;
+            localStorage.setItem('my_web_archive_sync_id', activeSyncId);
+            updateAccountUI();
+            setupRealtimeListener();
+            closeAuthModal();
+            showToast(`'${activeSyncId}' 계정의 데이터를 연동했습니다.`);
+        }
+
+        async function handleEmailLogin() {
+            const email = document.getElementById('authEmailInput').value.trim();
+            const pass = document.getElementById('authPasswordInput').value;
+
+            if (!email || !pass) {
+                showToast("이메일과 비밀번호를 입력해주세요.", "rose");
+                return;
+            }
+
+            try {
+                const cred = await window.fbSignInWithEmailAndPassword(window.auth, email, pass);
+                currentUser = cred.user;
+                activeSyncId = currentUser.uid;
+                localStorage.setItem('my_web_archive_sync_id', activeSyncId);
+                updateAccountUI();
+                setupRealtimeListener();
+                closeAuthModal();
+                showToast("로그인 성공! 클라우드 데이터를 불러왔습니다.");
+            } catch (err) {
+                showToast("로그인에 실패했습니다. 이메일/비밀번호를 확인해주세요.", "rose");
+            }
+        }
+
+        async function handleEmailRegister() {
+            const email = document.getElementById('authEmailInput').value.trim();
+            const pass = document.getElementById('authPasswordInput').value;
+
+            if (!email || pass.length < 6) {
+                showToast("유효한 이메일과 6자리 이상 비밀번호를 입력하세요.", "rose");
+                return;
+            }
+
+            try {
+                const cred = await window.fbCreateUserWithEmailAndPassword(window.auth, email, pass);
+                currentUser = cred.user;
+                activeSyncId = currentUser.uid;
+                localStorage.setItem('my_web_archive_sync_id', activeSyncId);
+                updateAccountUI();
+                saveToCloud();
+                setupRealtimeListener();
+                closeAuthModal();
+                showToast("회원가입 완료! 계정이 생성되었습니다.");
+            } catch (err) {
+                showToast("회원가입 오류: " + err.message, "rose");
+            }
+        }
+
+        function resetSyncToOwn() {
+            if (currentUser) {
+                activeSyncId = currentUser.uid;
+                localStorage.removeItem('my_web_archive_sync_id');
+                updateAccountUI();
+                setupRealtimeListener();
+                closeAuthModal();
+                showToast("내 기본 기기 계정으로 재설정되었습니다.");
+            }
+        }
 
         // Theme Handling
         function loadTheme() {
@@ -359,8 +729,8 @@
             }
         }
 
-        // LocalStorage & Category Handling
-        function loadCategories() {
+        // LocalStorage fallback
+        function loadCategoriesLocally() {
             const savedCat = localStorage.getItem('my_web_archive_categories');
             if (savedCat) {
                 try {
@@ -370,16 +740,15 @@
                 }
             } else {
                 customCategories = [...DEFAULT_CATEGORIES];
-                saveCategories();
+                saveCategoriesLocally();
             }
         }
 
-        function saveCategories() {
+        function saveCategoriesLocally() {
             localStorage.setItem('my_web_archive_categories', JSON.stringify(customCategories));
         }
 
-        // LocalStorage & Data Handling
-        function loadBookmarks() {
+        function loadBookmarksLocally() {
             const saved = localStorage.getItem('my_web_archive_links');
             if (saved) {
                 try {
@@ -389,12 +758,12 @@
                 }
             } else {
                 bookmarks = [...DEFAULT_BOOKMARKS];
-                saveBookmarks();
+                saveBookmarksLocally();
             }
             render();
         }
 
-        function saveBookmarks() {
+        function saveBookmarksLocally() {
             localStorage.setItem('my_web_archive_links', JSON.stringify(bookmarks));
         }
 
@@ -402,8 +771,7 @@
             if (confirmModal("초기 데이터로 복원하시겠습니까? 현재 작성된 데이터가 대체됩니다.")) {
                 bookmarks = [...DEFAULT_BOOKMARKS];
                 customCategories = [...DEFAULT_CATEGORIES];
-                saveCategories();
-                saveBookmarks();
+                saveToCloud();
                 render();
                 showToast("기본 데이터로 복원되었습니다.", "info");
             }
@@ -411,7 +779,6 @@
 
         // Categories List Generator
         function getCategories() {
-            // Merge custom categories and any categories dynamically present in bookmarks
             const bookmarkCats = bookmarks.map(b => b.category || '기타');
             const merged = Array.from(new Set([...customCategories, ...bookmarkCats]));
             if (!merged.includes('기타')) merged.push('기타');
@@ -423,7 +790,6 @@
             renderCategoryFilter();
             populateFormCategories();
             
-            // Filter bookmarks
             let filtered = bookmarks.filter(item => {
                 const matchesCat = currentCategory === '전체' || item.category === currentCategory;
                 const matchesSearch = searchQuery === '' || 
@@ -435,7 +801,6 @@
                 return matchesCat && matchesSearch && matchesPinned;
             });
 
-            // Sort pinned first
             filtered.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
 
             linkCount.textContent = filtered.length;
@@ -451,7 +816,6 @@
                 bookmarkGrid.innerHTML = filtered.map(item => `
                     <div class="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-orange-500/50 dark:hover:border-orange-500/50 rounded-2xl p-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-500/5 flex flex-col justify-between">
                         <div>
-                            <!-- Top Header of Card -->
                             <div class="flex items-start justify-between mb-3">
                                 <div class="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xl shadow-inner group-hover:bg-orange-50 dark:group-hover:bg-orange-950/40 transition-colors">
                                     ${renderIcon(item.icon)}
@@ -469,7 +833,6 @@
                                 </div>
                             </div>
 
-                            <!-- Card Title & Domain -->
                             <h3 class="font-bold text-slate-900 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 text-base line-clamp-1 mb-1 transition-colors">
                                 ${escapeHtml(item.title)}
                             </h3>
@@ -479,7 +842,6 @@
                             ${item.desc ? `<p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 mb-4">${escapeHtml(item.desc)}</p>` : '<div class="mb-4"></div>'}
                         </div>
 
-                        <!-- Card Footer Links & Tags -->
                         <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
                             <span class="inline-block px-2.5 py-0.5 text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-md">
                                 ${escapeHtml(item.category || '기타')}
@@ -496,7 +858,6 @@
             }
         }
 
-        // Render Icon Helper
         function renderIcon(icon) {
             if (!icon) return '🔗';
             if (icon.startsWith('fa-')) {
@@ -505,7 +866,6 @@
             return icon;
         }
 
-        // Clean Domain URL display
         function cleanDomain(url) {
             try {
                 const parsed = new URL(url);
@@ -515,7 +875,6 @@
             }
         }
 
-        // Category Filter UI Render
         function renderCategoryFilter() {
             const categories = getCategories();
             categoryFilterContainer.innerHTML = categories.map(cat => `
@@ -582,7 +941,7 @@
             }
 
             customCategories.push(catName);
-            saveCategories();
+            saveToCloud();
             newCategoryInput.value = '';
             renderCategoryManagerList();
             render();
@@ -595,7 +954,6 @@
 
             const trimmedNewName = newName.trim();
 
-            // Update in customCategories list
             const index = customCategories.indexOf(oldName);
             if (index !== -1) {
                 customCategories[index] = trimmedNewName;
@@ -603,15 +961,13 @@
                 customCategories.push(trimmedNewName);
             }
 
-            // Update all matching bookmarks to the new category name
             bookmarks = bookmarks.map(b => b.category === oldName ? { ...b, category: trimmedNewName } : b);
 
             if (currentCategory === oldName) {
                 currentCategory = trimmedNewName;
             }
 
-            saveCategories();
-            saveBookmarks();
+            saveToCloud();
             renderCategoryManagerList();
             render();
             showToast("카테고리 이름이 변경되었습니다.");
@@ -631,8 +987,7 @@
                     currentCategory = '전체';
                 }
 
-                saveCategories();
-                saveBookmarks();
+                saveToCloud();
                 renderCategoryManagerList();
                 render();
                 showToast("카테고리가 삭제되었습니다.", "rose");
@@ -688,10 +1043,10 @@
             });
         }
 
-        // Bookmark Actions (Add, Edit, Delete, Pin)
+        // Bookmark Actions
         function togglePin(id) {
             bookmarks = bookmarks.map(b => b.id === id ? { ...b, pinned: !b.pinned } : b);
-            saveBookmarks();
+            saveToCloud();
             render();
             showToast("즐겨찾기 상태가 변경되었습니다.");
         }
@@ -700,7 +1055,7 @@
             const item = bookmarks.find(b => b.id === id);
             if (item && confirmModal(`'${item.title}' 링크를 삭제하시겠습니까?`)) {
                 bookmarks = bookmarks.filter(b => b.id !== id);
-                saveBookmarks();
+                saveToCloud();
                 render();
                 showToast("링크가 삭제되었습니다.", "rose");
             }
@@ -766,11 +1121,9 @@
             }
 
             if (id) {
-                // Edit existing
                 bookmarks = bookmarks.map(b => b.id === id ? { ...b, title, url, category, icon, desc, pinned } : b);
                 showToast("링크가 수정되었습니다.");
             } else {
-                // Add new
                 const newItem = {
                     id: Date.now().toString(),
                     title,
@@ -784,12 +1137,12 @@
                 showToast("새 링크가 등록되었습니다.");
             }
 
-            saveBookmarks();
+            saveToCloud();
             render();
             closeModal();
         }
 
-        // Data Backup / Restore Modals & Handlers
+        // Data Backup / Restore Modals
         const dataModalOverlay = document.getElementById('dataModalOverlay');
 
         function openDataModal() {
@@ -824,14 +1177,12 @@
                 try {
                     const imported = JSON.parse(e.target.result);
                     if (Array.isArray(imported)) {
-                        // Older backup file format
                         bookmarks = imported;
                     } else if (imported && typeof imported === 'object') {
                         if (Array.isArray(imported.bookmarks)) bookmarks = imported.bookmarks;
                         if (Array.isArray(imported.categories)) customCategories = imported.categories;
                     }
-                    saveCategories();
-                    saveBookmarks();
+                    saveToCloud();
                     render();
                     closeDataModal();
                     showToast("성공적으로 데이터가 복원되었습니다.");
@@ -842,7 +1193,7 @@
             reader.readAsText(file);
         }
 
-        // Helpers (Toast & Alert fallback)
+        // Helpers
         function showToast(msg, color = 'emerald') {
             const toast = document.getElementById('toast');
             const toastMsg = document.getElementById('toastMsg');
