@@ -83,7 +83,7 @@
 
                     <!-- Logout Button -->
                     <button id="logoutBtn" onclick="handleLogout()" class="hidden flex items-center space-x-1.5 px-3 py-2 text-xs font-semibold text-rose-500 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 rounded-2xl transition">
-                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                        <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
                         <span class="hidden sm:inline">로그아웃</span>
                     </button>
 
@@ -614,8 +614,37 @@
         };
 
         window.moveBookmarkOrder = function(id, direction) {
+            // Find full current view list regardless of rows/columns
+            let listToReorder = [];
+            if (state.currentCategory === '전체') {
+                // When '전체' is selected, reorder within the specific category group the card belongs to
+                const bmObj = state.bookmarks.find(b => b.id === id);
+                if (!bmObj) return;
+                const cat = bmObj.category;
+                
+                // Get all bookmarks in this category (sorted by pinned first)
+                let catBookmarks = state.bookmarks.filter(b => b.category === cat);
+                catBookmarks.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+                
+                const curIdx = catBookmarks.findIndex(b => b.id === id);
+                const targetIdx = curIdx + direction;
+                if (targetIdx < 0 || targetIdx >= catBookmarks.length) return;
+                
+                const targetBmId = catBookmarks[targetIdx].id;
+                const realIdx1 = state.bookmarks.findIndex(b => b.id === id);
+                const realIdx2 = state.bookmarks.findIndex(b => b.id === targetBmId);
+                
+                if (realIdx1 !== -1 && realIdx2 !== -1) {
+                    const temp = state.bookmarks[realIdx1];
+                    state.bookmarks[realIdx1] = state.bookmarks[realIdx2];
+                    state.bookmarks[realIdx2] = temp;
+                    saveData();
+                    renderBookmarks();
+                }
+                return;
+            }
+
             let filtered = state.bookmarks.filter(bm => {
-                if (state.currentCategory === '전체') return true;
                 if (state.currentCategory === '📌') return bm.pinned;
                 return bm.category === state.currentCategory;
             });
@@ -857,7 +886,7 @@
                 state.isAdmin = false;
                 authBtnText.textContent = '로그인';
                 logoutBtn.classList.add('hidden');
-                loggedOutView.classList.add('hidden');
+                loggedOutView.classList.remove('hidden');
                 loggedInView.classList.add('hidden');
                 loggedInEmail.textContent = '';
                 adminBadge.classList.add('hidden');
@@ -1018,7 +1047,7 @@
                                 <h3 class="font-bold text-sm text-[#191f28] dark:text-white">${cat}</h3>
                                 <span class="text-xs text-[#8b95a1] font-medium">(${catBookmarks.length})</span>
                             </div>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5">
                                 ${catBookmarks.map((bm, idx) => renderCardHtml(bm, idx, catBookmarks.length, isTouchDevice, false)).join('')}
                             </div>
                         </div>
@@ -1048,7 +1077,7 @@
                 }
 
                 container.innerHTML = `
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5">
                         ${filtered.map((bm, idx) => renderCardHtml(bm, idx, filtered.length, isTouchDevice, false)).join('')}
                     </div>
                 `;
@@ -1088,24 +1117,24 @@
                 }
 
                 return `
-                <div class="bm-card group bg-white dark:bg-[#171c24] rounded-2xl p-3.5 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between border-2 border-amber-500/30 dark:border-amber-500/20 select-none relative overflow-hidden">
+                <div class="bm-card group bg-white dark:bg-[#171c24] rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between border-2 border-amber-500/30 dark:border-amber-500/20 select-none relative overflow-hidden">
                     <div class="absolute -right-8 -top-8 w-16 h-16 bg-amber-500/10 rounded-full pointer-events-none"></div>
                     <div>
                         <!-- Category Badge moved to top of content for clean layout -->
                         <div class="mb-2">
-                            <span class="inline-block text-[10px] font-bold px-2 py-0.5 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg pointer-events-none">
+                            <span class="inline-block text-[11px] font-bold px-2.5 py-0.5 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg pointer-events-none">
                                 운영자 Picks
                             </span>
                         </div>
-                        <div class="flex items-center space-x-2 mb-1">
+                        <div class="flex items-center space-x-2 mb-1.5">
                             <img src="${faviconUrl}" class="w-4 h-4 rounded-sm shrink-0" onerror="this.src='https://placehold.co/16x16/eab308/ffffff?text=⭐'">
-                            <h4 class="font-bold text-[#191f28] dark:text-white text-sm group-hover:text-amber-500 transition line-clamp-1 pointer-events-none">${rec.title}</h4>
+                            <h4 class="font-bold text-[#191f28] dark:text-white text-sm sm:text-base group-hover:text-amber-500 transition line-clamp-1 pointer-events-none">${rec.title}</h4>
                         </div>
-                        <p class="text-xs font-medium text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-3 min-h-[2.2rem] leading-relaxed pointer-events-none">${rec.desc || '오늘의 발견 추천 링크'}</p>
+                        <p class="text-xs sm:text-sm font-medium text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-4 min-h-[2.5rem] leading-relaxed pointer-events-none">${rec.desc || '오늘의 발견 추천 링크'}</p>
                     </div>
-                    <a href="${rec.url}" target="_blank" rel="noopener" class="w-full py-2 bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-500 hover:text-white text-amber-700 dark:text-amber-300 text-xs font-bold rounded-xl flex items-center justify-center space-x-1 transition active:scale-[0.98]">
+                    <a href="${rec.url}" target="_blank" rel="noopener" class="w-full py-2.5 bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-500 hover:text-white text-amber-700 dark:text-amber-300 text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-1.5 transition active:scale-[0.98]">
                         <span>방문하기</span>
-                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                        <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
                     </a>
                 </div>
                 `;
@@ -1126,43 +1155,43 @@
 
             return `
             <div data-id="${bm.id}" data-index="${idx}" ${isTouchDevice ? '' : 'draggable="true"'} 
-                class="bm-card group bg-white dark:bg-[#171c24] rounded-2xl p-3.5 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between ${isTouchDevice ? '' : 'cursor-grab active:cursor-grabbing'} border-2 border-transparent select-none">
+                class="bm-card group bg-white dark:bg-[#171c24] rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between ${isTouchDevice ? '' : 'cursor-grab active:cursor-grabbing'} border-2 border-transparent select-none">
                 <div>
-                    <!-- Category Badge moved to top for clean alignment and preventing truncation -->
+                    <!-- Category Badge at top to prevent truncation -->
                     <div class="flex items-center justify-between mb-2">
-                        <span class="inline-block text-[10px] font-bold px-2 py-0.5 bg-brand-50 dark:bg-brand-500/10 text-brand-500 rounded-lg pointer-events-none truncate max-w-[120px]">
+                        <span class="inline-block text-[11px] font-bold px-2.5 py-0.5 bg-brand-50 dark:bg-brand-500/10 text-brand-500 rounded-lg pointer-events-none truncate max-w-[130px]">
                             ${bm.category}
                         </span>
                         <div class="flex items-center space-x-0.5 shrink-0">
                             ${isTouchDevice ? `
-                                <button onclick="moveBookmarkOrder('${bm.id}', -1)" ${isFirst ? 'disabled class="p-1 text-[#b0b8c1]/30 cursor-not-allowed"' : 'class="p-1 text-[#8b95a1] hover:text-brand-500 transition"'} title="위로 이동">
-                                    <i data-lucide="chevron-up" class="w-3.5 h-3.5"></i>
+                                <button onclick="moveBookmarkOrder('${bm.id}', -1)" ${isFirst ? 'disabled class="p-1.5 text-[#b0b8c1]/30 cursor-not-allowed"' : 'class="p-1.5 text-[#8b95a1] hover:text-brand-500 transition"'} title="위로 이동">
+                                    <i data-lucide="chevron-up" class="w-4 h-4"></i>
                                 </button>
-                                <button onclick="moveBookmarkOrder('${bm.id}', 1)" ${isLast ? 'disabled class="p-1 text-[#b0b8c1]/30 cursor-not-allowed"' : 'class="p-1 text-[#8b95a1] hover:text-brand-500 transition"'} title="아래로 이동">
-                                    <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                                <button onclick="moveBookmarkOrder('${bm.id}', 1)" ${isLast ? 'disabled class="p-1.5 text-[#b0b8c1]/30 cursor-not-allowed"' : 'class="p-1.5 text-[#8b95a1] hover:text-brand-500 transition"'} title="아래로 이동">
+                                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
                                 </button>
-                                <div class="w-[1px] h-3 bg-[#b0b8c1]/30 mx-0.5"></div>
+                                <div class="w-[1px] h-3.5 bg-[#b0b8c1]/30 mx-0.5"></div>
                             ` : ''}
-                            <button onclick="togglePin('${bm.id}')" class="p-1 text-[#b0b8c1] hover:text-amber-500 transition" title="즐겨찾기">
-                                <i data-lucide="pin" class="w-3.5 h-3.5 ${bm.pinned ? 'fill-amber-500 text-amber-500' : ''}"></i>
+                            <button onclick="togglePin('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-amber-500 transition" title="즐겨찾기">
+                                <i data-lucide="pin" class="w-4 h-4 ${bm.pinned ? 'fill-amber-500 text-amber-500' : ''}"></i>
                             </button>
-                            <button onclick="openEditModal('${bm.id}')" class="p-1 text-[#b0b8c1] hover:text-brand-500 transition" title="수정">
-                                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                            <button onclick="openEditModal('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-brand-500 transition" title="수정">
+                                <i data-lucide="pencil" class="w-4 h-4"></i>
                             </button>
-                            <button onclick="deleteBookmark('${bm.id}')" class="p-1 text-[#b0b8c1] hover:text-rose-500 transition" title="삭제">
-                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            <button onclick="deleteBookmark('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-rose-500 transition" title="삭제">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-2 mb-1">
+                    <div class="flex items-center space-x-2 mb-1.5">
                         <img src="${faviconUrl}" class="w-4 h-4 rounded-sm shrink-0" onerror="this.src='https://placehold.co/16x16/ff6b00/ffffff?text=🔗'">
-                        <h4 class="font-bold text-[#191f28] dark:text-white text-sm group-hover:text-brand-500 transition line-clamp-1 pointer-events-none">${bm.title}</h4>
+                        <h4 class="font-bold text-[#191f28] dark:text-white text-sm sm:text-base group-hover:text-brand-500 transition line-clamp-1 pointer-events-none">${bm.title}</h4>
                     </div>
-                    <p class="text-xs font-medium text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-3 min-h-[2.2rem] leading-relaxed pointer-events-none">${bm.desc || '메모 없음'}</p>
+                    <p class="text-xs sm:text-sm font-medium text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-4 min-h-[2.5rem] leading-relaxed pointer-events-none">${bm.desc || '메모 없음'}</p>
                 </div>
-                <a href="${bm.url}" target="_blank" rel="noopener" class="w-full py-2 bg-[#f2f4f6] dark:bg-[#202632] hover:bg-brand-500 hover:text-white text-[#4e5968] dark:text-[#b0b8c1] text-xs font-bold rounded-xl flex items-center justify-center space-x-1 transition active:scale-[0.98]">
+                <a href="${bm.url}" target="_blank" rel="noopener" class="w-full py-2.5 bg-[#f2f4f6] dark:bg-[#202632] hover:bg-brand-500 hover:text-white text-[#4e5968] dark:text-[#b0b8c1] text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-1.5 transition active:scale-[0.98]">
                     <span>방문하기</span>
-                    <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                    <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
                 </a>
             </div>
             `;
