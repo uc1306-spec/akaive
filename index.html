@@ -55,7 +55,6 @@
 </head>
 <body class="bg-[#f2f4f6] dark:bg-[#101318] text-[#191f28] dark:text-[#f9fafb] min-h-screen flex flex-col font-sans transition-colors duration-200 antialiased">
 
-    <!-- Header -->
     <header class="bg-white/80 dark:bg-[#171c24]/80 backdrop-blur-md sticky top-0 z-30 transition-colors duration-200 border-b border-[#e5e8eb] dark:border-[#202632]">
         <div class="max-w-5xl mx-auto px-4 sm:px-8 py-3.5 sm:py-5">
             <div class="flex items-center justify-between gap-2">
@@ -101,7 +100,6 @@
         </div>
     </header>
 
-    <!-- Main Container -->
     <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-8 py-5 sm:py-6 space-y-5 sm:space-y-6">
 
         <!-- Category Filter Row with Action Buttons -->
@@ -135,7 +133,6 @@
             </div>
         </div>
 
-        <!-- Operator Recommended Section (Appears right below category header) -->
         <div id="operatorRecommendedSection" class="space-y-3 pt-1">
             <div class="flex items-center space-x-2 pb-1.5 border-b border-[#e5e8eb] dark:border-[#202632]">
                 <h3 class="font-bold text-sm text-[#191f28] dark:text-white flex items-center gap-1.5">
@@ -145,12 +142,11 @@
                 </h3>
                 <span id="recCountBadge" class="text-xs text-[#8b95a1] font-medium">(0)</span>
             </div>
-            <div id="operatorRecommendedContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            <div id="operatorRecommendedContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5">
                 <!-- Dynamically populated recommended sites from operator -->
             </div>
         </div>
 
-        <!-- Bookmarks Container -->
         <div id="bookmarkContainer" class="space-y-6">
             <!-- Dynamically generated grouped or filtered bookmarks -->
         </div>
@@ -165,7 +161,6 @@
         </div>
     </main>
 
-    <!-- Footer -->
     <footer class="py-8 mt-auto border-t border-[#e5e8eb] dark:border-[#202632]">
         <div class="max-w-5xl mx-auto px-5 text-center text-xs font-medium text-[#8b95a1]">
             <p>© 김망고. All rights reserved. — 다이렉트 링크 (Direct Link)</p>
@@ -237,7 +232,7 @@
         </div>
     </div>
 
-    <!-- Operator Recommended Sites Manager Modal (Only for gimms2002@naver.com) -->
+    <!-- Operator Recommended Sites Manager Modal -->
     <div id="operatorRecModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-[#171c24] rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 my-auto max-h-[80vh] flex flex-col">
             <div class="flex justify-between items-center shrink-0">
@@ -249,7 +244,7 @@
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
-            <p class="text-xs text-[#8b95a1] shrink-0">전체 사용자 화면 카테고리 바로 아래 고정 노출될 오늘의 발견 사이트를 여러 개 등록하고 관리할 수 있습니다.</p>
+            <p class="text-xs text-[#8b95a1] shrink-0">모든 사용자 화면 상단에 고정 노출될 오늘의 발견 사이트를 등록하고 관리할 수 있습니다.</p>
 
             <!-- Add Recommended Site Form -->
             <form id="operatorRecForm" onsubmit="handleSaveOperatorRec(event)" class="space-y-3 p-3.5 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl shrink-0">
@@ -285,7 +280,7 @@
         </div>
     </div>
 
-    <!-- Login Modal (with Social Auth support) -->
+    <!-- Login Modal (Restored Fully) -->
     <div id="authModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-[#171c24] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-5">
             <div class="flex justify-between items-center">
@@ -614,37 +609,8 @@
         };
 
         window.moveBookmarkOrder = function(id, direction) {
-            // Find full current view list regardless of rows/columns
-            let listToReorder = [];
-            if (state.currentCategory === '전체') {
-                // When '전체' is selected, reorder within the specific category group the card belongs to
-                const bmObj = state.bookmarks.find(b => b.id === id);
-                if (!bmObj) return;
-                const cat = bmObj.category;
-                
-                // Get all bookmarks in this category (sorted by pinned first)
-                let catBookmarks = state.bookmarks.filter(b => b.category === cat);
-                catBookmarks.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
-                
-                const curIdx = catBookmarks.findIndex(b => b.id === id);
-                const targetIdx = curIdx + direction;
-                if (targetIdx < 0 || targetIdx >= catBookmarks.length) return;
-                
-                const targetBmId = catBookmarks[targetIdx].id;
-                const realIdx1 = state.bookmarks.findIndex(b => b.id === id);
-                const realIdx2 = state.bookmarks.findIndex(b => b.id === targetBmId);
-                
-                if (realIdx1 !== -1 && realIdx2 !== -1) {
-                    const temp = state.bookmarks[realIdx1];
-                    state.bookmarks[realIdx1] = state.bookmarks[realIdx2];
-                    state.bookmarks[realIdx2] = temp;
-                    saveData();
-                    renderBookmarks();
-                }
-                return;
-            }
-
             let filtered = state.bookmarks.filter(bm => {
+                if (state.currentCategory === '전체') return true;
                 if (state.currentCategory === '📌') return bm.pinned;
                 return bm.category === state.currentCategory;
             });
@@ -1013,7 +979,6 @@
 
             const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
-            // Render operator recommended sites first right below category header
             renderOperatorRecommended();
 
             if (state.currentCategory === '전체') {
@@ -1041,7 +1006,7 @@
                     if (catBookmarks.length === 0) return '';
 
                     return `
-                        <div class="space-y-3">
+                        <div class="space-y-3.5">
                             <div class="flex items-center space-x-2 pb-1.5 border-b border-[#e5e8eb] dark:border-[#202632]">
                                 <span class="w-2.5 h-2.5 bg-brand-500 rounded-full"></span>
                                 <h3 class="font-bold text-sm text-[#191f28] dark:text-white">${cat}</h3>
@@ -1120,9 +1085,9 @@
                 <div class="bm-card group bg-white dark:bg-[#171c24] rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between border-2 border-amber-500/30 dark:border-amber-500/20 select-none relative overflow-hidden">
                     <div class="absolute -right-8 -top-8 w-16 h-16 bg-amber-500/10 rounded-full pointer-events-none"></div>
                     <div>
-                        <!-- Category Badge moved to top of content for clean layout -->
-                        <div class="mb-2">
-                            <span class="inline-block text-[11px] font-bold px-2.5 py-0.5 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg pointer-events-none">
+                        <!-- Category Badge placed cleanly at top before title -->
+                        <div class="mb-2.5">
+                            <span class="inline-block text-[10px] font-extrabold px-2 py-0.5 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg pointer-events-none tracking-tight">
                                 운영자 Picks
                             </span>
                         </div>
@@ -1130,7 +1095,7 @@
                             <img src="${faviconUrl}" class="w-4 h-4 rounded-sm shrink-0" onerror="this.src='https://placehold.co/16x16/eab308/ffffff?text=⭐'">
                             <h4 class="font-bold text-[#191f28] dark:text-white text-sm sm:text-base group-hover:text-amber-500 transition line-clamp-1 pointer-events-none">${rec.title}</h4>
                         </div>
-                        <p class="text-xs sm:text-sm font-medium text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-4 min-h-[2.5rem] leading-relaxed pointer-events-none">${rec.desc || '오늘의 발견 추천 링크'}</p>
+                        <p class="text-xs sm:text-sm font-medium text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-3.5 min-h-[2.5rem] leading-relaxed pointer-events-none">${rec.desc || '오늘의 발견 추천 링크'}</p>
                     </div>
                     <a href="${rec.url}" target="_blank" rel="noopener" class="w-full py-2.5 bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-500 hover:text-white text-amber-700 dark:text-amber-300 text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-1.5 transition active:scale-[0.98]">
                         <span>방문하기</span>
@@ -1157,29 +1122,29 @@
             <div data-id="${bm.id}" data-index="${idx}" ${isTouchDevice ? '' : 'draggable="true"'} 
                 class="bm-card group bg-white dark:bg-[#171c24] rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between ${isTouchDevice ? '' : 'cursor-grab active:cursor-grabbing'} border-2 border-transparent select-none">
                 <div>
-                    <!-- Category Badge at top to prevent truncation -->
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="inline-block text-[11px] font-bold px-2.5 py-0.5 bg-brand-50 dark:bg-brand-500/10 text-brand-500 rounded-lg pointer-events-none truncate max-w-[130px]">
+                    <!-- Category Badge placed cleanly at top before title, preventing overlapping -->
+                    <div class="flex items-center justify-between mb-2.5">
+                        <span class="inline-block text-[10px] font-extrabold px-2 py-0.5 bg-brand-50 dark:bg-brand-500/10 text-brand-500 rounded-lg pointer-events-none truncate max-w-[130px] tracking-tight">
                             ${bm.category}
                         </span>
                         <div class="flex items-center space-x-0.5 shrink-0">
                             ${isTouchDevice ? `
-                                <button onclick="moveBookmarkOrder('${bm.id}', -1)" ${isFirst ? 'disabled class="p-1.5 text-[#b0b8c1]/30 cursor-not-allowed"' : 'class="p-1.5 text-[#8b95a1] hover:text-brand-500 transition"'} title="위로 이동">
-                                    <i data-lucide="chevron-up" class="w-4 h-4"></i>
+                                <button onclick="moveBookmarkOrder('${bm.id}', -1)" ${isFirst ? 'disabled class="p-1 text-[#b0b8c1]/30 cursor-not-allowed"' : 'class="p-1 text-[#8b95a1] hover:text-brand-500 transition"'} title="위로 이동">
+                                    <i data-lucide="chevron-up" class="w-3.5 h-3.5"></i>
                                 </button>
-                                <button onclick="moveBookmarkOrder('${bm.id}', 1)" ${isLast ? 'disabled class="p-1.5 text-[#b0b8c1]/30 cursor-not-allowed"' : 'class="p-1.5 text-[#8b95a1] hover:text-brand-500 transition"'} title="아래로 이동">
-                                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                                <button onclick="moveBookmarkOrder('${bm.id}', 1)" ${isLast ? 'disabled class="p-1 text-[#b0b8c1]/30 cursor-not-allowed"' : 'class="p-1 text-[#8b95a1] hover:text-brand-500 transition"'} title="아래로 이동">
+                                    <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
                                 </button>
-                                <div class="w-[1px] h-3.5 bg-[#b0b8c1]/30 mx-0.5"></div>
+                                <div class="w-[1px] h-3 bg-[#b0b8c1]/30 mx-0.5"></div>
                             ` : ''}
-                            <button onclick="togglePin('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-amber-500 transition" title="즐겨찾기">
-                                <i data-lucide="pin" class="w-4 h-4 ${bm.pinned ? 'fill-amber-500 text-amber-500' : ''}"></i>
+                            <button onclick="togglePin('${bm.id}')" class="p-1 text-[#b0b8c1] hover:text-amber-500 transition" title="즐겨찾기">
+                                <i data-lucide="pin" class="w-3.5 h-3.5 ${bm.pinned ? 'fill-amber-500 text-amber-500' : ''}"></i>
                             </button>
-                            <button onclick="openEditModal('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-brand-500 transition" title="수정">
-                                <i data-lucide="pencil" class="w-4 h-4"></i>
+                            <button onclick="openEditModal('${bm.id}')" class="p-1 text-[#b0b8c1] hover:text-brand-500 transition" title="수정">
+                                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                             </button>
-                            <button onclick="deleteBookmark('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-rose-500 transition" title="삭제">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            <button onclick="deleteBookmark('${bm.id}')" class="p-1 text-[#b0b8c1] hover:text-rose-500 transition" title="삭제">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                             </button>
                         </div>
                     </div>
@@ -1187,7 +1152,7 @@
                         <img src="${faviconUrl}" class="w-4 h-4 rounded-sm shrink-0" onerror="this.src='https://placehold.co/16x16/ff6b00/ffffff?text=🔗'">
                         <h4 class="font-bold text-[#191f28] dark:text-white text-sm sm:text-base group-hover:text-brand-500 transition line-clamp-1 pointer-events-none">${bm.title}</h4>
                     </div>
-                    <p class="text-xs sm:text-sm font-medium text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-4 min-h-[2.5rem] leading-relaxed pointer-events-none">${bm.desc || '메모 없음'}</p>
+                    <p class="text-xs sm:text-sm font-medium text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-3.5 min-h-[2.5rem] leading-relaxed pointer-events-none">${bm.desc || '메모 없음'}</p>
                 </div>
                 <a href="${bm.url}" target="_blank" rel="noopener" class="w-full py-2.5 bg-[#f2f4f6] dark:bg-[#202632] hover:bg-brand-500 hover:text-white text-[#4e5968] dark:text-[#b0b8c1] text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-1.5 transition active:scale-[0.98]">
                     <span>방문하기</span>
