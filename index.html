@@ -76,7 +76,7 @@
 
                 <!-- Right Controls -->
                 <div class="flex items-center space-x-1 sm:space-x-2 shrink-0">
-                    <!-- Gamification Level Badge in Header (Hidden if logged out) -->
+                    <!-- Gamification Level Badge in Header (Visible ONLY if logged in) -->
                     <button id="headerLevelBadgeBtn" onclick="openGamificationModal()" class="hidden items-center space-x-1 px-2 sm:px-3 py-1.5 bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 text-[10px] sm:text-xs font-extrabold rounded-xl border border-brand-500/20 hover:scale-105 transition shadow-sm shrink-0">
                         <i data-lucide="award" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-500 shrink-0"></i>
                         <span id="headerLevelBadge" class="truncate max-w-[70px] sm:max-w-none">Lv.1 링크 탐험가</span>
@@ -107,7 +107,7 @@
                     </button>
                 </div>
             </div>
-            <!-- Subtitle without any highlight -->
+            <!-- Subtitle without highlight -->
             <div class="mt-3 pl-0.5">
                 <p class="text-xs sm:text-sm font-medium text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed">인터넷 바다 속에서 길 잃지 않도록, 나만의 소중한 링크를 모아두세요.</p>
             </div>
@@ -116,14 +116,14 @@
 
     <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-8 py-5 sm:py-6 space-y-6 sm:space-y-7">
 
-        <!-- Slightly reduced Quick Guide Banner -->
-        <div id="guideWrapper" class="bg-white dark:bg-[#171c24] rounded-3xl p-3.5 sm:p-4 shadow-sm border border-[#e5e8eb] dark:border-[#202632] transition-all duration-200">
+        <!-- Quick Guide Banner (Slightly reduced size) -->
+        <div id="guideWrapper" class="bg-white dark:bg-[#171c24] rounded-3xl p-2 sm:p-2.5 shadow-sm border border-[#e5e8eb] dark:border-[#202632] transition-all duration-200">
             <div class="flex items-center justify-between cursor-pointer select-none gap-4" onclick="toggleGuideCollapse()">
                 <div class="flex items-center space-x-2">
-                    <div class="w-7 h-7 sm:w-8 sm:h-8 bg-amber-100 dark:bg-amber-500/25 text-amber-500 rounded-xl flex items-center justify-center font-bold shrink-0">
-                        <i data-lucide="lightbulb" class="w-3.5 h-3.5 fill-amber-400 text-amber-500"></i>
+                    <div class="w-5 h-5 bg-amber-100 dark:bg-amber-500/25 text-amber-500 rounded-lg flex items-center justify-center font-bold shrink-0">
+                        <i data-lucide="lightbulb" class="w-3 h-3 fill-amber-400 text-amber-500"></i>
                     </div>
-                    <h3 class="text-xs sm:text-sm font-bold text-[#191f28] dark:text-white tracking-tight">링키지 이용 가이드</h3>
+                    <h3 class="text-xs font-bold text-[#191f28] dark:text-white tracking-tight">링키지 이용 가이드</h3>
                 </div>
                 <div class="flex items-center space-x-1.5">
                     <span id="guideToggleText" class="text-[11px] font-bold text-[#8b95a1]">접기</span>
@@ -133,26 +133,26 @@
                 </div>
             </div>
             
-            <div id="guideContent" class="mt-3 pt-2.5 border-t border-[#e5e8eb]/60 dark:border-[#202632] transition-all duration-200">
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                    <div class="flex items-center space-x-2.5 p-2.5 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl">
-                        <div class="w-6 h-6 bg-[#e5e8eb] dark:bg-[#2c3442] text-[#4e5968] dark:text-[#b0b8c1] rounded-lg flex items-center justify-center font-bold text-[11px] shrink-0">1</div>
+            <div id="guideContent" class="mt-2 pt-2 border-t border-[#e5e8eb]/60 dark:border-[#202632] transition-all duration-200">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div class="flex items-center space-x-2.5 p-2 bg-[#f9fafb] dark:bg-[#202632] rounded-xl">
+                        <div class="w-5 h-5 bg-[#e5e8eb] dark:bg-[#2c3442] text-[#4e5968] dark:text-[#b0b8c1] rounded-md flex items-center justify-center font-bold text-[10px] shrink-0">1</div>
                         <div class="min-w-0">
-                            <h4 class="text-[11px] sm:text-xs font-bold text-[#191f28] dark:text-white truncate">로그인</h4>
+                            <h4 class="text-[11px] font-bold text-[#191f28] dark:text-white truncate">로그인</h4>
                             <p class="text-[10px] text-[#8b95a1] truncate">내 계정으로 링크 안전 동기화</p>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-2.5 p-2.5 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl">
-                        <div class="w-6 h-6 bg-[#e5e8eb] dark:bg-[#2c3442] text-[#4e5968] dark:text-[#b0b8c1] rounded-lg flex items-center justify-center font-bold text-[11px] shrink-0">2</div>
+                    <div class="flex items-center space-x-2.5 p-2 bg-[#f9fafb] dark:bg-[#202632] rounded-xl">
+                        <div class="w-5 h-5 bg-[#e5e8eb] dark:bg-[#2c3442] text-[#4e5968] dark:text-[#b0b8c1] rounded-md flex items-center justify-center font-bold text-[10px] shrink-0">2</div>
                         <div class="min-w-0">
-                            <h4 class="text-[11px] sm:text-xs font-bold text-[#191f28] dark:text-white truncate">카테고리 수정</h4>
+                            <h4 class="text-[11px] font-bold text-[#191f28] dark:text-white truncate">카테고리 수정</h4>
                             <p class="text-[10px] text-[#8b95a1] truncate">나만의 맞춤 폴더 등록</p>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-2.5 p-2.5 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl">
-                        <div class="w-6 h-6 bg-[#e5e8eb] dark:bg-[#2c3442] text-[#4e5968] dark:text-[#b0b8c1] rounded-lg flex items-center justify-center font-bold text-[11px] shrink-0">3</div>
+                    <div class="flex items-center space-x-2.5 p-2 bg-[#f9fafb] dark:bg-[#202632] rounded-xl">
+                        <div class="w-5 h-5 bg-[#e5e8eb] dark:bg-[#2c3442] text-[#4e5968] dark:text-[#b0b8c1] rounded-md flex items-center justify-center font-bold text-[10px] shrink-0">3</div>
                         <div class="min-w-0">
-                            <h4 class="text-[11px] sm:text-xs font-bold text-[#191f28] dark:text-white truncate">링크 추가</h4>
+                            <h4 class="text-[11px] font-bold text-[#191f28] dark:text-white truncate">링크 추가</h4>
                             <p class="text-[10px] text-[#8b95a1] truncate">자주 찾는 웹사이트 즉시 등록</p>
                         </div>
                     </div>
@@ -162,7 +162,7 @@
 
         <div>
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-                <!-- Category Container -->
+                <!-- Category Container with Badge Counts -->
                 <div class="flex-1 flex items-center gap-1.5 p-1.5 bg-[#e5e8eb]/70 dark:bg-[#171c24] rounded-2xl border border-[#e5e8eb] dark:border-transparent min-w-0">
                     <div id="fixedCategoryTabs" class="flex items-center gap-1.5 shrink-0"></div>
                     <div id="categoryDivider" class="w-[1.5px] h-4 bg-[#b0b8c1]/40 dark:bg-[#2c3442] mx-0.5 shrink-0"></div>
@@ -400,7 +400,7 @@
                 <div>
                     <label class="block text-[11px] font-bold text-[#4e5968] dark:text-[#b0b8c1] mb-1">방문 접근 권한 옵션</label>
                     <select id="opRecAccess" class="w-full px-3.5 py-2 text-xs bg-white dark:bg-[#171c24] border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-recommended-500 dark:text-white">
-                        <option value="public">전체 공개 (비로그인도 링크 이동 가능)</option>
+                        <option value="public">전체 (비로그인도 링크 이동 가능)</option>
                         <option value="login_required">회원 전용 (회원만 이동 가능)</option>
                     </select>
                 </div>
@@ -737,9 +737,10 @@
 
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-                    const sharedBms = (data.bookmarks || []).filter(b => b.category === decodeURIComponent(targetCat));
+                    const decodedCat = decodeURIComponent(targetCat);
+                    const sharedBms = (data.bookmarks || []).filter(b => b.category === decodedCat);
                     
-                    renderPublicSharedView(decodeURIComponent(targetCat), sharedBms, ownerNickname);
+                    renderPublicSharedView(decodedCat, sharedBms, ownerNickname);
                     return true;
                 }
             } catch (e) {
@@ -754,6 +755,8 @@
 
             document.title = `${ownerNickname}님의 링키지 - ${categoryName}`;
 
+            const urlsJson = JSON.stringify(bookmarks.map(b => b.url)).replace(/"/g, '&quot;');
+
             mainEl.innerHTML = `
                 <div class="space-y-6">
                     <div class="bg-brand-50 dark:bg-brand-500/10 p-6 rounded-3xl border border-brand-500/20 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -762,7 +765,14 @@
                             <h2 class="text-xl font-black text-[#191f28] dark:text-white">${ownerNickname}님의 링키지입니다.</h2>
                             <p class="text-xs text-[#8b95a1] mt-1">'${categoryName}' 카테고리에 공유된 읽기 전용 링크 모음입니다.</p>
                         </div>
-                        <a href="${window.location.pathname}" class="px-4 py-2.5 bg-white dark:bg-[#202632] text-brand-600 dark:text-brand-400 text-xs font-bold rounded-2xl shadow-sm border border-brand-500/20 hover:bg-brand-50 transition">나도 링키지 시작하기</a>
+                        <div class="flex items-center gap-2">
+                            ${bookmarks.length > 0 ? `
+                            <button onclick='openAllCategoryLinks(${urlsJson}, ${bookmarks.length})' class="px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-2xl transition shadow-sm flex items-center gap-1.5 shrink-0">
+                                <i data-lucide="external-link" class="w-4 h-4"></i>
+                                <span>이 카테고리 링크 한꺼번에 열기 (${bookmarks.length})</span>
+                            </button>` : ''}
+                            <a href="${window.location.pathname}" class="px-4 py-2.5 bg-white dark:bg-[#202632] text-brand-600 dark:text-brand-400 text-xs font-bold rounded-2xl shadow-sm border border-brand-500/20 hover:bg-brand-50 transition">나도 링키지 시작하기</a>
+                        </div>
                     </div>
 
                     <div class="space-y-4">
@@ -871,6 +881,16 @@
         window.toggleCategoryCollapse = function(catName) {
             state.collapsedCategories[catName] = !state.collapsedCategories[catName];
             renderBookmarks();
+        };
+
+        window.openAllCategoryLinks = function(urls, count) {
+            if (!urls || urls.length === 0) return;
+            if (!confirm(`총 ${count}개의 등록된 링크가 있습니다. 이 링크들을 모두 여시겠습니까?`)) {
+                return;
+            }
+            urls.forEach(url => {
+                window.open(url, '_blank', 'noopener');
+            });
         };
 
         window.checkEmailUppercase = function(input) {
@@ -1641,7 +1661,7 @@
                         <div class="min-w-0 pr-2">
                             <div class="flex items-center space-x-1.5">
                                 <h5 class="text-xs font-bold text-[#191f28] dark:text-white truncate">${rec.title}</h5>
-                                <span class="text-[9px] font-bold px-2 py-0.5 rounded-md ${isLoginReq ? 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300'}">${isLoginReq ? '회원 전용' : '전체 공개'}</span>
+                                <span class="text-[9px] font-bold px-2 py-0.5 rounded-md ${isLoginReq ? 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300'}">${isLoginReq ? '회원 전용' : '전체'}</span>
                             </div>
                             <p class="text-[10px] text-[#8b95a1] truncate">${rec.url}</p>
                         </div>
@@ -1761,6 +1781,7 @@
                     catBookmarks.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
 
                     const isCollapsed = state.collapsedCategories[cat] || false;
+                    const catUrlsJson = JSON.stringify(catBookmarks.map(b => b.url)).replace(/"/g, '&quot;');
 
                     if (catBookmarks.length === 0) {
                         return `
@@ -1798,6 +1819,10 @@
                                     <span class="text-xs text-[#8b95a1] font-medium">(${catBookmarks.length})</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
+                                    <button onclick='openAllCategoryLinks(${catUrlsJson}, ${catBookmarks.length})' class="flex items-center space-x-1 text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline px-2.5 py-1 bg-brand-50 dark:bg-brand-500/10 rounded-lg" title="이 카테고리 링크 한꺼번에 열기">
+                                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                                        <span>한꺼번에 열기</span>
+                                    </button>
                                     <button onclick="openPublicShareModal('${cat}')" class="flex items-center space-x-1 text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline px-2 py-1 bg-brand-50 dark:bg-brand-500/10 rounded-lg">
                                         <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
                                         <span>공유</span>
@@ -1822,6 +1847,8 @@
                 });
 
                 filtered.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+
+                const filteredUrlsJson = JSON.stringify(filtered.map(b => b.url)).replace(/"/g, '&quot;');
 
                 if (filtered.length === 0) {
                     container.innerHTML = `
@@ -1857,6 +1884,17 @@
                                 <span class="w-3 h-3 bg-brand-500 rounded-full"></span>
                                 <h3 class="font-bold text-base text-[#191f28] dark:text-white">${state.currentCategory}</h3>
                                 <span class="text-xs text-[#8b95a1] font-medium">(${filtered.length})</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                ${state.currentCategory !== '📌' ? `
+                                <button onclick='openAllCategoryLinks(${filteredUrlsJson}, ${filtered.length})' class="flex items-center space-x-1 text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline px-2.5 py-1 bg-brand-50 dark:bg-brand-500/10 rounded-lg">
+                                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                                    <span>한꺼번에 열기</span>
+                                </button>
+                                <button onclick="openPublicShareModal('${state.currentCategory}')" class="flex items-center space-x-1 text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline px-2.5 py-1 bg-brand-50 dark:bg-brand-500/10 rounded-lg">
+                                    <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+                                    <span>공유</span>
+                                </button>` : ''}
                             </div>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
