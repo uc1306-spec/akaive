@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>링키지 Linkage - 스마트 링크 아카이브</title>
-    <!-- Browser Favicon / Web App Icon -->
+    <!-- Browser Favicon -->
     <link rel="icon" href="https://placehold.co/32x32/10B981/ffffff?text=L" type="image/x-icon">
     <!-- PWA Web App Manifest -->
     <link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22%EB%A7%81%ED%82%A4%EC%A7%80%22%2C%22short_name%22%3A%22Linkage%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f2f4f6%22%2C%22theme_color%22%3A%22%2310B981%22%7D">
@@ -49,16 +49,12 @@
             transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s ease, border-color 0.2s ease;
             will-change: transform;
         }
-        .shift-left { transform: translateX(-8px); }
-        .shift-right { transform: translateX(8px); }
-        .shift-up { transform: translateY(-6px); }
-        .shift-down { transform: translateY(6px); }
     </style>
 </head>
 <body class="bg-[#f2f4f6] dark:bg-[#101318] text-[#191f28] dark:text-[#f9fafb] min-h-screen flex flex-col font-sans transition-colors duration-200 antialiased">
 
     <!-- Header -->
-    <header class="bg-white/80 dark:bg-[#171c24]/80 backdrop-blur-md sticky top-0 z-30 transition-colors duration-200 border-b border-[#e5e8eb] dark:border-[#202632]">
+    <header class="bg-white/85 dark:bg-[#171c24]/85 backdrop-blur-md sticky top-0 z-30 transition-colors duration-200 border-b border-[#e5e8eb] dark:border-[#202632]">
         <div class="max-w-5xl mx-auto px-4 sm:px-8 py-4 sm:py-5">
             <div class="flex items-center justify-between gap-2">
                 <!-- Logo & Title -->
@@ -105,6 +101,42 @@
 
     <!-- Main Container -->
     <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-8 py-5 sm:py-6 space-y-6 sm:space-y-7">
+
+        <!-- 3-Step Quick Guide Banner -->
+        <div class="bg-white dark:bg-[#171c24] rounded-3xl p-5 shadow-sm border border-[#e5e8eb] dark:border-[#202632]">
+            <div class="flex items-center justify-between mb-3.5">
+                <div class="flex items-center space-x-2">
+                    <div class="w-7 h-7 bg-brand-50 dark:bg-brand-500/10 text-brand-500 rounded-xl flex items-center justify-center font-bold">
+                        <i data-lucide="compass" class="w-4 h-4"></i>
+                    </div>
+                    <h3 class="text-xs font-extrabold text-[#191f28] dark:text-white uppercase tracking-wider">링키지 이용 가이드</h3>
+                </div>
+                <span class="text-[11px] font-semibold text-[#8b95a1]">3단계로 간편하게 시작하세요</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="flex items-center space-x-3 p-3 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl">
+                    <div class="w-7 h-7 bg-brand-500 text-white rounded-xl flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">1</div>
+                    <div class="min-w-0">
+                        <h4 class="text-xs font-bold text-[#191f28] dark:text-white truncate">로그인</h4>
+                        <p class="text-[11px] text-[#8b95a1] truncate">내 기기로 링크 동기화</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3 p-3 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl">
+                    <div class="w-7 h-7 bg-brand-500 text-white rounded-xl flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">2</div>
+                    <div class="min-w-0">
+                        <h4 class="text-xs font-bold text-[#191f28] dark:text-white truncate">카테고리 수정</h4>
+                        <p class="text-[11px] text-[#8b95a1] truncate">원하는 폴더 이름 설정</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3 p-3 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl">
+                    <div class="w-7 h-7 bg-brand-500 text-white rounded-xl flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">3</div>
+                    <div class="min-w-0">
+                        <h4 class="text-xs font-bold text-[#191f28] dark:text-white truncate">링크 추가</h4>
+                        <p class="text-[11px] text-[#8b95a1] truncate">자주 찾는 웹사이트 등록</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Category Filter Row with Action Buttons -->
         <div>
@@ -186,7 +218,13 @@
             <form id="bookmarkForm" onsubmit="handleSaveBookmark(event)" class="space-y-3.5">
                 <input type="hidden" id="editId">
                 <div>
-                    <label class="block text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] mb-1">URL 주소</label>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1]">URL 주소</label>
+                        <span id="loginWarningNotice" class="hidden text-[11px] font-bold text-amber-500 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-0.5 rounded-lg items-center gap-1">
+                            <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
+                            비로그인시 링크가 저장되지 않습니다
+                        </span>
+                    </div>
                     <div class="flex gap-2">
                         <input type="url" id="bmUrl" required placeholder="https://www.example.com" onblur="fetchMetaIfEmpty()" class="flex-1 px-4 py-2.5 text-sm bg-[#f9fafb] dark:bg-[#202632] border-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
                         <button type="button" onclick="fetchMetadata()" class="px-3.5 py-2.5 bg-brand-50 dark:bg-brand-500/10 text-brand-500 text-xs font-bold rounded-2xl hover:bg-brand-100 transition shrink-0 flex items-center gap-1">
@@ -253,8 +291,9 @@
             </div>
             <p class="text-xs text-[#8b95a1] shrink-0">모든 사용자 화면 상단에 고정 노출될 오늘의 발견 사이트를 등록하고 관리할 수 있습니다.</p>
 
-            <!-- Add Recommended Site Form -->
+            <!-- Add/Edit Recommended Site Form -->
             <form id="operatorRecForm" onsubmit="handleSaveOperatorRec(event)" class="space-y-3 p-3.5 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl shrink-0">
+                <input type="hidden" id="opRecEditId">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <div>
                         <label class="block text-[11px] font-bold text-[#4e5968] dark:text-[#b0b8c1] mb-1">사이트 이름</label>
@@ -269,10 +308,11 @@
                     <label class="block text-[11px] font-bold text-[#4e5968] dark:text-[#b0b8c1] mb-1">소개 메모</label>
                     <input type="text" id="opRecDesc" placeholder="추천하는 이유나 간단한 설명" class="w-full px-3.5 py-2 text-xs bg-white dark:bg-[#171c24] border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-recommended-500 dark:text-white">
                 </div>
-                <div class="flex justify-end pt-1">
-                    <button type="submit" class="px-4 py-2 text-xs font-bold text-white bg-recommended-500 hover:bg-recommended-600 rounded-xl transition shadow-sm flex items-center gap-1">
+                <div class="flex justify-between items-center pt-1">
+                    <button type="button" id="opRecCancelBtn" onclick="resetOperatorRecForm()" class="hidden px-3 py-2 text-xs font-bold text-[#8b95a1] hover:bg-white dark:hover:bg-[#171c24] rounded-xl transition">취소</button>
+                    <button type="submit" id="opRecSubmitBtn" class="ml-auto px-4 py-2 text-xs font-bold text-white bg-recommended-500 hover:bg-recommended-600 rounded-xl transition shadow-sm flex items-center gap-1">
                         <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                        <span>오늘의 발견 추가 등록</span>
+                        <span id="opRecSubmitText">오늘의 발견 추가 등록</span>
                     </button>
                 </div>
             </form>
@@ -318,7 +358,6 @@
                 <div>
                     <div class="flex justify-between items-center mb-1">
                         <label class="block text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1]">이메일 주소</label>
-                        <!-- Uppercase Warning -->
                         <span id="emailUppercaseWarning" class="hidden text-[10px] font-bold text-amber-500 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-lg items-center gap-1">
                             <i data-lucide="alert-circle" class="w-3 h-3"></i>
                             대문자가 포함되어 있습니다
@@ -329,7 +368,6 @@
                 <div>
                     <div class="flex justify-between items-center mb-1">
                         <label class="block text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1]">비밀번호</label>
-                        <!-- Password Uppercase Warning -->
                         <span id="passwordUppercaseWarning" class="hidden text-[10px] font-bold text-amber-500 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-lg items-center gap-1">
                             <i data-lucide="alert-circle" class="w-3 h-3"></i>
                             대문자가 포함되어 있습니다
@@ -365,9 +403,9 @@
 
         const OPERATOR_EMAIL = 'gimms2002@naver.com';
 
-        // Production Reset: Strict 3 Categories & 3 Default Bookmarks
-        const DEFAULT_CATEGORIES = ['전체', '자주가는곳', '뉴스', '기타'];
-        const DEFAULT_BOOKMARKS = [
+        // Production Reset: Strict 3 Categories & Sample Bookmarks on every page load
+        const PRODUCTION_CATEGORIES = ['전체', '자주가는곳', '뉴스', '기타'];
+        const PRODUCTION_BOOKMARKS = [
             { id: '1', title: '유튜브', url: 'https://www.youtube.com', category: '자주가는곳', desc: '동영상 시청 플랫폼', pinned: true },
             { id: '2', title: '네이버', url: 'https://www.naver.com', category: '뉴스', desc: '포털 뉴스 및 검색', pinned: true }
         ];
@@ -376,13 +414,12 @@
             { id: 'rec-1', title: '링키지 추천 서비스', url: 'https://www.example.com', desc: '오늘의 발견 추천 링크입니다.', category: '추천' }
         ];
 
-        // Production Reset: Always fresh state on page load, ignoring legacy local storage
         let state = {
             currentUser: null,
             isAdmin: false,
-            categories: DEFAULT_CATEGORIES,
+            categories: [...PRODUCTION_CATEGORIES],
             currentCategory: '전체',
-            bookmarks: DEFAULT_BOOKMARKS,
+            bookmarks: [...PRODUCTION_BOOKMARKS],
             operatorRecommended: DEFAULT_RECOMMENDED_SITES
         };
 
@@ -414,7 +451,6 @@
             console.warn("Firebase Init Boundary Warning:", err.message);
         }
 
-        // Check Email Uppercase in Realtime
         window.checkEmailUppercase = function(input) {
             const val = input.value;
             const warningEl = document.getElementById('emailUppercaseWarning');
@@ -428,7 +464,6 @@
             if (window.lucide) lucide.createIcons();
         };
 
-        // Check Password Uppercase in Realtime
         window.checkPasswordUppercase = function(input) {
             const val = input.value;
             const warningEl = document.getElementById('passwordUppercaseWarning');
@@ -442,7 +477,6 @@
             if (window.lucide) lucide.createIcons();
         };
 
-        // Friendly Auth Error Translator
         function getFriendlyAuthErrorMessage(errorCode) {
             switch (errorCode) {
                 case 'auth/invalid-email':
@@ -503,7 +537,19 @@
             document.getElementById('modalTitle').textContent = '새 링크 추가';
             document.getElementById('bookmarkForm').reset();
             document.getElementById('editId').value = '';
+            
+            // Show non-login warning if user is not authenticated
+            const notice = document.getElementById('loginWarningNotice');
+            if (!state.currentUser) {
+                notice.classList.remove('hidden');
+                notice.classList.add('flex');
+            } else {
+                notice.classList.add('hidden');
+                notice.classList.remove('flex');
+            }
+
             document.getElementById('bookmarkModal').classList.remove('hidden');
+            if (window.lucide) lucide.createIcons();
         };
 
         window.openEditModal = function(id) {
@@ -515,6 +561,10 @@
             document.getElementById('bmTitle').value = bm.title;
             document.getElementById('bmCategory').value = bm.category;
             document.getElementById('bmDesc').value = bm.desc || '';
+            
+            document.getElementById('loginWarningNotice').classList.add('hidden');
+            document.getElementById('loginWarningNotice').classList.remove('flex');
+
             document.getElementById('bookmarkModal').classList.remove('hidden');
         };
 
@@ -536,6 +586,7 @@
                 alert('운영자 권한이 필요합니다.');
                 return;
             }
+            resetOperatorRecForm();
             renderOperatorRecManageList();
             document.getElementById('operatorRecModal').classList.remove('hidden');
         };
@@ -622,6 +673,7 @@
             e.preventDefault();
             if (!state.isAdmin) return alert('권한이 없습니다.');
             
+            const editId = document.getElementById('opRecEditId').value;
             const title = document.getElementById('opRecTitle').value.trim();
             const urlInput = document.getElementById('opRecUrl').value.trim();
             const desc = document.getElementById('opRecDesc').value.trim();
@@ -633,19 +685,43 @@
 
             if (!title || !finalUrl) return alert('제목과 URL을 모두 입력해주세요.');
 
-            const newRec = {
-                id: 'rec-' + Date.now(),
-                title,
-                url: finalUrl,
-                desc: desc || '오늘의 발견 추천 링크',
-                category: '추천'
-            };
+            if (editId) {
+                state.operatorRecommended = state.operatorRecommended.map(rec => 
+                    rec.id === editId ? { ...rec, title, url: finalUrl, desc: desc || '오늘의 발견 추천 링크' } : rec
+                );
+            } else {
+                const newRec = {
+                    id: 'rec-' + Date.now(),
+                    title,
+                    url: finalUrl,
+                    desc: desc || '오늘의 발견 추천 링크',
+                    category: '추천'
+                };
+                state.operatorRecommended.push(newRec);
+            }
 
-            state.operatorRecommended.push(newRec);
-            document.getElementById('operatorRecForm').reset();
+            resetOperatorRecForm();
             saveOperatorRecommendations();
             renderOperatorRecommended();
             renderOperatorRecManageList();
+        };
+
+        window.editOperatorRec = function(id) {
+            const rec = state.operatorRecommended.find(r => r.id === id);
+            if (!rec) return;
+            document.getElementById('opRecEditId').value = rec.id;
+            document.getElementById('opRecTitle').value = rec.title;
+            document.getElementById('opRecUrl').value = rec.url;
+            document.getElementById('opRecDesc').value = rec.desc || '';
+            document.getElementById('opRecSubmitText').textContent = '오늘의 발견 수정 완료';
+            document.getElementById('opRecCancelBtn').classList.remove('hidden');
+        };
+
+        window.resetOperatorRecForm = function() {
+            document.getElementById('operatorRecForm').reset();
+            document.getElementById('opRecEditId').value = '';
+            document.getElementById('opRecSubmitText').textContent = '오늘의 발견 추가 등록';
+            document.getElementById('opRecCancelBtn').classList.add('hidden');
         };
 
         window.deleteOperatorRec = function(id) {
@@ -937,9 +1013,7 @@
                 return;
             }
 
-            list.innerHTML = state.operatorRecommended.map((rec, idx) => {
-                const isFirst = idx === 0;
-                const isLast = idx === state.operatorRecommended.length - 1;
+            list.innerHTML = state.operatorRecommended.map((rec) => {
                 return `
                     <div class="flex items-center justify-between py-2 px-3 bg-white dark:bg-[#171c24] rounded-xl border border-recommended-500/20 shadow-sm">
                         <div class="min-w-0 pr-2">
@@ -947,11 +1021,8 @@
                             <p class="text-[10px] text-[#8b95a1] truncate">${rec.url}</p>
                         </div>
                         <div class="flex items-center space-x-1 shrink-0">
-                            <button onclick="moveOperatorRecOrder('${rec.id}', -1)" ${isFirst ? 'disabled class="p-1 text-[#b0b8c1]/30 cursor-not-allowed"' : 'class="p-1 text-[#8b95a1] hover:text-recommended-500 hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-lg transition"'} title="위로 이동">
-                                <i data-lucide="chevron-up" class="w-4 h-4"></i>
-                            </button>
-                            <button onclick="moveOperatorRecOrder('${rec.id}', 1)" ${isLast ? 'disabled class="p-1 text-[#b0b8c1]/30 cursor-not-allowed"' : 'class="p-1 text-[#8b95a1] hover:text-recommended-500 hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-lg transition"'} title="아래로 이동">
-                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            <button onclick="editOperatorRec('${rec.id}')" class="p-1 text-[#8b95a1] hover:text-recommended-500 hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-lg transition" title="수정">
+                                <i data-lucide="pencil" class="w-4 h-4"></i>
                             </button>
                             <div class="w-[1px] h-3 bg-[#b0b8c1]/30 mx-0.5"></div>
                             <button onclick="deleteOperatorRec('${rec.id}')" class="p-1 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition" title="삭제">
@@ -1134,9 +1205,7 @@
                 recCountBadge.textContent = `(${state.operatorRecommended.length})`;
             }
 
-            const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-
-            recContainer.innerHTML = state.operatorRecommended.map((rec, idx) => {
+            recContainer.innerHTML = state.operatorRecommended.map((rec) => {
                 let faviconUrl = '';
                 try {
                     const uObj = new URL(rec.url);
@@ -1146,20 +1215,19 @@
                 }
 
                 return `
-                <div data-id="${rec.id}" data-index="${idx}" ${isTouchDevice ? '' : 'draggable="true"'}
-                    class="bm-card group bg-white dark:bg-[#171c24] rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between border border-recommended-500/30 dark:border-recommended-500/20 select-none relative overflow-hidden ${isTouchDevice ? '' : 'cursor-grab active:cursor-grabbing'}">
+                <div class="group bg-white dark:bg-[#171c24] rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between border border-recommended-500/30 dark:border-recommended-500/20 relative overflow-hidden">
                     <div class="absolute -right-8 -top-8 w-16 h-16 bg-recommended-500/10 rounded-full pointer-events-none"></div>
                     <div>
                         <div class="mb-4 flex items-center justify-between">
-                            <span class="inline-block text-xs font-extrabold px-3 py-1 bg-recommended-50 dark:bg-recommended-500/10 text-recommended-600 dark:text-recommended-400 rounded-xl pointer-events-none tracking-tight">
+                            <span class="inline-block text-xs font-extrabold px-3 py-1 bg-recommended-50 dark:bg-recommended-500/10 text-recommended-600 dark:text-recommended-400 rounded-xl tracking-tight">
                                 오늘의 발견
                             </span>
                         </div>
                         <div class="flex items-center space-x-3 mb-3">
                             <img src="${faviconUrl}" class="w-5 h-5 rounded-sm shrink-0" onerror="this.src='https://placehold.co/16x16/8B5CF6/ffffff?text=⭐'">
-                            <h4 class="font-bold text-[#191f28] dark:text-white text-lg group-hover:text-recommended-500 transition line-clamp-1 pointer-events-none">${rec.title}</h4>
+                            <h4 class="font-bold text-[#191f28] dark:text-white text-lg group-hover:text-recommended-500 transition line-clamp-1">${rec.title}</h4>
                         </div>
-                        <p class="text-sm font-medium text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-6 min-h-[3rem] leading-relaxed pointer-events-none">${rec.desc || '오늘의 발견 추천 링크'}</p>
+                        <p class="text-sm font-medium text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-6 min-h-[3rem] leading-relaxed">${rec.desc || '오늘의 발견 추천 링크'}</p>
                     </div>
                     <a href="${rec.url}" target="_blank" rel="noopener" class="w-full py-3.5 bg-recommended-50 dark:bg-recommended-950/30 hover:bg-recommended-500 hover:text-white text-recommended-700 dark:text-recommended-300 text-sm font-bold rounded-2xl flex items-center justify-center space-x-2 transition active:scale-[0.98]">
                         <span>방문하기</span>
@@ -1220,7 +1288,7 @@
             
             const clearCardTransforms = () => {
                 cards.forEach(c => {
-                    c.classList.remove('shift-left', 'shift-right', 'shift-up', 'shift-down', 'border-brand-500');
+                    c.classList.remove('border-brand-500');
                     c.style.transform = '';
                 });
             };
@@ -1241,30 +1309,8 @@
                 card.addEventListener('dragover', (e) => {
                     e.preventDefault();
                     e.dataTransfer.dropEffect = 'move';
-
                     const currentHoverId = card.getAttribute('data-id');
                     if (draggedBookmarkId && currentHoverId !== draggedBookmarkId) {
-                        const draggedCard = cards.find(c => c.getAttribute('data-id') === draggedBookmarkId);
-                        if (!draggedCard) return;
-
-                        const draggedIndex = parseInt(draggedCard.getAttribute('data-index'));
-                        const targetIndex = parseInt(card.getAttribute('data-index'));
-
-                        clearCardTransforms();
-
-                        cards.forEach((c) => {
-                            const cIdx = parseInt(c.getAttribute('data-index'));
-                            if (draggedIndex < targetIndex) {
-                                if (cIdx > draggedIndex && cIdx <= targetIndex) {
-                                    c.classList.add('shift-left');
-                                }
-                            } else if (draggedIndex > targetIndex) {
-                                if (cIdx >= targetIndex && cIdx < draggedIndex) {
-                                    c.classList.add('shift-right');
-                                }
-                            }
-                        });
-
                         card.classList.add('border-brand-500');
                     }
                 });
