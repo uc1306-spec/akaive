@@ -2,7 +2,7 @@
 <html lang="ko" class="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>링키지 Linkage - 스마트 링크 아카이브</title>
     <!-- Browser Favicon -->
     <link rel="icon" href="https://placehold.co/32x32/10B981/ffffff?text=L" type="image/x-icon">
@@ -48,6 +48,16 @@
         .bm-card {
             transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s ease, border-color 0.2s ease;
             will-change: transform;
+        }
+
+        /* Prevent auto-zoom on mobile inputs by ensuring text size is at least 16px (1rem) */
+        input, select, textarea {
+            font-size: 16px !important;
+        }
+        @media (min-width: 640px) {
+            input, select, textarea {
+                font-size: 0.875rem !important;
+            }
         }
     </style>
 </head>
@@ -104,7 +114,7 @@
         <div id="guideWrapper" class="bg-white dark:bg-[#171c24] rounded-3xl p-4 shadow-sm border border-[#e5e8eb] dark:border-[#202632] transition-all duration-200 self-start inline-block w-full sm:w-auto">
             <div class="flex items-center justify-between cursor-pointer select-none gap-6" onclick="toggleGuideCollapse()">
                 <div class="flex items-center space-x-2.5">
-                    <div class="w-6 h-6 bg-amber-50 dark:bg-amber-500/10 text-amber-500 rounded-lg flex items-center justify-center font-bold">
+                    <div class="w-6 h-6 bg-amber-50 dark:bg-amber-500/10 text-amber-500 rounded-lg flex items-center justify-center font-bold shrink-0">
                         <i data-lucide="lightbulb" class="w-3.5 h-3.5 fill-amber-400"></i>
                     </div>
                     <h3 class="text-sm sm:text-base font-bold text-[#4e5968] dark:text-[#b0b8c1] tracking-tight">링키지 이용 가이드</h3>
@@ -214,7 +224,6 @@
         </div>
     </main>
 
-    <!-- Footer -->
     <footer class="py-8 mt-auto border-t border-[#e5e8eb] dark:border-[#202632]">
         <div class="max-w-5xl mx-auto px-5 text-center text-xs font-medium text-[#8b95a1]">
             <p>© 링키지 (Linkage). All rights reserved. — 스마트 링크 아카이브</p>
