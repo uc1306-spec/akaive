@@ -24,6 +24,12 @@
                             500: '#ff6b00',
                             600: '#ea580c',
                             700: '#c2410c',
+                        },
+                        recommended: {
+                            50: '#fefce8',
+                            100: '#fef9c3',
+                            500: '#eab308',
+                            600: '#ca8a04',
                         }
                     },
                     fontFamily: {
@@ -63,6 +69,12 @@
 
                 <!-- Right Controls -->
                 <div class="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+                    <!-- Operator Badge if logged in as admin -->
+                    <div id="adminBadge" class="hidden items-center space-x-1 px-2.5 py-1.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[11px] font-extrabold rounded-xl border border-amber-500/20">
+                        <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                        <span class="hidden sm:inline">운영자</span>
+                    </div>
+
                     <!-- Login / Account Button -->
                     <button id="authBtn" onclick="openAuthModal()" class="flex items-center space-x-1.5 px-3 py-2 text-xs font-semibold rounded-2xl bg-[#f2f4f6] dark:bg-[#202632] text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] transition max-w-[130px] sm:max-w-none">
                         <i data-lucide="user" class="w-4 h-4 shrink-0"></i>
@@ -104,6 +116,12 @@
 
                 <!-- Action Buttons -->
                 <div class="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+                    <!-- Operator Manage Recommended Button -->
+                    <button id="operatorRecManageBtn" onclick="openOperatorRecModal()" class="hidden flex items-center space-x-1.5 px-3.5 py-2.5 text-xs font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 rounded-2xl transition border border-amber-200 dark:border-amber-900/50 shrink-0">
+                        <i data-lucide="award" class="w-4 h-4 text-amber-500"></i>
+                        <span>오늘의 발견 관리</span>
+                    </button>
+
                     <button onclick="openAddModal()" class="flex items-center space-x-1.5 px-4 py-2.5 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-2xl shadow-md shadow-brand-500/20 transition active:scale-95 shrink-0">
                         <i data-lucide="plus-circle" class="w-4 h-4 stroke-[2.5]"></i>
                         <span>링크 추가</span>
@@ -120,6 +138,23 @@
         <!-- Bookmarks Container -->
         <div id="bookmarkContainer" class="space-y-6">
             <!-- Dynamically generated grouped or filtered bookmarks -->
+        </div>
+
+        <!-- Operator Recommended Section (Appears below categories/user bookmarks) -->
+        <div id="operatorRecommendedSection" class="space-y-3 pt-4 border-t border-dashed border-[#e5e8eb] dark:border-[#202632]">
+            <div class="flex items-center justify-between pb-1">
+                <div class="flex items-center space-x-2">
+                    <span class="w-2.5 h-2.5 bg-amber-500 rounded-full animate-pulse"></span>
+                    <h3 class="font-bold text-sm text-[#191f28] dark:text-white flex items-center gap-1.5">
+                        <span>💡 오늘의 발견</span>
+                        <span class="text-[10px] font-semibold px-2 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg">Official</span>
+                    </h3>
+                </div>
+                <span id="recCountBadge" class="text-xs text-[#8b95a1] font-medium">(0)</span>
+            </div>
+            <div id="operatorRecommendedContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                <!-- Dynamically populated recommended sites from operator -->
+            </div>
         </div>
 
         <!-- Empty State -->
@@ -204,6 +239,54 @@
         </div>
     </div>
 
+    <!-- Operator Recommended Sites Manager Modal (Only for gimms2002@naver.com) -->
+    <div id="operatorRecModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#171c24] rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 my-auto max-h-[80vh] flex flex-col">
+            <div class="flex justify-between items-center shrink-0">
+                <h3 class="font-bold text-xl text-[#191f28] dark:text-white flex items-center gap-2">
+                    <i data-lucide="award" class="w-5 h-5 text-amber-500"></i>
+                    <span>오늘의 발견 관리</span>
+                </h3>
+                <button onclick="closeOperatorRecModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <p class="text-xs text-[#8b95a1] shrink-0">전체 사용자 화면 하단에 고정 노출될 오늘의 발견 사이트를 여러 개 등록하고 관리할 수 있습니다.</p>
+
+            <!-- Add Recommended Site Form -->
+            <form id="operatorRecForm" onsubmit="handleSaveOperatorRec(event)" class="space-y-3 p-3.5 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl shrink-0">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[11px] font-bold text-[#4e5968] dark:text-[#b0b8c1] mb-1">사이트 이름</label>
+                        <input type="text" id="opRecTitle" required placeholder="예: 추천 서비스" class="w-full px-3.5 py-2 text-xs bg-white dark:bg-[#171c24] border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-[#4e5968] dark:text-[#b0b8c1] mb-1">URL 주소</label>
+                        <input type="url" id="opRecUrl" required placeholder="https://..." class="w-full px-3.5 py-2 text-xs bg-white dark:bg-[#171c24] border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 dark:text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-[#4e5968] dark:text-[#b0b8c1] mb-1">소개 메모</label>
+                    <input type="text" id="opRecDesc" placeholder="추천하는 이유나 간단한 설명" class="w-full px-3.5 py-2 text-xs bg-white dark:bg-[#171c24] border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 dark:text-white">
+                </div>
+                <div class="flex justify-end pt-1">
+                    <button type="submit" class="px-4 py-2 text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-xl transition shadow-sm flex items-center gap-1">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                        <span>오늘의 발견 추가 등록</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Current Recommended Sites List -->
+            <div class="space-y-2 overflow-y-auto pr-1 flex-1">
+                <span class="text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1]">등록된 오늘의 발견 목록</span>
+                <div id="operatorRecManageList" class="space-y-1.5">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Login Modal (with Social Auth support) -->
     <div id="authModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-[#171c24] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-5">
@@ -264,7 +347,9 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const OPERATOR_EMAIL = 'gimms2002@naver.com';
 
         const DEFAULT_CATEGORIES = ['전체', '주요 사이트', '개발', '뉴스/정보', '기타'];
         const DEFAULT_BOOKMARKS = [
@@ -274,14 +359,21 @@
             { id: '4', title: 'GitHub', url: 'https://github.com', category: '개발', desc: '코드 저장소', pinned: false }
         ];
 
+        const DEFAULT_RECOMMENDED_SITES = [
+            { id: 'rec-1', title: '망고 추천 서비스', url: 'https://www.example.com', desc: '오늘의 발견 추천 링크입니다.', category: '추천' }
+        ];
+
         const localSavedBookmarks = localStorage.getItem('local_bookmarks');
         const localSavedCategories = localStorage.getItem('local_categories');
+        const localSavedRecs = localStorage.getItem('local_operator_recs');
 
         let state = {
             currentUser: null,
+            isAdmin: false,
             categories: localSavedCategories ? JSON.parse(localSavedCategories) : DEFAULT_CATEGORIES,
             currentCategory: '전체',
-            bookmarks: localSavedBookmarks ? JSON.parse(localSavedBookmarks) : DEFAULT_BOOKMARKS
+            bookmarks: localSavedBookmarks ? JSON.parse(localSavedBookmarks) : DEFAULT_BOOKMARKS,
+            operatorRecommended: localSavedRecs ? JSON.parse(localSavedRecs) : DEFAULT_RECOMMENDED_SITES
         };
 
         const firebaseConfig = {
@@ -299,6 +391,7 @@
         let db = null;
         let isFirebaseActive = false;
         let unsubscribeFirestore = null;
+        let unsubscribeGlobalRecs = null;
 
         try {
             if (firebaseConfig.apiKey) {
@@ -380,6 +473,19 @@
             document.getElementById('categoryModal').classList.add('hidden');
         };
 
+        window.openOperatorRecModal = function() {
+            if (!state.isAdmin) {
+                alert('운영자 권한이 필요합니다.');
+                return;
+            }
+            renderOperatorRecManageList();
+            document.getElementById('operatorRecModal').classList.remove('hidden');
+        };
+
+        window.closeOperatorRecModal = function() {
+            document.getElementById('operatorRecModal').classList.add('hidden');
+        };
+
         window.openAuthModal = function() {
             if (!isFirebaseActive) {
                 alert('Firebase 서비스가 초기화되지 않았습니다.');
@@ -451,6 +557,46 @@
                 saveData();
                 renderCategories();
                 renderCategoryManageList();
+            }
+        };
+
+        window.handleSaveOperatorRec = function(e) {
+            e.preventDefault();
+            if (!state.isAdmin) return alert('권한이 없습니다.');
+            
+            const title = document.getElementById('opRecTitle').value.trim();
+            const urlInput = document.getElementById('opRecUrl').value.trim();
+            const desc = document.getElementById('opRecDesc').value.trim();
+
+            let finalUrl = urlInput;
+            if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
+                finalUrl = 'https://' + finalUrl;
+            }
+
+            if (!title || !finalUrl) return alert('제목과 URL을 모두 입력해주세요.');
+
+            const newRec = {
+                id: 'rec-' + Date.now(),
+                title,
+                url: finalUrl,
+                desc: desc || '오늘의 발견 추천 링크',
+                category: '추천'
+            };
+
+            state.operatorRecommended.push(newRec);
+            document.getElementById('operatorRecForm').reset();
+            saveOperatorRecommendations();
+            renderOperatorRecommended();
+            renderOperatorRecManageList();
+        };
+
+        window.deleteOperatorRec = function(id) {
+            if (!state.isAdmin) return alert('권한이 없습니다.');
+            if (confirm('이 오늘의 발견 사이트를 삭제하시겠습니까?')) {
+                state.operatorRecommended = state.operatorRecommended.filter(r => r.id !== id);
+                saveOperatorRecommendations();
+                renderOperatorRecommended();
+                renderOperatorRecManageList();
             }
         };
 
@@ -586,6 +732,7 @@
                 try {
                     if (auth) await signOut(auth);
                     state.currentUser = null;
+                    state.isAdmin = false;
                     if (unsubscribeFirestore) unsubscribeFirestore();
                     updateAuthUI(null);
                     alert('로그아웃되었습니다.');
@@ -600,6 +747,45 @@
             localStorage.setItem('local_bookmarks', JSON.stringify(state.bookmarks));
             localStorage.setItem('local_categories', JSON.stringify(state.categories));
             if (isFirebaseActive && db && state.currentUser) saveToCloud();
+        }
+
+        async function saveOperatorRecommendations() {
+            localStorage.setItem('local_operator_recs', JSON.stringify(state.operatorRecommended));
+            if (isFirebaseActive && db && state.isAdmin) {
+                try {
+                    const docRef = doc(db, 'global_config', 'operator_recommendations');
+                    await setDoc(docRef, {
+                        recommendations: state.operatorRecommended,
+                        updatedAt: new Date().toISOString()
+                    });
+                } catch (e) {
+                    console.error("Operator Rec Cloud Save Error:", e.message);
+                }
+            }
+        }
+
+        function listenToGlobalRecommendations() {
+            if (!db) return;
+            if (unsubscribeGlobalRecs) unsubscribeGlobalRecs();
+            try {
+                const docRef = doc(db, 'global_config', 'operator_recommendations');
+                unsubscribeGlobalRecs = onSnapshot(docRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        if (data.recommendations) {
+                            state.operatorRecommended = data.recommendations;
+                            localStorage.setItem('local_operator_recs', JSON.stringify(data.recommendations));
+                            renderOperatorRecommended();
+                        }
+                    } else {
+                        saveOperatorRecommendations();
+                    }
+                }, (err) => {
+                    console.warn("Global Recommendations Notice:", err.message);
+                });
+            } catch (e) {
+                console.warn("Global Rec listener error:", e.message);
+            }
         }
 
         async function saveToCloud() {
@@ -646,20 +832,39 @@
             const loggedOutView = document.getElementById('loggedOutView');
             const loggedInView = document.getElementById('loggedInView');
             const loggedInEmail = document.getElementById('loggedInEmail');
+            const adminBadge = document.getElementById('adminBadge');
+            const operatorRecManageBtn = document.getElementById('operatorRecManageBtn');
 
             if (user) {
+                const userEmail = user.email || '';
+                state.isAdmin = (userEmail.toLowerCase() === OPERATOR_EMAIL.toLowerCase());
+
                 const displayName = user.email ? user.email.split('@')[0] : (user.displayName || '내 계정');
                 authBtnText.textContent = displayName;
                 logoutBtn.classList.remove('hidden');
                 loggedOutView.classList.add('hidden');
                 loggedInView.classList.remove('hidden');
                 loggedInEmail.textContent = user.email || user.displayName || '소셜 계정';
+
+                if (state.isAdmin) {
+                    adminBadge.classList.remove('hidden');
+                    adminBadge.classList.add('flex');
+                    operatorRecManageBtn.classList.remove('hidden');
+                } else {
+                    adminBadge.classList.add('hidden');
+                    adminBadge.classList.remove('flex');
+                    operatorRecManageBtn.classList.add('hidden');
+                }
             } else {
+                state.isAdmin = false;
                 authBtnText.textContent = '로그인';
                 logoutBtn.classList.add('hidden');
                 loggedOutView.classList.remove('hidden');
                 loggedInView.classList.add('hidden');
                 loggedInEmail.textContent = '';
+                adminBadge.classList.add('hidden');
+                adminBadge.classList.remove('flex');
+                operatorRecManageBtn.classList.add('hidden');
             }
         }
 
@@ -689,6 +894,32 @@
                                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                             </button>
                         </div>
+                    </div>
+                `;
+            }).join('');
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function renderOperatorRecManageList() {
+            const list = document.getElementById('operatorRecManageList');
+            if (!list) return;
+
+            if (state.operatorRecommended.length === 0) {
+                list.innerHTML = `<p class="text-xs text-[#8b95a1] text-center py-4">등록된 오늘의 발견 사이트가 없습니다.</p>`;
+                return;
+            }
+
+            list.innerHTML = state.operatorRecommended.map((rec) => {
+                return `
+                    <div class="flex items-center justify-between py-2 px-3 bg-white dark:bg-[#171c24] rounded-xl border border-amber-500/20 shadow-sm">
+                        <div class="min-w-0 pr-2">
+                            <h5 class="text-xs font-bold text-[#191f28] dark:text-white truncate">${rec.title}</h5>
+                            <p class="text-[10px] text-[#8b95a1] truncate">${rec.url}</p>
+                        </div>
+                        <button onclick="deleteOperatorRec('${rec.id}')" class="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition shrink-0" title="삭제">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
                     </div>
                 `;
             }).join('');
@@ -759,7 +990,7 @@
                 const userCategories = state.categories.filter(c => c !== '전체');
                 let hasAnyBookmarks = state.bookmarks.length > 0;
 
-                if (!hasAnyBookmarks) {
+                if (!hasAnyBookmarks && state.operatorRecommended.length === 0) {
                     container.innerHTML = '';
                     if (empty) {
                         empty.classList.remove('hidden');
@@ -787,7 +1018,7 @@
                                 <span class="text-xs text-[#8b95a1] font-medium">(${catBookmarks.length})</span>
                             </div>
                             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                                ${catBookmarks.map((bm, idx) => renderCardHtml(bm, idx, catBookmarks.length, isTouchDevice)).join('')}
+                                ${catBookmarks.map((bm, idx) => renderCardHtml(bm, idx, catBookmarks.length, isTouchDevice, false)).join('')}
                             </div>
                         </div>
                     `;
@@ -803,7 +1034,7 @@
 
                 if (filtered.length === 0) {
                     container.innerHTML = '';
-                    if (empty) {
+                    if (empty && state.operatorRecommended.length === 0) {
                         empty.classList.remove('hidden');
                         empty.classList.add('flex');
                     }
@@ -817,10 +1048,12 @@
 
                 container.innerHTML = `
                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                        ${filtered.map((bm, idx) => renderCardHtml(bm, idx, filtered.length, isTouchDevice)).join('')}
+                        ${filtered.map((bm, idx) => renderCardHtml(bm, idx, filtered.length, isTouchDevice, false)).join('')}
                     </div>
                 `;
             }
+
+            renderOperatorRecommended();
 
             if (window.lucide) lucide.createIcons();
 
@@ -829,7 +1062,60 @@
             }
         };
 
-        function renderCardHtml(bm, idx, totalCount, isTouchDevice) {
+        function renderOperatorRecommended() {
+            const recContainer = document.getElementById('operatorRecommendedContainer');
+            const recCountBadge = document.getElementById('recCountBadge');
+            const recSection = document.getElementById('operatorRecommendedSection');
+            if (!recContainer) return;
+
+            if (state.operatorRecommended.length === 0) {
+                recSection.classList.add('hidden');
+                return;
+            } else {
+                recSection.classList.remove('hidden');
+            }
+
+            if (recCountBadge) {
+                recCountBadge.textContent = `(${state.operatorRecommended.length})`;
+            }
+
+            recContainer.innerHTML = state.operatorRecommended.map((rec, idx) => {
+                let faviconUrl = '';
+                try {
+                    const uObj = new URL(rec.url);
+                    faviconUrl = `https://www.google.com/s2/favicons?domain=${uObj.hostname}&sz=32`;
+                } catch(e) {
+                    faviconUrl = 'https://placehold.co/16x16/eab308/ffffff?text=⭐';
+                }
+
+                return `
+                <div class="bm-card group bg-white dark:bg-[#171c24] rounded-2xl p-2.5 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between border-2 border-amber-500/30 dark:border-amber-500/20 select-none relative overflow-hidden">
+                    <div class="absolute -right-8 -top-8 w-16 h-16 bg-amber-500/10 rounded-full pointer-events-none"></div>
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <div class="flex items-center space-x-1 min-w-0 pr-1">
+                                <img src="${faviconUrl}" class="w-3.5 h-3.5 rounded-sm shrink-0" onerror="this.src='https://placehold.co/16x16/eab308/ffffff?text=⭐'">
+                                <span class="text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg pointer-events-none truncate">
+                                    오늘의 발견
+                                </span>
+                            </div>
+                            <div class="flex items-center space-x-0.5 shrink-0 text-amber-500">
+                                <i data-lucide="sparkles" class="w-3.5 h-3.5 fill-current"></i>
+                            </div>
+                        </div>
+                        <h4 class="font-bold text-[#191f28] dark:text-white text-xs mb-0.5 group-hover:text-amber-500 transition line-clamp-1 pointer-events-none">${rec.title}</h4>
+                        <p class="text-[11px] font-medium text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-2 min-h-[1.1rem] leading-snug pointer-events-none">${rec.desc || '오늘의 발견 추천 링크'}</p>
+                    </div>
+                    <a href="${rec.url}" target="_blank" rel="noopener" class="w-full py-1.5 bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-500 hover:text-white text-amber-700 dark:text-amber-300 text-[11px] font-bold rounded-xl flex items-center justify-center space-x-1 transition active:scale-[0.98]">
+                        <span>방문하기</span>
+                        <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
+                    </a>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function renderCardHtml(bm, idx, totalCount, isTouchDevice, isRecommended = false) {
             const isFirst = idx === 0;
             const isLast = idx === totalCount - 1;
             
@@ -1001,6 +1287,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             if (isFirebaseActive && auth) {
+                listenToGlobalRecommendations();
                 onAuthStateChanged(auth, (user) => {
                     state.currentUser = user;
                     updateAuthUI(user);
