@@ -888,8 +888,10 @@
             if (!confirm(`총 ${count}개의 등록된 링크가 있습니다. 이 링크들을 모두 여시겠습니까?`)) {
                 return;
             }
-            urls.forEach(url => {
-                window.open(url, '_blank', 'noopener');
+            urls.forEach((url, index) => {
+                setTimeout(() => {
+                    window.open(url, '_blank', 'noopener');
+                }, index * 100);
             });
         };
 
