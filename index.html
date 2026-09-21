@@ -288,14 +288,15 @@
             bookmarks: localSavedBookmarks ? JSON.parse(localSavedBookmarks) : DEFAULT_BOOKMARKS
         };
 
-        // Secure Firebase configuration placeholder
+        // 실제 Firebase 설정 적용 완료 (kbookmark-26bd5)
         const firebaseConfig = {
-            apiKey: "YOUR_FIREBASE_API_KEY",
-            authDomain: "your-project-id.firebaseapp.com",
-            projectId: "your-project-id",
-            storageBucket: "your-project-id.appspot.com",
-            messagingSenderId: "1234567890",
-            appId: "1:1234567890:web:abcdef"
+            apiKey: "AIzaSyAmNtN_-QDODsWvlfutmvUzSUgkSEUSMmE",
+            authDomain: "kbookmark-26bd5.firebaseapp.com",
+            projectId: "kbookmark-26bd5",
+            storageBucket: "kbookmark-26bd5.firebasestorage.app",
+            messagingSenderId: "315317394216",
+            appId: "1:315317394216:web:538795d9951eded885ce1d",
+            measurementId: "G-B25B61BCNZ"
         };
 
         let app = null;
@@ -305,13 +306,12 @@
         let unsubscribeFirestore = null;
 
         try {
-            if (firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY") {
+            if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY") {
                 app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
                 isFirebaseActive = true;
-            } else {
-                console.info("Firebase running in standalone local mode (API key not configured).");
+                console.log("Firebase initialized successfully for kbookmark-26bd5.");
             }
         } catch (err) {
             console.warn("Firebase Init Boundary Warning:", err.message);
@@ -340,7 +340,6 @@
                 const parsedObj = new URL(formattedUrl);
                 const domain = parsedObj.hostname;
                 
-                // Fallback smart title generation from hostname
                 let siteName = domain.replace('www.', '');
                 siteName = siteName.charAt(0).toUpperCase() + siteName.slice(1);
                 
@@ -389,7 +388,7 @@
 
         window.openAuthModal = function() {
             if (!isFirebaseActive) {
-                alert('Firebase API 키가 설정되지 않아 로그인 기능을 사용할 수 없습니다. 로컬 모드로 동작 중입니다.');
+                alert('Firebase 서비스가 초기화되지 않았습니다.');
                 return;
             }
             document.getElementById('authModal').classList.remove('hidden');
@@ -852,7 +851,6 @@
             const isFirst = idx === 0;
             const isLast = idx === totalCount - 1;
             
-            // Extract domain for Favicon
             let faviconUrl = '';
             try {
                 const uObj = new URL(bm.url);
