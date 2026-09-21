@@ -53,7 +53,6 @@
 </head>
 <body class="bg-[#f2f4f6] dark:bg-[#101318] text-[#191f28] dark:text-[#f9fafb] min-h-screen flex flex-col font-sans transition-colors duration-200 antialiased">
 
-    <!-- Header -->
     <header class="bg-white/85 dark:bg-[#171c24]/85 backdrop-blur-md sticky top-0 z-30 transition-colors duration-200 border-b border-[#e5e8eb] dark:border-[#202632]">
         <div class="max-w-5xl mx-auto px-4 sm:px-8 py-4 sm:py-5">
             <div class="flex items-center justify-between gap-2">
@@ -99,7 +98,6 @@
         </div>
     </header>
 
-    <!-- Main Container -->
     <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-8 py-5 sm:py-6 space-y-6 sm:space-y-7">
 
         <!-- 3-Step Quick Guide Banner with Tone-Down & Dynamic Width Collapse -->
@@ -412,7 +410,6 @@
         </div>
     </div>
 
-    <!-- Firebase SDK Scripts & App Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -1177,7 +1174,8 @@
                                     <i data-lucide="chevron-${isCollapsed ? 'down' : 'up'}" class="w-4 h-4"></i>
                                 </button>
                             </div>
-                            <div class="${isCollapsed ? 'hidden' : ''} grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                            <!-- Mobile horizontal scroll, desktop grid -->
+                            <div class="${isCollapsed ? 'hidden' : ''} flex sm:grid sm:grid-cols-2 md:grid-cols-3 overflow-x-auto sm:overflow-x-visible no-scrollbar sm:no-scrollbar gap-4 sm:gap-5 pb-2 sm:pb-0">
                                 ${catBookmarks.map((bm, idx) => renderCardHtml(bm, idx, catBookmarks.length, isTouchDevice)).join('')}
                             </div>
                         </div>
@@ -1288,7 +1286,7 @@
                 }
 
                 return `
-                <div class="group bg-white dark:bg-[#171c24] rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between border border-recommended-500/30 dark:border-recommended-500/20 relative overflow-hidden">
+                <div class="group bg-white dark:bg-[#171c24] rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between border border-recommended-500/30 dark:border-recommended-500/20 relative overflow-hidden shrink-0 w-[280px] sm:w-auto">
                     <div class="absolute -right-8 -top-8 w-16 h-16 bg-recommended-500/10 rounded-full pointer-events-none"></div>
                     <div>
                         <div class="mb-4 flex items-center justify-between">
@@ -1322,7 +1320,7 @@
 
             return `
             <div data-id="${bm.id}" data-index="${idx}" ${isTouchDevice ? '' : 'draggable="true"'} 
-                class="bm-card group bg-white dark:bg-[#171c24] rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between ${isTouchDevice ? '' : 'cursor-grab active:cursor-grabbing'} border border-[#e5e8eb] dark:border-[#202632] select-none">
+                class="bm-card group bg-white dark:bg-[#171c24] rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between ${isTouchDevice ? '' : 'cursor-grab active:cursor-grabbing'} border border-[#e5e8eb] dark:border-[#202632] select-none shrink-0 w-[280px] sm:w-auto">
                 <div>
                     <div class="mb-4 flex items-center justify-between">
                         <span class="inline-block text-xs font-extrabold px-3 py-1 bg-brand-50 dark:bg-brand-500/10 text-brand-500 rounded-xl pointer-events-none truncate max-w-[150px] tracking-tight">
