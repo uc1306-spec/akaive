@@ -76,10 +76,10 @@
 
                 <!-- Right Controls -->
                 <div class="flex items-center space-x-1 sm:space-x-2 shrink-0">
-                    <!-- Gamification Level Badge in Header (Compact on mobile) -->
-                    <button onclick="openGamificationModal()" class="flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 text-[11px] sm:text-xs font-extrabold rounded-xl border border-brand-500/20 hover:scale-105 transition shadow-sm shrink-0">
+                    <!-- Gamification Level Badge in Header (Hidden if logged out) -->
+                    <button id="headerLevelBadgeBtn" onclick="openGamificationModal()" class="hidden items-center space-x-1 px-2 sm:px-3 py-1.5 bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 text-[10px] sm:text-xs font-extrabold rounded-xl border border-brand-500/20 hover:scale-105 transition shadow-sm shrink-0">
                         <i data-lucide="award" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-500 shrink-0"></i>
-                        <span id="headerLevelBadge" class="truncate max-w-[85px] sm:max-w-none">Lv.1 링크 탐험가</span>
+                        <span id="headerLevelBadge" class="truncate max-w-[70px] sm:max-w-none">Lv.1 링크 탐험가</span>
                     </button>
 
                     <!-- Operator Badge if logged in as admin -->
@@ -107,53 +107,53 @@
                     </button>
                 </div>
             </div>
-            <!-- Subtitle -->
+            <!-- Subtitle without any highlight -->
             <div class="mt-3 pl-0.5">
-                <p class="text-xs sm:text-sm font-semibold text-[#333d4b] dark:text-[#d1d5db] leading-relaxed">자주 가거나 기억해야 할 인터넷 링크 주소를 가장 심플하고 빠르게 연결하는 사이트</p>
+                <p class="text-xs sm:text-sm font-medium text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed">인터넷 바다 속에서 길 잃지 않도록, 나만의 소중한 링크를 모아두세요.</p>
             </div>
         </div>
     </header>
 
     <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-8 py-5 sm:py-6 space-y-6 sm:space-y-7">
 
-        <!-- Enlarged & Enhanced Quick Guide Banner with Collapsible Functionality -->
-        <div id="guideWrapper" class="bg-white dark:bg-[#171c24] rounded-3xl p-5 sm:p-6 shadow-sm border border-[#e5e8eb] dark:border-[#202632] transition-all duration-200">
+        <!-- Slightly reduced Quick Guide Banner -->
+        <div id="guideWrapper" class="bg-white dark:bg-[#171c24] rounded-3xl p-3.5 sm:p-4 shadow-sm border border-[#e5e8eb] dark:border-[#202632] transition-all duration-200">
             <div class="flex items-center justify-between cursor-pointer select-none gap-4" onclick="toggleGuideCollapse()">
-                <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 sm:w-9 sm:h-9 bg-amber-100 dark:bg-amber-500/25 text-amber-500 rounded-2xl flex items-center justify-center font-bold shrink-0">
-                        <i data-lucide="lightbulb" class="w-5 h-5 fill-amber-400 text-amber-500"></i>
-                    </div>
-                    <h3 class="text-base sm:text-lg font-bold text-[#191f28] dark:text-white tracking-tight">링키지 이용 가이드</h3>
-                </div>
                 <div class="flex items-center space-x-2">
-                    <span id="guideToggleText" class="text-xs sm:text-sm font-bold text-[#8b95a1]">접기</span>
+                    <div class="w-7 h-7 sm:w-8 sm:h-8 bg-amber-100 dark:bg-amber-500/25 text-amber-500 rounded-xl flex items-center justify-center font-bold shrink-0">
+                        <i data-lucide="lightbulb" class="w-3.5 h-3.5 fill-amber-400 text-amber-500"></i>
+                    </div>
+                    <h3 class="text-xs sm:text-sm font-bold text-[#191f28] dark:text-white tracking-tight">링키지 이용 가이드</h3>
+                </div>
+                <div class="flex items-center space-x-1.5">
+                    <span id="guideToggleText" class="text-[11px] font-bold text-[#8b95a1]">접기</span>
                     <button id="guideToggleBtn" class="p-1 text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white transition">
-                        <i data-lucide="chevron-up" id="guideChevron" class="w-5 h-5 transition-transform duration-200"></i>
+                        <i data-lucide="chevron-up" id="guideChevron" class="w-3.5 h-3.5 transition-transform duration-200"></i>
                     </button>
                 </div>
             </div>
             
-            <div id="guideContent" class="mt-5 pt-4 border-t border-[#e5e8eb]/60 dark:border-[#202632] transition-all duration-200">
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-                    <div class="flex items-center space-x-3.5 p-3.5 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl">
-                        <div class="w-7 h-7 bg-[#e5e8eb] dark:bg-[#2c3442] text-[#4e5968] dark:text-[#b0b8c1] rounded-xl flex items-center justify-center font-bold text-xs shrink-0">1</div>
+            <div id="guideContent" class="mt-3 pt-2.5 border-t border-[#e5e8eb]/60 dark:border-[#202632] transition-all duration-200">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    <div class="flex items-center space-x-2.5 p-2.5 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl">
+                        <div class="w-6 h-6 bg-[#e5e8eb] dark:bg-[#2c3442] text-[#4e5968] dark:text-[#b0b8c1] rounded-lg flex items-center justify-center font-bold text-[11px] shrink-0">1</div>
                         <div class="min-w-0">
-                            <h4 class="text-sm sm:text-base font-bold text-[#191f28] dark:text-white truncate">로그인</h4>
-                            <p class="text-xs sm:text-sm text-[#8b95a1] truncate">내 계정으로 링크 안전하게 동기화</p>
+                            <h4 class="text-[11px] sm:text-xs font-bold text-[#191f28] dark:text-white truncate">로그인</h4>
+                            <p class="text-[10px] text-[#8b95a1] truncate">내 계정으로 링크 안전 동기화</p>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-3.5 p-3.5 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl">
-                        <div class="w-7 h-7 bg-[#e5e8eb] dark:bg-[#2c3442] text-[#4e5968] dark:text-[#b0b8c1] rounded-xl flex items-center justify-center font-bold text-xs shrink-0">2</div>
+                    <div class="flex items-center space-x-2.5 p-2.5 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl">
+                        <div class="w-6 h-6 bg-[#e5e8eb] dark:bg-[#2c3442] text-[#4e5968] dark:text-[#b0b8c1] rounded-lg flex items-center justify-center font-bold text-[11px] shrink-0">2</div>
                         <div class="min-w-0">
-                            <h4 class="text-sm sm:text-base font-bold text-[#191f28] dark:text-white truncate">카테고리 수정</h4>
-                            <p class="text-xs sm:text-sm text-[#8b95a1] truncate">나만의 맞춤 폴더 등록</p>
+                            <h4 class="text-[11px] sm:text-xs font-bold text-[#191f28] dark:text-white truncate">카테고리 수정</h4>
+                            <p class="text-[10px] text-[#8b95a1] truncate">나만의 맞춤 폴더 등록</p>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-3.5 p-3.5 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl">
-                        <div class="w-7 h-7 bg-[#e5e8eb] dark:bg-[#2c3442] text-[#4e5968] dark:text-[#b0b8c1] rounded-xl flex items-center justify-center font-bold text-xs shrink-0">3</div>
+                    <div class="flex items-center space-x-2.5 p-2.5 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl">
+                        <div class="w-6 h-6 bg-[#e5e8eb] dark:bg-[#2c3442] text-[#4e5968] dark:text-[#b0b8c1] rounded-lg flex items-center justify-center font-bold text-[11px] shrink-0">3</div>
                         <div class="min-w-0">
-                            <h4 class="text-sm sm:text-base font-bold text-[#191f28] dark:text-white truncate">링크 추가</h4>
-                            <p class="text-xs sm:text-sm text-[#8b95a1] truncate">자주 찾는 웹사이트 즉시 등록</p>
+                            <h4 class="text-[11px] sm:text-xs font-bold text-[#191f28] dark:text-white truncate">링크 추가</h4>
+                            <p class="text-[10px] text-[#8b95a1] truncate">자주 찾는 웹사이트 즉시 등록</p>
                         </div>
                     </div>
                 </div>
@@ -212,7 +212,6 @@
                     <i data-lucide="chevron-up" id="recChevron" class="w-4 h-4 transition-transform duration-200"></i>
                 </button>
             </div>
-            <!-- Subtitle description for Operator Picks -->
             <p class="text-xs font-medium text-[#8b95a1] pl-0.5">운영자가 엄선한 유용한 웹사이트와 추천 콘텐츠를 만나보세요.</p>
             
             <div id="operatorRecommendedContainer" class="flex sm:grid sm:grid-cols-2 md:grid-cols-3 overflow-x-auto sm:overflow-x-visible no-scrollbar gap-4 sm:gap-5 pb-2 sm:pb-0">
@@ -237,7 +236,7 @@
 
     <footer class="py-8 mt-auto border-t border-[#e5e8eb] dark:border-[#202632]">
         <div class="max-w-5xl mx-auto px-5 text-center text-xs font-medium text-[#8b95a1]">
-            <p>© 링키지 (Linkage). All rights reserved. — 스마트 링크 아카이브</p>
+            <p>© 링키지 (Linkage). All rights reserved. — 인터넷 바다 속에서 길 잃지 않도록, 나만의 소중한 링크를 모아두세요.</p>
         </div>
     </footer>
 
@@ -402,7 +401,7 @@
                     <label class="block text-[11px] font-bold text-[#4e5968] dark:text-[#b0b8c1] mb-1">방문 접근 권한 옵션</label>
                     <select id="opRecAccess" class="w-full px-3.5 py-2 text-xs bg-white dark:bg-[#171c24] border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-recommended-500 dark:text-white">
                         <option value="public">전체 공개 (비로그인도 링크 이동 가능)</option>
-                        <option value="login_required">회원 전용 (로그인 회원만 이동 가능)</option>
+                        <option value="login_required">회원 전용 (회원만 이동 가능)</option>
                     </select>
                 </div>
                 <div class="flex justify-between items-center pt-1">
@@ -610,7 +609,6 @@
 
         const OPERATOR_EMAIL = 'gimms2002@naver.com';
 
-        // Production Reset: Strict 3 Categories & Default Bookmarks
         const PRODUCTION_CATEGORIES = ['전체', '자주가는곳', '뉴스', '기타'];
         const PRODUCTION_BOOKMARKS = [
             { id: '1', title: '유튜브', url: 'https://www.youtube.com', category: '자주가는곳', desc: '동영상 시청 플랫폼', pinned: true },
@@ -662,7 +660,6 @@
             console.warn("Firebase Init Boundary Warning:", err.message);
         }
 
-        // Gamification Level Calculation (Retro-active & dynamic)
         function updateGamificationUI() {
             const count = state.bookmarks.length;
             let level = 1;
@@ -698,7 +695,6 @@
             if (progressBar) progressBar.style.width = `${percent}%`;
             if (progressText) progressText.textContent = `현재 링크 수: ${count}개 (다음 레벨까지 ${Math.max(0, nextTarget - count)}개 남음)`;
 
-            // Badges
             const b1 = document.getElementById('badgeFirstLink');
             const b2 = document.getElementById('badgeCategoryMaster');
             
@@ -716,7 +712,6 @@
             document.getElementById('gamificationModal').classList.add('hidden');
         };
 
-        // Check if URL has ?share=uid:category parameter
         async function checkPublicShareParam() {
             const params = new URLSearchParams(window.location.search);
             const shareParam = params.get('share');
@@ -744,7 +739,6 @@
                     const data = docSnap.data();
                     const sharedBms = (data.bookmarks || []).filter(b => b.category === decodeURIComponent(targetCat));
                     
-                    // Render Public View with Nickname
                     renderPublicSharedView(decodeURIComponent(targetCat), sharedBms, ownerNickname);
                     return true;
                 }
@@ -758,7 +752,6 @@
             const mainEl = document.querySelector('main');
             if (!mainEl) return;
 
-            // Update browser tab title with Nickname
             document.title = `${ownerNickname}님의 링키지 - ${categoryName}`;
 
             mainEl.innerHTML = `
@@ -835,7 +828,6 @@
             document.getElementById('publicShareUrlInput').value = shareUrl;
             document.getElementById('publicShareModal').classList.remove('hidden');
             
-            // Unlock badge
             const b3 = document.getElementById('badgeSharingPro');
             if (b3) { b3.classList.remove('opacity-40'); b3.classList.add('bg-recommended-50', 'dark:bg-recommended-500/20', 'border-recommended-500/30'); }
 
@@ -1309,6 +1301,20 @@
             }
         };
 
+        window.moveOperatorRec = function(index, direction) {
+            if (!state.isAdmin) return alert('권한이 없습니다.');
+            const targetIndex = index + direction;
+            if (targetIndex < 0 || targetIndex >= state.operatorRecommended.length) return;
+
+            const temp = state.operatorRecommended[index];
+            state.operatorRecommended[index] = state.operatorRecommended[targetIndex];
+            state.operatorRecommended[targetIndex] = temp;
+
+            saveOperatorRecommendations();
+            renderOperatorRecommended();
+            renderOperatorRecManageList();
+        };
+
         window.renameCategory = function(oldName) {
             if (oldName === '전체') return;
             const newName = prompt(`'${oldName}' 카테고리의 새로운 이름을 입력하세요:`, oldName);
@@ -1501,7 +1507,6 @@
                     console.warn("Cloud Sync Listener Notice:", err.message);
                 });
 
-                // Fetch User Profile Nickname
                 const userDocRef = doc(db, 'users', uid);
                 getDocs(collection(db, 'users')).then(() => {
                     onSnapshot(userDocRef, (uSnap) => {
@@ -1530,6 +1535,7 @@
             const adminBadge = document.getElementById('adminBadge');
             const operatorRecManageBtn = document.getElementById('operatorRecManageBtn');
             const adminDashboardBtn = document.getElementById('adminDashboardBtn');
+            const headerLevelBadgeBtn = document.getElementById('headerLevelBadgeBtn');
 
             if (user) {
                 const userEmail = user.email || '';
@@ -1541,6 +1547,11 @@
                 loggedOutView.classList.add('hidden');
                 loggedInView.classList.remove('hidden');
                 loggedInEmail.textContent = user.email || user.displayName || '소셜 계정';
+
+                if (headerLevelBadgeBtn) {
+                    headerLevelBadgeBtn.classList.remove('hidden');
+                    headerLevelBadgeBtn.classList.add('flex');
+                }
 
                 if (state.isAdmin) {
                     adminBadge.classList.remove('hidden');
@@ -1565,6 +1576,11 @@
                 adminBadge.classList.remove('flex');
                 operatorRecManageBtn.classList.add('hidden');
                 adminDashboardBtn.classList.add('hidden');
+
+                if (headerLevelBadgeBtn) {
+                    headerLevelBadgeBtn.classList.add('hidden');
+                    headerLevelBadgeBtn.classList.remove('flex');
+                }
             }
             renderOperatorRecommended();
         }
@@ -1618,7 +1634,7 @@
                 return;
             }
 
-            list.innerHTML = state.operatorRecommended.map((rec) => {
+            list.innerHTML = state.operatorRecommended.map((rec, idx) => {
                 const isLoginReq = rec.access === 'login_required';
                 return `
                     <div class="flex items-center justify-between py-2 px-3 bg-white dark:bg-[#171c24] rounded-xl border border-recommended-500/20 shadow-sm">
@@ -1630,6 +1646,14 @@
                             <p class="text-[10px] text-[#8b95a1] truncate">${rec.url}</p>
                         </div>
                         <div class="flex items-center space-x-1 shrink-0">
+                            <div class="flex items-center space-x-0.5 mr-1 border-r border-[#e5e8eb] dark:border-[#2c3442] pr-1.5">
+                                <button onclick="moveOperatorRec(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="p-1 text-[#8b95a1] hover:text-recommended-500 disabled:opacity-30 transition" title="위로">
+                                    <i data-lucide="chevron-up" class="w-3.5 h-3.5"></i>
+                                </button>
+                                <button onclick="moveOperatorRec(${idx}, 1)" ${idx === state.operatorRecommended.length - 1 ? 'disabled' : ''} class="p-1 text-[#8b95a1] hover:text-recommended-500 disabled:opacity-30 transition" title="아래로">
+                                    <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
                             <button onclick="editOperatorRec('${rec.id}')" class="p-1 text-[#8b95a1] hover:text-recommended-500 hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-lg transition" title="수정">
                                 <i data-lucide="pencil" class="w-4 h-4"></i>
                             </button>
@@ -1712,7 +1736,7 @@
             const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
             renderOperatorRecommended();
-            renderCategories(); // update tab badges too
+            renderCategories();
 
             if (state.currentCategory === '전체') {
                 const userCategories = state.categories.filter(c => c !== '전체');
@@ -1784,7 +1808,6 @@
                                     </button>
                                 </div>
                             </div>
-                            <!-- Mobile horizontal scroll on '전체', desktop grid -->
                             <div class="${isCollapsed ? 'hidden' : ''} flex sm:grid sm:grid-cols-2 md:grid-cols-3 overflow-x-auto sm:overflow-x-visible no-scrollbar sm:no-scrollbar gap-4 sm:gap-5 pb-2 sm:pb-0">
                                 ${catBookmarks.map((bm, idx) => renderCardHtml(bm, idx, catBookmarks.length, isTouchDevice)).join('')}
                             </div>
@@ -1836,7 +1859,6 @@
                                 <span class="text-xs text-[#8b95a1] font-medium">(${filtered.length})</span>
                             </div>
                         </div>
-                        <!-- Individual category view: Grid list layout (no horizontal scroll) -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
                             ${filtered.map((bm, idx) => renderCardHtml(bm, idx, filtered.length, isTouchDevice)).join('')}
                         </div>
