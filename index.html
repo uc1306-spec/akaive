@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>망고 다이렉트 링크 - 인터넷 링크 정리 사이트</title>
+    <title>링키지 (Linkage) - 스마트 링크 아카이브</title>
     <!-- PWA Web App Manifest -->
-    <link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22%EB%A7%9D%EA%B3%A0%20%EB%8B%A4%EC%9D%B4%EB%A0%89%ED%8A%B8%20%EB%A7%81%ED%81%AC%22%2C%22short_name%22%3A%22%EB%A7%9D%EA%B3%A0%EB%A7%81%ED%81%AC%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f2f4f6%22%2C%22theme_color%22%3A%22%23ff6b00%22%7D">
-    <meta name="theme-color" content="#ff6b00">
+    <link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22%EB%A7%81%ED%82%A4%EC%A7%80%22%2C%22short_name%22%3A%22Linkage%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f2f4f6%22%2C%22theme_color%22%3A%22%2310B981%22%7D">
+    <meta name="theme-color" content="#10B981">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Tailwind CSS -->
@@ -18,18 +18,18 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#fff7ed',
-                            100: '#ffedd5',
-                            200: '#fed7aa',
-                            500: '#ff6b00',
-                            600: '#ea580c',
-                            700: '#c2410c',
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            500: '#10B981',
+                            600: '#059669',
+                            700: '#047857',
                         },
                         recommended: {
-                            50: '#fefce8',
-                            100: '#fef9c3',
-                            500: '#eab308',
-                            600: '#ca8a04',
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            500: '#8B5CF6',
+                            600: '#7C3AED',
                         }
                     },
                     fontFamily: {
@@ -55,21 +55,22 @@
 </head>
 <body class="bg-[#f2f4f6] dark:bg-[#101318] text-[#191f28] dark:text-[#f9fafb] min-h-screen flex flex-col font-sans transition-colors duration-200 antialiased">
 
+    <!-- Header -->
     <header class="bg-white/80 dark:bg-[#171c24]/80 backdrop-blur-md sticky top-0 z-30 transition-colors duration-200 border-b border-[#e5e8eb] dark:border-[#202632]">
         <div class="max-w-5xl mx-auto px-4 sm:px-8 py-3.5 sm:py-5">
             <div class="flex items-center justify-between gap-2">
                 <!-- Logo & Title -->
                 <div class="flex items-center space-x-2.5 sm:space-x-3 min-w-0 shrink">
                     <div class="w-9 h-9 sm:w-10 sm:h-10 bg-brand-500/10 dark:bg-brand-500/20 text-brand-500 rounded-2xl flex items-center justify-center font-bold shrink-0">
-                        <i data-lucide="bookmark" class="w-5 h-5 stroke-[2.5]"></i>
+                        <i data-lucide="link" class="w-5 h-5 stroke-[2.5]"></i>
                     </div>
-                    <h1 class="font-bold text-base sm:text-xl tracking-tight text-[#191f28] dark:text-white whitespace-nowrap break-keep truncate">망고 다이렉트 링크</h1>
+                    <h1 class="font-bold text-base sm:text-xl tracking-tight text-[#191f28] dark:text-white whitespace-nowrap break-keep truncate">링키지 Linkage</h1>
                 </div>
 
                 <!-- Right Controls -->
                 <div class="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
                     <!-- Operator Badge if logged in as admin -->
-                    <div id="adminBadge" class="hidden items-center space-x-1 px-2.5 py-1.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-extrabold rounded-xl border border-amber-500/20">
+                    <div id="adminBadge" class="hidden items-center space-x-1 px-2.5 py-1.5 bg-recommended-500/10 text-recommended-600 dark:text-recommended-400 text-xs font-extrabold rounded-xl border border-recommended-500/20">
                         <i data-lucide="shield-check" class="w-4 h-4"></i>
                         <span class="hidden sm:inline">운영자</span>
                     </div>
@@ -95,11 +96,12 @@
             </div>
             <!-- Subtitle displayed clearly on separate line -->
             <div class="mt-3 pl-0.5">
-                <p class="text-xs sm:text-sm font-semibold text-[#333d4b] dark:text-[#d1d5db] leading-relaxed">자주 가거나 기억해야 할 인터넷 링크 주소를 정리하는 사이트</p>
+                <p class="text-xs sm:text-sm font-semibold text-[#333d4b] dark:text-[#d1d5db] leading-relaxed">인터넷 바다 속에서 길 잃지 않도록, 나만의 소중한 링크를 모아두세요</p>
             </div>
         </div>
     </header>
 
+    <!-- Main Container -->
     <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-8 py-5 sm:py-6 space-y-5 sm:space-y-6">
 
         <!-- Category Filter Row with Action Buttons -->
@@ -115,8 +117,8 @@
                 <!-- Action Buttons -->
                 <div class="flex items-center gap-2 shrink-0 self-start sm:self-auto">
                     <!-- Operator Manage Recommended Button -->
-                    <button id="operatorRecManageBtn" onclick="openOperatorRecModal()" class="hidden flex items-center space-x-1.5 px-3.5 py-2.5 text-xs font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 rounded-2xl transition border border-amber-200 dark:border-amber-900/50 shrink-0">
-                        <i data-lucide="award" class="w-4 h-4 text-amber-500"></i>
+                    <button id="operatorRecManageBtn" onclick="openOperatorRecModal()" class="hidden flex items-center space-x-1.5 px-3.5 py-2.5 text-xs font-bold text-recommended-700 dark:text-recommended-300 bg-recommended-50 dark:bg-recommended-950/40 hover:bg-recommended-100 dark:hover:bg-recommended-900/50 rounded-2xl transition border border-recommended-200 dark:border-recommended-900/50 shrink-0">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-recommended-500"></i>
                         <span>오늘의 발견 관리</span>
                     </button>
 
@@ -133,21 +135,23 @@
             </div>
         </div>
 
-        <div id="operatorRecommendedSection" class="space-y-3 pt-1">
-            <div class="flex items-center space-x-2 pb-1.5 border-b border-[#e5e8eb] dark:border-[#202632]">
-                <h3 class="font-bold text-sm text-[#191f28] dark:text-white flex items-center gap-1.5">
-                    <i data-lucide="lightbulb" class="w-4 h-4 text-amber-500 fill-amber-500/20"></i>
+        <!-- Today's Discovery (Operator Picks) Section right below categories -->
+        <div id="operatorRecommendedSection" class="space-y-3.5 pt-1">
+            <div class="flex items-center space-x-2 pb-2 border-b border-[#e5e8eb] dark:border-[#202632]">
+                <h3 class="font-bold text-base text-[#191f28] dark:text-white flex items-center gap-2">
+                    <i data-lucide="lightbulb" class="w-5 h-5 text-recommended-500 fill-recommended-500/20"></i>
                     <span>오늘의 발견</span>
-                    <span class="text-[11px] font-semibold px-2 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg">운영자 Picks</span>
+                    <span class="text-xs font-semibold px-2.5 py-0.5 bg-recommended-500/10 text-recommended-600 dark:text-recommended-400 rounded-xl">운영자 Picks</span>
                 </h3>
                 <span id="recCountBadge" class="text-xs text-[#8b95a1] font-medium">(0)</span>
             </div>
-            <div id="operatorRecommendedContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5">
+            <div id="operatorRecommendedContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 <!-- Dynamically populated recommended sites from operator -->
             </div>
         </div>
 
-        <div id="bookmarkContainer" class="space-y-6">
+        <!-- Bookmarks Container -->
+        <div id="bookmarkContainer" class="space-y-8">
             <!-- Dynamically generated grouped or filtered bookmarks -->
         </div>
 
@@ -161,9 +165,10 @@
         </div>
     </main>
 
+    <!-- Footer -->
     <footer class="py-8 mt-auto border-t border-[#e5e8eb] dark:border-[#202632]">
         <div class="max-w-5xl mx-auto px-5 text-center text-xs font-medium text-[#8b95a1]">
-            <p>© 김망고. All rights reserved. — 다이렉트 링크 (Direct Link)</p>
+            <p>© 링키지 (Linkage). All rights reserved. — 스마트 링크 아카이브</p>
         </div>
     </footer>
 
@@ -237,7 +242,7 @@
         <div class="bg-white dark:bg-[#171c24] rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 my-auto max-h-[80vh] flex flex-col">
             <div class="flex justify-between items-center shrink-0">
                 <h3 class="font-bold text-xl text-[#191f28] dark:text-white flex items-center gap-2">
-                    <i data-lucide="award" class="w-5 h-5 text-amber-500"></i>
+                    <i data-lucide="sparkles" class="w-5 h-5 text-recommended-500"></i>
                     <span>오늘의 발견 관리</span>
                 </h3>
                 <button onclick="closeOperatorRecModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white">
@@ -251,19 +256,19 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <div>
                         <label class="block text-[11px] font-bold text-[#4e5968] dark:text-[#b0b8c1] mb-1">사이트 이름</label>
-                        <input type="text" id="opRecTitle" required placeholder="예: 추천 서비스" class="w-full px-3.5 py-2 text-xs bg-white dark:bg-[#171c24] border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 dark:text-white">
+                        <input type="text" id="opRecTitle" required placeholder="예: 추천 서비스" class="w-full px-3.5 py-2 text-xs bg-white dark:bg-[#171c24] border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-recommended-500 dark:text-white">
                     </div>
                     <div>
                         <label class="block text-[11px] font-bold text-[#4e5968] dark:text-[#b0b8c1] mb-1">URL 주소</label>
-                        <input type="url" id="opRecUrl" required placeholder="https://..." class="w-full px-3.5 py-2 text-xs bg-white dark:bg-[#171c24] border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 dark:text-white">
+                        <input type="url" id="opRecUrl" required placeholder="https://..." class="w-full px-3.5 py-2 text-xs bg-white dark:bg-[#171c24] border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-recommended-500 dark:text-white">
                     </div>
                 </div>
                 <div>
                     <label class="block text-[11px] font-bold text-[#4e5968] dark:text-[#b0b8c1] mb-1">소개 메모</label>
-                    <input type="text" id="opRecDesc" placeholder="추천하는 이유나 간단한 설명" class="w-full px-3.5 py-2 text-xs bg-white dark:bg-[#171c24] border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 dark:text-white">
+                    <input type="text" id="opRecDesc" placeholder="추천하는 이유나 간단한 설명" class="w-full px-3.5 py-2 text-xs bg-white dark:bg-[#171c24] border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-recommended-500 dark:text-white">
                 </div>
                 <div class="flex justify-end pt-1">
-                    <button type="submit" class="px-4 py-2 text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-xl transition shadow-sm flex items-center gap-1">
+                    <button type="submit" class="px-4 py-2 text-xs font-bold text-white bg-recommended-500 hover:bg-recommended-600 rounded-xl transition shadow-sm flex items-center gap-1">
                         <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                         <span>오늘의 발견 추가 등록</span>
                     </button>
@@ -280,7 +285,7 @@
         </div>
     </div>
 
-    <!-- Login Modal (Restored Fully) -->
+    <!-- Login Modal -->
     <div id="authModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-[#171c24] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-5">
             <div class="flex justify-between items-center">
@@ -340,7 +345,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const OPERATOR_EMAIL = 'gimms2002@naver.com';
 
@@ -353,7 +358,7 @@
         ];
 
         const DEFAULT_RECOMMENDED_SITES = [
-            { id: 'rec-1', title: '망고 추천 서비스', url: 'https://www.example.com', desc: '오늘의 발견 추천 링크입니다.', category: '추천' }
+            { id: 'rec-1', title: '링키지 추천 서비스', url: 'https://www.example.com', desc: '오늘의 발견 추천 링크입니다.', category: '추천' }
         ];
 
         const localSavedBookmarks = localStorage.getItem('local_bookmarks');
@@ -635,6 +640,21 @@
             }
         };
 
+        window.moveOperatorRecOrder = function(id, direction) {
+            const index = state.operatorRecommended.findIndex(r => r.id === id);
+            if (index === -1) return;
+            const targetIndex = index + direction;
+            if (targetIndex < 0 || targetIndex >= state.operatorRecommended.length) return;
+
+            const temp = state.operatorRecommended[index];
+            state.operatorRecommended[index] = state.operatorRecommended[targetIndex];
+            state.operatorRecommended[targetIndex] = temp;
+
+            saveOperatorRecommendations();
+            renderOperatorRecommended();
+            renderOperatorRecManageList();
+        };
+
         window.renameCategory = function(oldName) {
             if (oldName === '전체') return;
             const newName = prompt(`'${oldName}' 카테고리의 새로운 이름을 입력하세요:`, oldName);
@@ -903,16 +923,27 @@
                 return;
             }
 
-            list.innerHTML = state.operatorRecommended.map((rec) => {
+            list.innerHTML = state.operatorRecommended.map((rec, idx) => {
+                const isFirst = idx === 0;
+                const isLast = idx === state.operatorRecommended.length - 1;
                 return `
-                    <div class="flex items-center justify-between py-2 px-3 bg-white dark:bg-[#171c24] rounded-xl border border-amber-500/20 shadow-sm">
+                    <div class="flex items-center justify-between py-2 px-3 bg-white dark:bg-[#171c24] rounded-xl border border-recommended-500/20 shadow-sm">
                         <div class="min-w-0 pr-2">
                             <h5 class="text-xs font-bold text-[#191f28] dark:text-white truncate">${rec.title}</h5>
                             <p class="text-[10px] text-[#8b95a1] truncate">${rec.url}</p>
                         </div>
-                        <button onclick="deleteOperatorRec('${rec.id}')" class="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition shrink-0" title="삭제">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        </button>
+                        <div class="flex items-center space-x-1 shrink-0">
+                            <button onclick="moveOperatorRecOrder('${rec.id}', -1)" ${isFirst ? 'disabled class="p-1 text-[#b0b8c1]/30 cursor-not-allowed"' : 'class="p-1 text-[#8b95a1] hover:text-recommended-500 hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-lg transition"'} title="위로 이동">
+                                <i data-lucide="chevron-up" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="moveOperatorRecOrder('${rec.id}', 1)" ${isLast ? 'disabled class="p-1 text-[#b0b8c1]/30 cursor-not-allowed"' : 'class="p-1 text-[#8b95a1] hover:text-recommended-500 hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-lg transition"'} title="아래로 이동">
+                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            </button>
+                            <div class="w-[1px] h-3 bg-[#b0b8c1]/30 mx-0.5"></div>
+                            <button onclick="deleteOperatorRec('${rec.id}')" class="p-1 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition" title="삭제">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -1006,13 +1037,13 @@
                     if (catBookmarks.length === 0) return '';
 
                     return `
-                        <div class="space-y-3.5">
-                            <div class="flex items-center space-x-2 pb-1.5 border-b border-[#e5e8eb] dark:border-[#202632]">
-                                <span class="w-2.5 h-2.5 bg-brand-500 rounded-full"></span>
-                                <h3 class="font-bold text-sm text-[#191f28] dark:text-white">${cat}</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-2.5 pb-2 border-b border-[#e5e8eb] dark:border-[#202632]">
+                                <span class="w-3 h-3 bg-brand-500 rounded-full"></span>
+                                <h3 class="font-bold text-base text-[#191f28] dark:text-white">${cat}</h3>
                                 <span class="text-xs text-[#8b95a1] font-medium">(${catBookmarks.length})</span>
                             </div>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5">
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                                 ${catBookmarks.map((bm, idx) => renderCardHtml(bm, idx, catBookmarks.length, isTouchDevice, false)).join('')}
                             </div>
                         </div>
@@ -1042,7 +1073,7 @@
                 }
 
                 container.innerHTML = `
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                         ${filtered.map((bm, idx) => renderCardHtml(bm, idx, filtered.length, isTouchDevice, false)).join('')}
                     </div>
                 `;
@@ -1072,32 +1103,49 @@
                 recCountBadge.textContent = `(${state.operatorRecommended.length})`;
             }
 
+            const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+            const totalRecs = state.operatorRecommended.length;
+
             recContainer.innerHTML = state.operatorRecommended.map((rec, idx) => {
                 let faviconUrl = '';
                 try {
                     const uObj = new URL(rec.url);
                     faviconUrl = `https://www.google.com/s2/favicons?domain=${uObj.hostname}&sz=32`;
                 } catch(e) {
-                    faviconUrl = 'https://placehold.co/16x16/eab308/ffffff?text=⭐';
+                    faviconUrl = 'https://placehold.co/16x16/8B5CF6/ffffff?text=⭐';
                 }
 
+                const isFirst = idx === 0;
+                const isLast = idx === totalRecs - 1;
+
                 return `
-                <div class="bm-card group bg-white dark:bg-[#171c24] rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between border-2 border-amber-500/30 dark:border-amber-500/20 select-none relative overflow-hidden">
-                    <div class="absolute -right-8 -top-8 w-16 h-16 bg-amber-500/10 rounded-full pointer-events-none"></div>
+                <div data-id="${rec.id}" data-index="${idx}" 
+                    class="bm-card group bg-white dark:bg-[#171c24] rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between border border-recommended-500/30 dark:border-recommended-500/20 select-none relative overflow-hidden">
+                    <div class="absolute -right-8 -top-8 w-16 h-16 bg-recommended-500/10 rounded-full pointer-events-none"></div>
                     <div>
                         <!-- Category Badge placed cleanly at top before title -->
-                        <div class="mb-2.5">
-                            <span class="inline-block text-[10px] font-extrabold px-2 py-0.5 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg pointer-events-none tracking-tight">
+                        <div class="mb-3 flex items-center justify-between">
+                            <span class="inline-block text-[11px] font-extrabold px-2.5 py-1 bg-recommended-50 dark:bg-recommended-500/10 text-recommended-600 dark:text-recommended-400 rounded-xl pointer-events-none tracking-tight">
                                 운영자 Picks
                             </span>
+                            ${state.isAdmin ? `
+                                <div class="flex items-center space-x-0.5 shrink-0 bg-white/80 dark:bg-[#171c24]/80 backdrop-blur-sm rounded-lg p-0.5 border border-recommended-500/20">
+                                    <button onclick="moveOperatorRecOrder('${rec.id}', -1)" ${isFirst ? 'disabled class="p-1 text-[#b0b8c1]/30 cursor-not-allowed"' : 'class="p-1 text-[#8b95a1] hover:text-recommended-500 transition"'} title="위로 이동">
+                                        <i data-lucide="chevron-up" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                    <button onclick="moveOperatorRecOrder('${rec.id}', 1)" ${isLast ? 'disabled class="p-1 text-[#b0b8c1]/30 cursor-not-allowed"' : 'class="p-1 text-[#8b95a1] hover:text-recommended-500 transition"'} title="아래로 이동">
+                                        <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                </div>
+                            ` : ''}
                         </div>
-                        <div class="flex items-center space-x-2 mb-1.5">
-                            <img src="${faviconUrl}" class="w-4 h-4 rounded-sm shrink-0" onerror="this.src='https://placehold.co/16x16/eab308/ffffff?text=⭐'">
-                            <h4 class="font-bold text-[#191f28] dark:text-white text-sm sm:text-base group-hover:text-amber-500 transition line-clamp-1 pointer-events-none">${rec.title}</h4>
+                        <div class="flex items-center space-x-2.5 mb-2">
+                            <img src="${faviconUrl}" class="w-4 h-4 rounded-sm shrink-0" onerror="this.src='https://placehold.co/16x16/8B5CF6/ffffff?text=⭐'">
+                            <h4 class="font-bold text-[#191f28] dark:text-white text-base group-hover:text-recommended-500 transition line-clamp-1 pointer-events-none">${rec.title}</h4>
                         </div>
-                        <p class="text-xs sm:text-sm font-medium text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-3.5 min-h-[2.5rem] leading-relaxed pointer-events-none">${rec.desc || '오늘의 발견 추천 링크'}</p>
+                        <p class="text-xs sm:text-sm font-medium text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-4 min-h-[2.75rem] leading-relaxed pointer-events-none">${rec.desc || '오늘의 발견 추천 링크'}</p>
                     </div>
-                    <a href="${rec.url}" target="_blank" rel="noopener" class="w-full py-2.5 bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-500 hover:text-white text-amber-700 dark:text-amber-300 text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-1.5 transition active:scale-[0.98]">
+                    <a href="${rec.url}" target="_blank" rel="noopener" class="w-full py-2.5 bg-recommended-50 dark:bg-recommended-950/30 hover:bg-recommended-500 hover:text-white text-recommended-700 dark:text-recommended-300 text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-1.5 transition active:scale-[0.98]">
                         <span>방문하기</span>
                         <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
                     </a>
@@ -1106,7 +1154,7 @@
             }).join('');
         }
 
-        function renderCardHtml(bm, idx, totalCount, isTouchDevice, isRecommended = false) {
+        function renderCardHtml(bm, idx, totalCount, isTouchDevice) {
             const isFirst = idx === 0;
             const isLast = idx === totalCount - 1;
             
@@ -1115,44 +1163,44 @@
                 const uObj = new URL(bm.url);
                 faviconUrl = `https://www.google.com/s2/favicons?domain=${uObj.hostname}&sz=32`;
             } catch(e) {
-                faviconUrl = 'https://placehold.co/16x16/ff6b00/ffffff?text=🔗';
+                faviconUrl = 'https://placehold.co/16x16/10B981/ffffff?text=🔗';
             }
 
             return `
             <div data-id="${bm.id}" data-index="${idx}" ${isTouchDevice ? '' : 'draggable="true"'} 
-                class="bm-card group bg-white dark:bg-[#171c24] rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between ${isTouchDevice ? '' : 'cursor-grab active:cursor-grabbing'} border-2 border-transparent select-none">
+                class="bm-card group bg-white dark:bg-[#171c24] rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between ${isTouchDevice ? '' : 'cursor-grab active:cursor-grabbing'} border border-[#e5e8eb] dark:border-[#202632] select-none">
                 <div>
                     <!-- Category Badge placed cleanly at top before title, preventing overlapping -->
-                    <div class="flex items-center justify-between mb-2.5">
-                        <span class="inline-block text-[10px] font-extrabold px-2 py-0.5 bg-brand-50 dark:bg-brand-500/10 text-brand-500 rounded-lg pointer-events-none truncate max-w-[130px] tracking-tight">
+                    <div class="mb-3 flex items-center justify-between">
+                        <span class="inline-block text-[11px] font-extrabold px-2.5 py-1 bg-brand-50 dark:bg-brand-500/10 text-brand-500 rounded-xl pointer-events-none truncate max-w-[130px] tracking-tight">
                             ${bm.category}
                         </span>
                         <div class="flex items-center space-x-0.5 shrink-0">
                             ${isTouchDevice ? `
                                 <button onclick="moveBookmarkOrder('${bm.id}', -1)" ${isFirst ? 'disabled class="p-1 text-[#b0b8c1]/30 cursor-not-allowed"' : 'class="p-1 text-[#8b95a1] hover:text-brand-500 transition"'} title="위로 이동">
-                                    <i data-lucide="chevron-up" class="w-3.5 h-3.5"></i>
+                                    <i data-lucide="chevron-up" class="w-4 h-4"></i>
                                 </button>
                                 <button onclick="moveBookmarkOrder('${bm.id}', 1)" ${isLast ? 'disabled class="p-1 text-[#b0b8c1]/30 cursor-not-allowed"' : 'class="p-1 text-[#8b95a1] hover:text-brand-500 transition"'} title="아래로 이동">
-                                    <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
                                 </button>
-                                <div class="w-[1px] h-3 bg-[#b0b8c1]/30 mx-0.5"></div>
+                                <div class="w-[1px] h-3.5 bg-[#b0b8c1]/30 mx-0.5"></div>
                             ` : ''}
-                            <button onclick="togglePin('${bm.id}')" class="p-1 text-[#b0b8c1] hover:text-amber-500 transition" title="즐겨찾기">
-                                <i data-lucide="pin" class="w-3.5 h-3.5 ${bm.pinned ? 'fill-amber-500 text-amber-500' : ''}"></i>
+                            <button onclick="togglePin('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-amber-500 transition" title="즐겨찾기">
+                                <i data-lucide="pin" class="w-4 h-4 ${bm.pinned ? 'fill-amber-500 text-amber-500' : ''}"></i>
                             </button>
-                            <button onclick="openEditModal('${bm.id}')" class="p-1 text-[#b0b8c1] hover:text-brand-500 transition" title="수정">
-                                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                            <button onclick="openEditModal('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-brand-500 transition" title="수정">
+                                <i data-lucide="pencil" class="w-4 h-4"></i>
                             </button>
-                            <button onclick="deleteBookmark('${bm.id}')" class="p-1 text-[#b0b8c1] hover:text-rose-500 transition" title="삭제">
-                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            <button onclick="deleteBookmark('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-rose-500 transition" title="삭제">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-2 mb-1.5">
-                        <img src="${faviconUrl}" class="w-4 h-4 rounded-sm shrink-0" onerror="this.src='https://placehold.co/16x16/ff6b00/ffffff?text=🔗'">
-                        <h4 class="font-bold text-[#191f28] dark:text-white text-sm sm:text-base group-hover:text-brand-500 transition line-clamp-1 pointer-events-none">${bm.title}</h4>
+                    <div class="flex items-center space-x-2.5 mb-2">
+                        <img src="${faviconUrl}" class="w-4 h-4 rounded-sm shrink-0" onerror="this.src='https://placehold.co/16x16/10B981/ffffff?text=🔗'">
+                        <h4 class="font-bold text-[#191f28] dark:text-white text-base group-hover:text-brand-500 transition line-clamp-1 pointer-events-none">${bm.title}</h4>
                     </div>
-                    <p class="text-xs sm:text-sm font-medium text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-3.5 min-h-[2.5rem] leading-relaxed pointer-events-none">${bm.desc || '메모 없음'}</p>
+                    <p class="text-xs sm:text-sm font-medium text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-4 min-h-[2.75rem] leading-relaxed pointer-events-none">${bm.desc || '메모 없음'}</p>
                 </div>
                 <a href="${bm.url}" target="_blank" rel="noopener" class="w-full py-2.5 bg-[#f2f4f6] dark:bg-[#202632] hover:bg-brand-500 hover:text-white text-[#4e5968] dark:text-[#b0b8c1] text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center space-x-1.5 transition active:scale-[0.98]">
                     <span>방문하기</span>
