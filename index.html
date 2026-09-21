@@ -49,6 +49,7 @@
 </head>
 <body class="bg-[#f2f4f6] dark:bg-[#101318] text-[#191f28] dark:text-[#f9fafb] min-h-screen flex flex-col font-sans transition-colors duration-200 antialiased">
 
+    <!-- Header -->
     <header class="bg-white/80 dark:bg-[#171c24]/80 backdrop-blur-md sticky top-0 z-30 transition-colors duration-200 border-b border-[#e5e8eb] dark:border-[#202632]">
         <div class="max-w-5xl mx-auto px-4 sm:px-8 py-3.5 sm:py-5">
             <div class="flex items-center justify-between gap-2">
@@ -88,6 +89,7 @@
         </div>
     </header>
 
+    <!-- Main Container -->
     <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-8 py-5 sm:py-6 space-y-4 sm:space-y-5">
 
         <!-- Category Filter Row with Action Buttons -->
@@ -262,6 +264,7 @@
         </div>
     </div>
 
+    <!-- Firebase SDK Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, GithubAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -302,7 +305,7 @@
         let unsubscribeFirestore = null;
 
         try {
-            if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY") {
+            if (firebaseConfig.apiKey) {
                 app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
