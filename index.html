@@ -237,21 +237,21 @@
             </div>
         </div>
 
-        <!-- Public Popular Curation Section - Visible ONLY in '전체' -->
+        <!-- Public Popular Curation Section (Link Ranking) - Visible ONLY in '전체' -->
         <div id="publicPopularSection" class="space-y-3.5 pt-2">
-            <div class="flex items-center justify-between pb-2 border-b border-[#e5e8eb] dark:border-[#202632]">
-                <div class="flex items-center space-x-2.5">
-                    <div class="flex items-center gap-2">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-[#e5e8eb] dark:border-[#202632] gap-2">
+                <div class="flex items-center space-x-2.5 min-w-0">
+                    <div class="flex items-center gap-2 shrink-0">
                         <i data-lucide="flame" class="w-5 h-5 text-amber-500 fill-amber-500/20"></i>
-                        <h3 class="font-bold text-base text-[#191f28] dark:text-white">유저 인기 랭킹 큐레이션</h3>
+                        <h3 class="font-bold text-base text-[#191f28] dark:text-white">링크 랭킹</h3>
                     </div>
-                    <span class="text-[11px] font-extrabold px-2.5 py-0.5 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl tracking-tight">HOT CURATION</span>
+                    <span class="text-[11px] font-extrabold px-2.5 py-0.5 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl tracking-tight shrink-0">HOT RANKING</span>
                 </div>
-                <span class="text-xs font-semibold text-[#8b95a1]">실시간 인기 공유 링크</span>
+                <span class="text-xs font-semibold text-[#8b95a1] shrink-0">실시간 인기 공유 링크</span>
             </div>
             <p class="text-xs font-medium text-[#8b95a1] pl-0.5">다른 유저들이 공유한 링크 중 가장 많은 관심을 받고 있는 인기 사이트입니다.</p>
             
-            <div id="publicPopularContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5">
+            <div id="publicPopularContainer" class="flex sm:grid sm:grid-cols-2 md:grid-cols-3 overflow-x-auto sm:overflow-x-visible no-scrollbar gap-4 sm:gap-5 pb-2 sm:pb-0">
                 <!-- Dynamically populated popular curation -->
             </div>
         </div>
@@ -1026,7 +1026,7 @@
                 }
 
                 return `
-                <div class="bg-white dark:bg-[#171c24] rounded-3xl p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between border border-amber-500/25 relative overflow-hidden">
+                <div class="bg-white dark:bg-[#171c24] rounded-3xl p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between border border-amber-500/25 relative overflow-hidden shrink-0 w-[280px] sm:w-auto">
                     <div class="absolute -right-6 -top-6 w-14 h-14 bg-amber-500/10 rounded-full pointer-events-none"></div>
                     <div>
                         <div class="mb-4 flex items-center justify-between">
@@ -2502,21 +2502,21 @@
                     </div>
                 </div>
 
-                <!-- Public Popular Curation Section - Visible ONLY in '전체' -->
+                <!-- Public Popular Curation Section (Link Ranking) - Visible ONLY in '전체' -->
                 <div id="publicPopularSection" class="space-y-3.5 pt-2">
-                    <div class="flex items-center justify-between pb-2 border-b border-[#e5e8eb] dark:border-[#202632]">
-                        <div class="flex items-center space-x-2.5">
-                            <div class="flex items-center gap-2">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-[#e5e8eb] dark:border-[#202632] gap-2">
+                        <div class="flex items-center space-x-2.5 min-w-0">
+                            <div class="flex items-center gap-2 shrink-0">
                                 <i data-lucide="flame" class="w-5 h-5 text-amber-500 fill-amber-500/20"></i>
-                                <h3 class="font-bold text-base text-[#191f28] dark:text-white">유저 인기 랭킹 큐레이션</h3>
+                                <h3 class="font-bold text-base text-[#191f28] dark:text-white">링크 랭킹</h3>
                             </div>
-                            <span class="text-[11px] font-extrabold px-2.5 py-0.5 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl tracking-tight">HOT CURATION</span>
+                            <span class="text-[11px] font-extrabold px-2.5 py-0.5 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl tracking-tight shrink-0">HOT RANKING</span>
                         </div>
-                        <span class="text-xs font-semibold text-[#8b95a1]">실시간 인기 공유 링크</span>
+                        <span class="text-xs font-semibold text-[#8b95a1] shrink-0">실시간 인기 공유 링크</span>
                     </div>
                     <p class="text-xs font-medium text-[#8b95a1] pl-0.5">다른 유저들이 공유한 링크 중 가장 많은 관심을 받고 있는 인기 사이트입니다.</p>
                     
-                    <div id="publicPopularContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5">
+                    <div id="publicPopularContainer" class="flex sm:grid sm:grid-cols-2 md:grid-cols-3 overflow-x-auto sm:overflow-x-visible no-scrollbar gap-4 sm:gap-5 pb-2 sm:pb-0">
                         <!-- Dynamically populated popular curation -->
                     </div>
                 </div>
@@ -2657,3 +2657,4 @@
         });
     </script>
 </body>
+</html>
