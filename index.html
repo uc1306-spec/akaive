@@ -237,25 +237,6 @@
             </div>
         </div>
 
-        <!-- Public Popular Curation Section (Link Ranking) - Visible ONLY in '전체' -->
-        <div id="publicPopularSection" class="space-y-3.5 pt-2">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-[#e5e8eb] dark:border-[#202632] gap-2">
-                <div class="flex items-center space-x-2.5 min-w-0">
-                    <div class="flex items-center gap-2 shrink-0">
-                        <i data-lucide="flame" class="w-5 h-5 text-amber-500 fill-amber-500/20"></i>
-                        <h3 class="font-bold text-base text-[#191f28] dark:text-white">링크 랭킹</h3>
-                    </div>
-                    <span class="text-[11px] font-extrabold px-2.5 py-0.5 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl tracking-tight shrink-0">HOT RANKING</span>
-                </div>
-                <span class="text-xs font-semibold text-[#8b95a1] shrink-0">실시간 인기 공유 링크</span>
-            </div>
-            <p class="text-xs font-medium text-[#8b95a1] pl-0.5">다른 유저들이 공유한 링크 중 가장 많은 관심을 받고 있는 인기 사이트입니다.</p>
-            
-            <div id="publicPopularContainer" class="flex sm:grid sm:grid-cols-2 md:grid-cols-3 overflow-x-auto sm:overflow-x-visible no-scrollbar gap-4 sm:gap-5 pb-2 sm:pb-0">
-                <!-- Dynamically populated popular curation -->
-            </div>
-        </div>
-
         <!-- Bookmarks Container -->
         <div id="bookmarkContainer" class="space-y-8">
             <!-- Dynamically generated grouped or filtered bookmarks -->
@@ -971,91 +952,12 @@
         };
 
         async function fetchPublicPopularCuration() {
-            if (!db) {
-                state.publicPopularCuration = [
-                    { id: 'pop-1', title: 'GitHub', url: 'https://github.com', category: '개발', desc: '개발자들의 필수 소스코드 보관소', visitCount: 45 },
-                    { id: 'pop-2', title: 'ChatGPT', url: 'https://chatgpt.com', category: 'AI', desc: '인공지능 대화형 어시스턴트', visitCount: 38 },
-                    { id: 'pop-3', title: 'Notion', url: 'https://www.notion.so', category: '생산성', desc: '올인원 워크스페이스 노트', visitCount: 29 }
-                ];
-                if (state.viewMode === 'home') renderPublicPopularCuration();
-                return;
-            }
-
-            try {
-                const querySnapshot = await getDocs(collection(db, 'user_archives'));
-                let allBookmarks = [];
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    if (data.bookmarks && Array.isArray(data.bookmarks)) {
-                        allBookmarks.push(...data.bookmarks);
-                    }
-                });
-
-                allBookmarks.sort((a, b) => (b.visitCount || 0) - (a.visitCount || 0));
-                state.publicPopularCuration = allBookmarks.slice(0, 3);
-                if (state.viewMode === 'home') renderPublicPopularCuration();
-            } catch (e) {
-                console.warn("Public popular curation fetch notice:", e.message);
-            }
+            // Public Popular Curation removed per user request
+            state.publicPopularCuration = [];
         }
 
         function renderPublicPopularCuration() {
-            const container = document.getElementById('publicPopularContainer');
-            const section = document.getElementById('publicPopularSection');
-            if (!container || !section) return;
-
-            if (state.currentCategory !== '전체') {
-                section.classList.add('hidden');
-                return;
-            } else {
-                section.classList.remove('hidden');
-            }
-
-            if (state.publicPopularCuration.length === 0) {
-                section.classList.add('hidden');
-                return;
-            }
-
-            container.innerHTML = state.publicPopularCuration.map((bm, index) => {
-                let faviconUrl = '';
-                try {
-                    const uObj = new URL(bm.url);
-                    faviconUrl = `https://www.google.com/s2/favicons?domain=${uObj.hostname}&sz=32`;
-                } catch(e) {
-                    faviconUrl = 'https://placehold.co/16x16/F59E0B/ffffff?text=🔥';
-                }
-
-                return `
-                <div class="bg-white dark:bg-[#171c24] rounded-3xl p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between border border-amber-500/25 relative overflow-hidden shrink-0 w-[280px] sm:w-auto">
-                    <div class="absolute -right-6 -top-6 w-14 h-14 bg-amber-500/10 rounded-full pointer-events-none"></div>
-                    <div>
-                        <div class="mb-4 flex items-center justify-between">
-                            <span class="text-xs font-extrabold px-3 py-1 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl">
-                                TOP ${index + 1} 인기 링크
-                            </span>
-                            <div class="flex items-center space-x-1.5">
-                                <span class="text-[11px] font-bold text-[#8b95a1]">조회수 ${bm.visitCount || 1}회</span>
-                                <button onclick="openBookmarkShareModal('${bm.url}', '${bm.title}')" class="p-1.5 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 rounded-xl transition" title="공유하기">
-                                    <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3 mb-3">
-                            <img src="${faviconUrl}" class="w-5 h-5 rounded-sm shrink-0" onerror="this.src='https://placehold.co/16x16/F59E0B/ffffff?text=🔥'">
-                            <h4 class="font-bold text-[#191f28] dark:text-white text-lg line-clamp-1">${bm.title}</h4>
-                        </div>
-                        <p class="text-sm font-medium text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-6 min-h-[3rem] leading-relaxed">${bm.notes || bm.desc || '유저들이 자주 찾는 인기 링크입니다.'}</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <a href="${bm.url}" target="_blank" rel="noopener" onclick="recordVisit('${bm.id}')" class="flex-1 py-3.5 bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-500 hover:text-white text-amber-700 dark:text-amber-300 text-sm font-bold rounded-2xl flex items-center justify-center space-x-2 transition">
-                            <span>방문하기</span>
-                            <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
-                        </a>
-                    </div>
-                </div>
-                `;
-            }).join('');
-            if (window.lucide) lucide.createIcons();
+            // Removed
         }
 
         window.recordVisit = function(id) {
@@ -2035,7 +1937,6 @@
             const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
             renderOperatorRecommended();
-            renderPublicPopularCuration();
             renderCategories();
 
             if (state.currentCategory === '전체') {
@@ -2499,25 +2400,6 @@
                     
                     <div id="operatorRecommendedContainer" class="flex sm:grid sm:grid-cols-2 md:grid-cols-3 overflow-x-auto sm:overflow-x-visible no-scrollbar gap-4 sm:gap-5 pb-2 sm:pb-0">
                         <!-- Dynamically populated recommended sites from operator -->
-                    </div>
-                </div>
-
-                <!-- Public Popular Curation Section (Link Ranking) - Visible ONLY in '전체' -->
-                <div id="publicPopularSection" class="space-y-3.5 pt-2">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-[#e5e8eb] dark:border-[#202632] gap-2">
-                        <div class="flex items-center space-x-2.5 min-w-0">
-                            <div class="flex items-center gap-2 shrink-0">
-                                <i data-lucide="flame" class="w-5 h-5 text-amber-500 fill-amber-500/20"></i>
-                                <h3 class="font-bold text-base text-[#191f28] dark:text-white">링크 랭킹</h3>
-                            </div>
-                            <span class="text-[11px] font-extrabold px-2.5 py-0.5 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl tracking-tight shrink-0">HOT RANKING</span>
-                        </div>
-                        <span class="text-xs font-semibold text-[#8b95a1] shrink-0">실시간 인기 공유 링크</span>
-                    </div>
-                    <p class="text-xs font-medium text-[#8b95a1] pl-0.5">다른 유저들이 공유한 링크 중 가장 많은 관심을 받고 있는 인기 사이트입니다.</p>
-                    
-                    <div id="publicPopularContainer" class="flex sm:grid sm:grid-cols-2 md:grid-cols-3 overflow-x-auto sm:overflow-x-visible no-scrollbar gap-4 sm:gap-5 pb-2 sm:pb-0">
-                        <!-- Dynamically populated popular curation -->
                     </div>
                 </div>
 
