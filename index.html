@@ -127,79 +127,70 @@
         </div>
     </header>
 
-    <!-- App Main Body Layout with Left Narrow Sidebar -->
+    <!-- App Main Body Layout with Left Dashboard Sidebar -->
     <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-6 flex flex-col md:flex-row gap-6 items-start">
         
-        <!-- Left Vertical Sidebar (Collapsible with toggle button) -->
-        <aside id="sidebarAside" class="w-full md:w-56 shrink-0 bg-white dark:bg-[#171c24] rounded-3xl p-3.5 shadow-sm border border-[#e5e8eb] dark:border-[#202632] space-y-4 sticky top-20 transition-all duration-300">
-            <!-- Sidebar Top Toggle & Collapse Header -->
-            <div class="flex items-center justify-between px-1.5 pt-0.5">
-                <span id="sidebarHeaderLabel" class="text-xs font-bold text-[#8b95a1] tracking-wider uppercase">메뉴</span>
-                <button onclick="toggleSidebarCollapse()" class="p-1.5 text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-xl transition" title="사이드바 접기/펼치기">
+        <!-- Left Vertical Dashboard Sidebar (Responsive: static on mobile, sticky on desktop) -->
+        <aside id="sidebarAside" class="w-full md:w-60 shrink-0 bg-white dark:bg-[#171c24] rounded-3xl p-4 shadow-sm border border-[#e5e8eb] dark:border-[#202632] space-y-4 md:sticky md:top-20 transition-all duration-300">
+            <!-- Sidebar Header & Toggle Button -->
+            <div class="flex items-center justify-between px-1 pt-0.5">
+                <span id="sidebarTitle" class="text-xs font-bold text-[#8b95a1] tracking-wider uppercase">메뉴</span>
+                <button onclick="toggleSidebarCollapse()" class="p-1.5 text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-xl transition" title="메뉴 접기/펼치기">
                     <i data-lucide="panel-left-close" id="sidebarToggleIcon" class="w-4 h-4 transition-transform duration-300"></i>
                 </button>
             </div>
 
-            <!-- Vertical Navigation List -->
-            <nav id="sidebarNavList" class="space-y-1">
-                <!-- Dynamically injected via JS -->
-            </nav>
+            <!-- Vertical Dashboard Navigation List -->
+            <div id="sidebarAccordionWrapper" class="space-y-3 transition-all duration-300 overflow-hidden">
+                <nav id="sidebarNavList" class="space-y-1">
+                    <!-- Dynamically injected via JS -->
+                </nav>
 
-            <div id="sidebarBottomActions" class="pt-3 border-t border-[#e5e8eb] dark:border-[#202632] space-y-2 px-0.5">
-                <button onclick="openCategoryModal()" class="w-full flex items-center justify-between px-2.5 py-2 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-2xl transition sidebar-label-text">
-                    <span class="flex items-center gap-2"><i data-lucide="folder-cog" class="w-4 h-4 text-brand-500 shrink-0"></i> <span class="sidebar-text-span">카테고리 관리</span></span>
-                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 sidebar-text-span"></i>
-                </button>
-                <button onclick="openAddModal()" class="w-full flex items-center justify-center gap-2 py-2.5 px-3 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-2xl shadow-md shadow-brand-500/20 transition active:scale-95">
-                    <i data-lucide="plus-circle" class="w-4 h-4 stroke-[2.5] shrink-0"></i>
-                    <span class="sidebar-text-span">새 링크 추가</span>
-                </button>
+                <div id="sidebarBottomActions" class="pt-3 border-t border-[#e5e8eb] dark:border-[#202632] space-y-2 px-0.5">
+                    <button onclick="openCategoryModal()" class="w-full flex items-center justify-between px-3 py-2.5 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-2xl transition">
+                        <span class="sidebar-text flex items-center gap-2"><i data-lucide="folder-cog" class="w-4 h-4 text-brand-500 shrink-0"></i> <span>카테고리 관리</span></span>
+                        <i data-lucide="chevron-right" class="sidebar-arrow w-3.5 h-3.5"></i>
+                    </button>
+                    <button onclick="openAddModal()" class="w-full flex items-center justify-center gap-2 py-3 px-3 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-2xl shadow-md shadow-brand-500/20 transition active:scale-95">
+                        <i data-lucide="plus-circle" class="w-4 h-4 stroke-[2.5] shrink-0"></i>
+                        <span class="sidebar-text">새 링크 추가</span>
+                    </button>
+                </div>
             </div>
         </aside>
 
         <!-- Right Main Content Area -->
         <main id="mainAppView" class="flex-1 w-full min-w-0 space-y-6">
 
-            <!-- Quick Guide Banner -->
-            <div id="guideWrapper" class="bg-white dark:bg-[#171c24] rounded-3xl p-5 shadow-sm border border-brand-500/30 dark:border-brand-500/20 transition-all duration-200">
+            <!-- Compact Quick Guide Banner -->
+            <div id="guideWrapper" class="bg-white dark:bg-[#171c24] rounded-3xl px-5 py-4 shadow-sm border border-brand-500/30 dark:border-brand-500/20 transition-all duration-200 max-w-xl">
                 <div class="flex items-center justify-between cursor-pointer select-none gap-3" onclick="toggleGuideCollapse()">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-brand-50 dark:bg-brand-500/20 text-brand-500 rounded-2xl flex items-center justify-center font-bold shrink-0 shadow-sm">
-                            <i data-lucide="lightbulb" class="w-5 h-5 fill-brand-400 text-brand-500"></i>
+                        <div class="w-9 h-9 bg-brand-50 dark:bg-brand-500/20 text-brand-500 rounded-2xl flex items-center justify-center font-bold shrink-0 shadow-sm">
+                            <i data-lucide="lightbulb" class="w-4 h-4 fill-brand-400 text-brand-500"></i>
                         </div>
                         <div>
-                            <span class="text-base font-extrabold text-[#191f28] dark:text-white tracking-tight block">링키지 이용 가이드</span>
-                            <span class="text-xs text-[#8b95a1] font-medium">처음 방문하셨나요? 3단계로 쉽게 시작하세요.</span>
+                            <span class="text-sm font-extrabold text-[#191f28] dark:text-white tracking-tight">이용 가이드</span>
+                            <span class="text-xs text-[#8b95a1] font-medium ml-2">처음이신가요? 3단계로 시작하세요</span>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-1">
-                        <button id="guideToggleBtn" class="p-2 text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white transition">
-                            <i data-lucide="chevron-down" id="guideChevron" class="w-5 h-5 transition-transform duration-200"></i>
-                        </button>
-                    </div>
+                    <button id="guideToggleBtn" class="p-1.5 text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white transition">
+                        <i data-lucide="chevron-down" id="guideChevron" class="w-4 h-4 transition-transform duration-200"></i>
+                    </button>
                 </div>
                 
-                <div id="guideContent" class="hidden mt-5 pt-5 border-t border-[#e5e8eb] dark:border-[#202632] transition-all duration-200 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div class="p-4 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl space-y-2 border border-[#e5e8eb] dark:border-transparent">
-                        <span class="text-xs font-extrabold text-brand-600 dark:text-brand-400 flex items-center gap-1.5">
-                            <span class="w-6 h-6 bg-brand-100 dark:bg-brand-500/20 rounded-full flex items-center justify-center text-xs font-black">1</span>
-                            로그인
-                        </span>
-                        <p class="text-xs text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed">내 계정으로 안전하게 링크를 저장하고 클라우드 동기화하세요.</p>
+                <div id="guideContent" class="hidden mt-4 pt-4 border-t border-[#e5e8eb] dark:border-[#202632] grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="p-3 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl space-y-1.5 border border-[#e5e8eb] dark:border-transparent">
+                        <span class="text-xs font-black text-brand-600 dark:text-brand-400 block">1. 로그인</span>
+                        <p class="text-[11px] text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed">내 계정으로 안전하게 링크를 저장하고 클라우드 동기화하세요.</p>
                     </div>
-                    <div class="p-4 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl space-y-2 border border-[#e5e8eb] dark:border-transparent">
-                        <span class="text-xs font-extrabold text-brand-600 dark:text-brand-400 flex items-center gap-1.5">
-                            <span class="w-6 h-6 bg-brand-100 dark:bg-brand-500/20 rounded-full flex items-center justify-center text-xs font-black">2</span>
-                            카테고리 설정
-                        </span>
-                        <p class="text-xs text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed">나만의 맞춤 폴더를 만들고 순서와 이름을 정리해보세요.</p>
+                    <div class="p-3 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl space-y-1.5 border border-[#e5e8eb] dark:border-transparent">
+                        <span class="text-xs font-black text-brand-600 dark:text-brand-400 block">2. 카테고리 설정</span>
+                        <p class="text-[11px] text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed">나만의 맞춤 폴더를 만들고 순서와 이름을 정리해보세요.</p>
                     </div>
-                    <div class="p-4 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl space-y-2 border border-[#e5e8eb] dark:border-transparent">
-                        <span class="text-xs font-extrabold text-brand-600 dark:text-brand-400 flex items-center gap-1.5">
-                            <span class="w-6 h-6 bg-brand-100 dark:bg-brand-500/20 rounded-full flex items-center justify-center text-xs font-black">3</span>
-                            링크 추가
-                        </span>
-                        <p class="text-xs text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed">자주 찾는 웹사이트를 등록하고 상세한 생각이나 노트를 기록하세요.</p>
+                    <div class="p-3 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl space-y-1.5 border border-[#e5e8eb] dark:border-transparent">
+                        <span class="text-xs font-black text-brand-600 dark:text-brand-400 block">3. 링크 추가</span>
+                        <p class="text-[11px] text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed">자주 찾는 웹사이트를 등록하고 상세한 노트를 기록하세요.</p>
                     </div>
                 </div>
             </div>
@@ -750,22 +741,45 @@
 
         window.toggleSidebarCollapse = function() {
             state.isSidebarCollapsed = !state.isSidebarCollapsed;
-            const aside = document.getElementById('sidebarAside');
+            const sidebar = document.getElementById('sidebarAside');
+            const accordionWrapper = document.getElementById('sidebarAccordionWrapper');
             const toggleIcon = document.getElementById('sidebarToggleIcon');
-            const headerLabel = document.getElementById('sidebarHeaderLabel');
+            const sidebarTitle = document.getElementById('sidebarTitle');
+            const sidebarTexts = document.querySelectorAll('.sidebar-text');
+            const sidebarArrows = document.querySelectorAll('.sidebar-arrow');
 
-            if (state.isSidebarCollapsed) {
-                aside.classList.remove('md:w-56');
-                aside.classList.add('md:w-20');
-                if (headerLabel) headerLabel.classList.add('hidden');
-                if (toggleIcon) toggleIcon.classList.add('rotate-180');
+            const isMobile = window.innerWidth < 768;
+
+            if (isMobile) {
+                // Mobile: Vertical Accordion collapse
+                if (state.isSidebarCollapsed) {
+                    if (accordionWrapper) accordionWrapper.style.maxHeight = '0px';
+                    if (toggleIcon) {
+                        toggleIcon.setAttribute('data-lucide', 'chevron-down');
+                    }
+                } else {
+                    if (accordionWrapper) accordionWrapper.style.maxHeight = '600px';
+                    if (toggleIcon) {
+                        toggleIcon.setAttribute('data-lucide', 'chevron-up');
+                    }
+                }
             } else {
-                aside.classList.remove('md:w-20');
-                aside.classList.add('md:w-56');
-                if (headerLabel) headerLabel.classList.remove('hidden');
-                if (toggleIcon) toggleIcon.classList.remove('rotate-180');
+                // PC: Horizontal Sidebar collapse (rail mode)
+                if (state.isSidebarCollapsed) {
+                    if (sidebar) sidebar.classList.replace('md:w-60', 'md:w-20');
+                    if (sidebarTitle) sidebarTitle.classList.add('hidden');
+                    sidebarTexts.forEach(el => el.classList.add('hidden'));
+                    sidebarArrows.forEach(el => el.classList.add('hidden'));
+                    if (toggleIcon) toggleIcon.setAttribute('data-lucide', 'panel-left-open');
+                } else {
+                    if (sidebar) sidebar.classList.replace('md:w-20', 'md:w-60');
+                    if (sidebarTitle) sidebarTitle.classList.remove('hidden');
+                    sidebarTexts.forEach(el => el.classList.remove('hidden'));
+                    sidebarArrows.forEach(el => el.classList.remove('hidden'));
+                    if (toggleIcon) toggleIcon.setAttribute('data-lucide', 'panel-left-close');
+                }
             }
-            renderSidebarNav();
+            if (window.lucide) lucide.createIcons();
         };
 
         window.openInfoModal = function(type) {
@@ -1765,69 +1779,43 @@
 
             const totalCount = state.bookmarks.length;
             const pinnedCount = state.bookmarks.filter(b => b.pinned).length;
-            const collapsed = state.isSidebarCollapsed;
 
             let html = `
-                <button onclick="selectCategory('전체')" title="홈 (전체)" class="w-full flex items-center ${collapsed ? 'justify-center px-0 py-2.5 space-x-1' : 'justify-between px-2.5 py-2'} rounded-xl text-xs font-bold transition ${state.currentCategory === '전체' ? 'bg-brand-500 text-white shadow-sm shadow-brand-500/20' : 'text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632]'}">
-                    <span class="flex items-center gap-2">
+                <button onclick="selectCategory('전체')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-2xl text-xs font-bold transition ${state.currentCategory === '전체' ? 'bg-brand-500 text-white shadow-sm shadow-brand-500/20' : 'text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632]'}" title="홈 (전체)">
+                    <span class="flex items-center gap-2 truncate">
                         <i data-lucide="home" class="w-4 h-4 shrink-0"></i> 
-                        <span class="${collapsed ? 'hidden' : 'inline'}">홈 (전체)</span>
-                        <span class="${collapsed ? 'inline' : 'hidden'} text-xs font-black">전</span>
+                        <span class="sidebar-text truncate">홈 (전체)</span>
                     </span>
-                    <span class="${collapsed ? 'hidden' : 'px-1.5 py-0.5 text-[10px] rounded-md inline'} ${state.currentCategory === '전체' ? 'bg-white/20 text-white' : 'bg-[#e5e8eb] dark:bg-[#2c3442] text-[#4e5968] dark:text-[#b0b8c1]'}">${totalCount}</span>
+                    <span class="sidebar-text px-2 py-0.5 text-[10px] rounded-lg ${state.currentCategory === '전체' ? 'bg-white/20 text-white' : 'bg-[#e5e8eb] dark:bg-[#2c3442] text-[#4e5968] dark:text-[#b0b8c1]'}">${totalCount}</span>
                 </button>
-                <button onclick="selectCategory('📌')" title="즐겨찾기" class="w-full flex items-center ${collapsed ? 'justify-center px-0 py-2.5 space-x-1' : 'justify-between px-2.5 py-2'} rounded-xl text-xs font-bold transition ${state.currentCategory === '📌' ? 'bg-amber-500 text-white shadow-sm shadow-amber-500/20' : 'text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632]'}">
-                    <span class="flex items-center gap-2">
+                <button onclick="selectCategory('📌')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-2xl text-xs font-bold transition ${state.currentCategory === '📌' ? 'bg-amber-500 text-white shadow-sm shadow-amber-500/20' : 'text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632]'}" title="즐겨찾기">
+                    <span class="flex items-center gap-2 truncate">
                         <i data-lucide="pin" class="w-4 h-4 shrink-0"></i> 
-                        <span class="${collapsed ? 'hidden' : 'inline'}">즐겨찾기</span>
-                        <span class="${collapsed ? 'inline' : 'hidden'} text-xs font-black">핀</span>
+                        <span class="sidebar-text truncate">즐겨찾기</span>
                     </span>
-                    <span class="${collapsed ? 'hidden' : 'px-1.5 py-0.5 text-[10px] rounded-md inline'} ${state.currentCategory === '📌' ? 'bg-white/20 text-white' : 'bg-[#e5e8eb] dark:bg-[#2c3442] text-[#4e5968] dark:text-[#b0b8c1]'}">${pinnedCount}</span>
+                    <span class="sidebar-text px-2 py-0.5 text-[10px] rounded-lg ${state.currentCategory === '📌' ? 'bg-white/20 text-white' : 'bg-[#e5e8eb] dark:bg-[#2c3442] text-[#4e5968] dark:text-[#b0b8c1]'}">${pinnedCount}</span>
                 </button>
             `;
 
             const userCategories = state.categories.filter(c => c !== '전체');
             if (userCategories.length > 0) {
-                if (!collapsed) {
-                    html += `<div class="pt-2 pb-1 px-1.5"><span class="text-[10px] font-extrabold text-[#8b95a1] uppercase tracking-wider">카테고리 폴더</span></div>`;
-                } else {
-                    html += `<div class="pt-2 pb-1 text-center"><span class="text-[9px] text-[#8b95a1]">•••</span></div>`;
-                }
-
+                html += `<div class="pt-3 pb-1.5 px-1 sidebar-text"><span class="text-[10px] font-extrabold text-[#8b95a1] uppercase tracking-wider">카테고리 폴더</span></div>`;
                 html += userCategories.map(cat => {
                     const catCount = state.bookmarks.filter(b => b.category === cat).length;
                     const isActive = state.currentCategory === cat;
-                    const firstChar = cat.charAt(0);
                     return `
-                        <button onclick="selectCategory('${cat}')" title="${cat}" class="w-full flex items-center ${collapsed ? 'justify-center px-0 py-2.5 space-x-1' : 'justify-between px-2.5 py-2'} rounded-xl text-xs font-bold transition ${isActive ? 'bg-brand-500 text-white shadow-sm shadow-brand-500/20' : 'text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632]'}">
-                            <span class="flex items-center gap-2 truncate pr-1.5">
+                        <button onclick="selectCategory('${cat}')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-2xl text-xs font-bold transition ${isActive ? 'bg-brand-500 text-white shadow-sm shadow-brand-500/20' : 'text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632]'}" title="${cat}">
+                            <span class="flex items-center gap-2 truncate pr-2">
                                 <i data-lucide="folder" class="w-4 h-4 shrink-0"></i> 
-                                <span class="${collapsed ? 'hidden' : 'inline'} truncate">${cat}</span>
-                                <span class="${collapsed ? 'inline' : 'hidden'} text-xs font-black truncate">${firstChar}</span>
+                                <span class="sidebar-text truncate">${cat}</span>
                             </span>
-                            <span class="${collapsed ? 'hidden' : 'px-1.5 py-0.5 text-[10px] rounded-md shrink-0 inline'} ${isActive ? 'bg-white/20 text-white' : 'bg-[#e5e8eb] dark:bg-[#2c3442] text-[#4e5968] dark:text-[#b0b8c1]'}">${catCount}</span>
+                            <span class="sidebar-text px-2 py-0.5 text-[10px] rounded-lg shrink-0 ${isActive ? 'bg-white/20 text-white' : 'bg-[#e5e8eb] dark:bg-[#2c3442] text-[#4e5968] dark:text-[#b0b8c1]'}">${catCount}</span>
                         </button>
                     `;
                 }).join('');
             }
 
             navList.innerHTML = html;
-
-            const bottomActions = document.getElementById('sidebarBottomActions');
-            if (bottomActions) {
-                const spans = bottomActions.querySelectorAll('.sidebar-text-span');
-                const btn1 = bottomActions.querySelector('button:nth-child(1)');
-                const btn2 = bottomActions.querySelector('button:nth-child(2)');
-                if (collapsed) {
-                    spans.forEach(s => s.classList.add('hidden'));
-                    if (btn1) btn1.setAttribute('title', '카테고리 관리');
-                    if (btn2) btn2.setAttribute('title', '새 링크 추가');
-                } else {
-                    spans.forEach(s => s.classList.remove('hidden'));
-                    if (btn1) btn1.removeAttribute('title');
-                    if (btn2) btn2.removeAttribute('title');
-                }
-            }
 
             if (select) {
                 select.innerHTML = userCategories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
@@ -1915,7 +1903,6 @@
                                     </button>
                                 </div>
                             </div>
-                            <!-- Updated container to match Today's Discovery grid & scroll layout -->
                             <div class="${isCollapsed ? 'hidden' : ''} flex sm:grid sm:grid-cols-2 md:grid-cols-3 overflow-x-auto sm:overflow-x-visible no-scrollbar gap-4 sm:gap-5 pb-2 sm:pb-0">
                                 ${catBookmarks.map((bm, idx) => renderCardHtml(bm, idx, catBookmarks.length, isTouchDevice)).join('')}
                             </div>
@@ -2124,46 +2111,35 @@
             if (!mainEl) return;
 
             mainEl.innerHTML = `
-                <!-- Quick Guide Banner -->
-                <div id="guideWrapper" class="bg-white dark:bg-[#171c24] rounded-3xl p-5 shadow-sm border border-brand-500/30 dark:border-brand-500/20 transition-all duration-200">
+                <!-- Compact Quick Guide Banner -->
+                <div id="guideWrapper" class="bg-white dark:bg-[#171c24] rounded-3xl px-5 py-4 shadow-sm border border-brand-500/30 dark:border-brand-500/20 transition-all duration-200 max-w-xl">
                     <div class="flex items-center justify-between cursor-pointer select-none gap-3" onclick="toggleGuideCollapse()">
                         <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-brand-50 dark:bg-brand-500/20 text-brand-500 rounded-2xl flex items-center justify-center font-bold shrink-0 shadow-sm">
-                                <i data-lucide="lightbulb" class="w-5 h-5 fill-brand-400 text-brand-500"></i>
+                            <div class="w-9 h-9 bg-brand-50 dark:bg-brand-500/20 text-brand-500 rounded-2xl flex items-center justify-center font-bold shrink-0 shadow-sm">
+                                <i data-lucide="lightbulb" class="w-4 h-4 fill-brand-400 text-brand-500"></i>
                             </div>
                             <div>
-                                <span class="text-base font-extrabold text-[#191f28] dark:text-white tracking-tight block">링키지 이용 가이드</span>
-                                <span class="text-xs text-[#8b95a1] font-medium">처음 방문하셨나요? 3단계로 쉽게 시작하세요.</span>
+                                <span class="text-sm font-extrabold text-[#191f28] dark:text-white tracking-tight">이용 가이드</span>
+                                <span class="text-xs text-[#8b95a1] font-medium ml-2">처음이신가요? 3단계로 시작하세요</span>
                             </div>
                         </div>
-                        <div class="flex items-center space-x-1">
-                            <button id="guideToggleBtn" class="p-2 text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white transition">
-                                <i data-lucide="chevron-down" id="guideChevron" class="w-5 h-5 transition-transform duration-200"></i>
-                            </button>
-                        </div>
+                        <button id="guideToggleBtn" class="p-1.5 text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white transition">
+                            <i data-lucide="chevron-down" id="guideChevron" class="w-4 h-4 transition-transform duration-200"></i>
+                        </button>
                     </div>
                     
-                    <div id="guideContent" class="hidden mt-5 pt-5 border-t border-[#e5e8eb] dark:border-[#202632] transition-all duration-200 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="p-4 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl space-y-2 border border-[#e5e8eb] dark:border-transparent">
-                            <span class="text-xs font-extrabold text-brand-600 dark:text-brand-400 flex items-center gap-1.5">
-                                <span class="w-6 h-6 bg-brand-100 dark:bg-brand-500/20 rounded-full flex items-center justify-center text-xs font-black">1</span>
-                                로그인
-                            </span>
-                            <p class="text-xs text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed">내 계정으로 안전하게 링크를 저장하고 클라우드 동기화하세요.</p>
+                    <div id="guideContent" class="hidden mt-4 pt-4 border-t border-[#e5e8eb] dark:border-[#202632] grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="p-3 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl space-y-1.5 border border-[#e5e8eb] dark:border-transparent">
+                            <span class="text-xs font-black text-brand-600 dark:text-brand-400 block">1. 로그인</span>
+                            <p class="text-[11px] text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed">내 계정으로 안전하게 링크를 저장하고 클라우드 동기화하세요.</p>
                         </div>
-                        <div class="p-4 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl space-y-2 border border-[#e5e8eb] dark:border-transparent">
-                            <span class="text-xs font-extrabold text-brand-600 dark:text-brand-400 flex items-center gap-1.5">
-                                <span class="w-6 h-6 bg-brand-100 dark:bg-brand-500/20 rounded-full flex items-center justify-center text-xs font-black">2</span>
-                                카테고리 설정
-                            </span>
-                            <p class="text-xs text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed">나만의 맞춤 폴더를 만들고 순서와 이름을 정리해보세요.</p>
+                        <div class="p-3 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl space-y-1.5 border border-[#e5e8eb] dark:border-transparent">
+                            <span class="text-xs font-black text-brand-600 dark:text-brand-400 block">2. 카테고리 설정</span>
+                            <p class="text-[11px] text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed">나만의 맞춤 폴더를 만들고 순서와 이름을 정리해보세요.</p>
                         </div>
-                        <div class="p-4 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl space-y-2 border border-[#e5e8eb] dark:border-transparent">
-                            <span class="text-xs font-extrabold text-brand-600 dark:text-brand-400 flex items-center gap-1.5">
-                                <span class="w-6 h-6 bg-brand-100 dark:bg-brand-500/20 rounded-full flex items-center justify-center text-xs font-black">3</span>
-                                링크 추가
-                            </span>
-                            <p class="text-xs text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed">자주 찾는 웹사이트를 등록하고 상세한 생각이나 노트를 기록하세요.</p>
+                        <div class="p-3 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl space-y-1.5 border border-[#e5e8eb] dark:border-transparent">
+                            <span class="text-xs font-black text-brand-600 dark:text-brand-400 block">3. 링크 추가</span>
+                            <p class="text-[11px] text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed">자주 찾는 웹사이트를 등록하고 상세한 노트를 기록하세요.</p>
                         </div>
                     </div>
                 </div>
