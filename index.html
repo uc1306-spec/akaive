@@ -90,12 +90,6 @@
 
                 <!-- Right Controls -->
                 <div class="flex items-center space-x-1 sm:space-x-2 shrink-0">
-                    <!-- Weekly Curation Page Nav Button -->
-                    <button onclick="showCurationPage()" class="flex items-center space-x-1 px-3 py-2 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-bold rounded-xl border border-amber-500/20 hover:scale-105 transition shadow-sm shrink-0">
-                        <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
-                        <span>위클리 링키지</span>
-                    </button>
-
                     <!-- Gamification Level Badge in Header (Visible ONLY if logged in) -->
                     <button id="headerLevelBadgeBtn" onclick="openGamificationModal()" class="hidden items-center space-x-1 px-2.5 sm:px-3.5 py-2 bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 text-xs font-extrabold rounded-xl border border-brand-500/20 hover:scale-105 transition shadow-sm shrink-0">
                         <i data-lucide="award" class="w-4 h-4 text-brand-500 shrink-0"></i>
@@ -760,11 +754,9 @@
             currentCategory: '전체',
             bookmarks: [...PRODUCTION_BOOKMARKS],
             operatorRecommended: DEFAULT_RECOMMENDED_SITES,
-            publicPopularCuration: [],
             isGuideOpen: false,
             isRecCollapsed: false,
-            collapsedCategories: {},
-            viewMode: 'home' // 'home' or 'curation'
+            collapsedCategories: {}
         };
 
         const firebaseConfig = {
@@ -796,16 +788,8 @@
         }
 
         window.resetToHome = function() {
-            state.viewMode = 'home';
             state.currentCategory = '전체';
             renderMainContent();
-            if (window.lucide) lucide.createIcons();
-        };
-
-        window.showCurationPage = function() {
-            state.viewMode = 'curation';
-            renderMainContent();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
             if (window.lucide) lucide.createIcons();
         };
 
@@ -881,7 +865,6 @@
             
             bm.visitCount = (bm.visitCount || 0) + 1;
             saveData();
-            fetchPublicPopularCuration();
 
             document.getElementById('noteModalTitle').textContent = bm.title + ' 상세 노트';
             document.getElementById('noteModalCategory').textContent = bm.category;
@@ -950,15 +933,6 @@
         window.closeGamificationModal = function() {
             document.getElementById('gamificationModal').classList.add('hidden');
         };
-
-        async function fetchPublicPopularCuration() {
-            // Public Popular Curation removed per user request
-            state.publicPopularCuration = [];
-        }
-
-        function renderPublicPopularCuration() {
-            // Removed
-        }
 
         window.recordVisit = function(id) {
             const bm = state.bookmarks.find(b => b.id === id);
@@ -1344,7 +1318,6 @@
         };
 
         window.selectCategory = function(cat) {
-            state.viewMode = 'home';
             state.currentCategory = cat;
             renderMainContent();
         };
@@ -1352,14 +1325,14 @@
         window.togglePin = function(id) {
             state.bookmarks = state.bookmarks.map(b => b.id === id ? {...b, pinned: !b.pinned} : b);
             saveData();
-            if (state.viewMode === 'home') renderBookmarks();
+            renderBookmarks();
         };
 
         window.deleteBookmark = function(id) {
             if (confirm('이 링크를 삭제하시겠습니까?')) {
                 state.bookmarks = state.bookmarks.filter(b => b.id !== id);
                 saveData();
-                if (state.viewMode === 'home') renderBookmarks();
+                renderBookmarks();
                 updateGamificationUI();
             }
         };
@@ -1388,7 +1361,7 @@
             }
             saveData();
             closeModal();
-            if (state.viewMode === 'home') renderBookmarks();
+            renderBookmarks();
             updateGamificationUI();
         };
 
@@ -1399,10 +1372,8 @@
                 state.categories.push(name);
                 input.value = '';
                 saveData();
-                if (state.viewMode === 'home') {
-                    renderCategories();
-                    renderBookmarks();
-                }
+                renderCategories();
+                renderBookmarks();
                 renderCategoryManageList();
                 updateGamificationUI();
             }
@@ -1419,10 +1390,8 @@
 
             state.categories = ['전체', ...userCats];
             saveData();
-            if (state.viewMode === 'home') {
-                renderCategories();
-                renderBookmarks();
-            }
+            renderCategories();
+            renderBookmarks();
             renderCategoryManageList();
         };
 
@@ -1461,7 +1430,7 @@
 
             resetOperatorRecForm();
             saveOperatorRecommendations();
-            if (state.viewMode === 'home') renderOperatorRecommended();
+            renderOperatorRecommended();
             renderOperatorRecManageList();
         };
 
@@ -1489,7 +1458,7 @@
             if (confirm('이 오늘의 발견 사이트를 삭제하시겠습니까?')) {
                 state.operatorRecommended = state.operatorRecommended.filter(r => r.id !== id);
                 saveOperatorRecommendations();
-                if (state.viewMode === 'home') renderOperatorRecommended();
+                renderOperatorRecommended();
                 renderOperatorRecManageList();
             }
         };
@@ -1504,7 +1473,7 @@
             state.operatorRecommended[targetIndex] = temp;
 
             saveOperatorRecommendations();
-            if (state.viewMode === 'home') renderOperatorRecommended();
+            renderOperatorRecommended();
             renderOperatorRecManageList();
         };
 
@@ -1523,10 +1492,8 @@
                 if (state.currentCategory === oldName) state.currentCategory = trimmed;
 
                 saveData();
-                if (state.viewMode === 'home') {
-                    renderCategories();
-                    renderBookmarks();
-                }
+                renderCategories();
+                renderBookmarks();
                 renderCategoryManageList();
             }
         };
@@ -1547,10 +1514,8 @@
                 if (state.currentCategory === catName) state.currentCategory = '전체';
                 
                 saveData();
-                if (state.viewMode === 'home') {
-                    renderCategories();
-                    renderBookmarks();
-                }
+                renderCategories();
+                renderBookmarks();
                 renderCategoryManageList();
             }
         };
@@ -1630,7 +1595,6 @@
         function saveData() {
             if (isFirebaseActive && db && state.currentUser) saveToCloud();
             updateGamificationUI();
-            fetchPublicPopularCuration();
         }
 
         async function saveOperatorRecommendations() {
@@ -1657,7 +1621,7 @@
                         const data = docSnap.data();
                         if (data.recommendations) {
                             state.operatorRecommended = data.recommendations;
-                            if (state.viewMode === 'home') renderOperatorRecommended();
+                            renderOperatorRecommended();
                         }
                     } else {
                         saveOperatorRecommendations();
@@ -1695,12 +1659,9 @@
                         const data = docSnap.data();
                         if (data.bookmarks) state.bookmarks = data.bookmarks;
                         if (data.categories) state.categories = data.categories;
-                        if (state.viewMode === 'home') {
-                            renderCategories();
-                            renderBookmarks();
-                        }
+                        renderCategories();
+                        renderBookmarks();
                         updateGamificationUI();
-                        fetchPublicPopularCuration();
                     } else {
                         saveToCloud();
                     }
@@ -1783,7 +1744,7 @@
                     headerLevelBadgeBtn.classList.remove('flex');
                 }
             }
-            if (state.viewMode === 'home') renderOperatorRecommended();
+            renderOperatorRecommended();
         }
 
         function renderCategoryManageList() {
@@ -2217,90 +2178,9 @@
             `;
         }
 
-        function renderCurationPageView() {
-            const mainEl = document.getElementById('mainAppView');
-            if (!mainEl) return;
-
-            document.title = '위클리 링키지 - 2026년 9월 3주차 트렌드 매거진';
-
-            const curationArticles = [
-                {
-                    tag: 'AI & DEV PRODUCTIVITY',
-                    title: '2026년 9월 3주차: 프론트엔드 빌드 도구의 판도를 바꾸는 터보 및 에코시스템 분석',
-                    date: '2026년 9월 3주차',
-                    desc: '웹 개발 생태계에서 번들러 속도 혁신은 개발자의 몰입도와 생산성에 직결됩니다. 이번 주 링키지 트렌드 포커스에서는 최신 프레임워크 컴파일 최적화 도구들과 실무 도입 가이드를 심층 분석합니다.',
-                    links: [
-                        { title: 'Vite (Vite.js)', url: 'https://vite.dev', desc: '차세대 프론트엔드 빌드 툴. 초고속 HMR과 압도적인 빌드 속도로 글로벌 프론트엔드 표준으로 자리 잡았습니다.' },
-                        { title: 'GitHub', url: 'https://github.com', desc: '전 세계 개발자들의 소스코드 협업 및 오픈소스 생태계의 중심지' }
-                    ]
-                },
-                {
-                    tag: 'UI/UX DESIGN TRENDS',
-                    title: '디자이너를 위한 마이크로 인터랙션 및 타이포그래피 레퍼런스',
-                    date: '2026년 9월 3주차',
-                    desc: '사용자 경험(UX)을 극대화하는 미니멀한 UI 디자인 패턴과, 최근 모바일 웹 환경에서 각광받는 디자인 시스템 구성을 위한 핵심 아카이브 플랫폼들을 소개합니다.',
-                    links: [
-                        { title: 'Tailwind CSS', url: 'https://tailwindcss.com', desc: '유틸리티 우선 CSS 프레임워크. 빠르고 일관된 디자인 시스템 구축을 지원합니다.' },
-                        { title: 'Notion', url: 'https://www.notion.so', desc: '아이디어 기획부터 디자인 스펙 문서화까지 아우르는 올인원 협업 워크스페이스' }
-                    ]
-                }
-            ];
-
-            mainEl.innerHTML = `
-                <div class="space-y-8 animate-fadeIn">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <span class="text-xs font-extrabold px-3 py-1 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl inline-block mb-2">WEEKLY TREND MAGAZINE</span>
-                            <h2 class="text-2xl font-black text-[#191f28] dark:text-white tracking-tight">위클리 링키지 (9월 3주차)</h2>
-                            <p class="text-xs sm:text-sm text-[#8b95a1] mt-1">인터넷 트렌드와 유용한 개발·디자인 리소스를 깊이 있게 포착한 매거진입니다.</p>
-                        </div>
-                        <button onclick="resetToHome()" class="px-4 py-2.5 bg-white dark:bg-[#202632] text-[#4e5968] dark:text-white text-xs font-bold rounded-2xl border border-[#e5e8eb] dark:border-[#2c3442] shadow-sm hover:bg-[#f9fafb] transition flex items-center gap-1.5 shrink-0">
-                            <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                            <span>메인으로 돌아가기</span>
-                        </button>
-                    </div>
-
-                    <div class="space-y-6">
-                        ${curationArticles.map(article => `
-                            <div class="bg-white dark:bg-[#171c24] rounded-3xl p-6 sm:p-8 shadow-sm border border-[#e5e8eb] dark:border-[#202632] space-y-5">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs font-extrabold px-3 py-1 bg-amber-50 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400 rounded-xl">${article.tag}</span>
-                                    <span class="text-xs font-semibold text-[#8b95a1]">${article.date}</span>
-                                </div>
-                                <div class="space-y-2">
-                                    <h3 class="text-xl font-bold text-[#191f28] dark:text-white tracking-tight">${article.title}</h3>
-                                    <p class="text-sm text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed">${article.desc}</p>
-                                </div>
-                                <div class="space-y-3 pt-2">
-                                    <h4 class="text-xs font-bold text-[#8b95a1] tracking-wider uppercase">핵심 추천 사이트 & 리소스 분석</h4>
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                        ${article.links.map(l => `
-                                            <a href="${l.url}" target="_blank" rel="noopener" class="p-4 bg-[#f9fafb] dark:bg-[#202632] hover:bg-brand-50 dark:hover:bg-brand-950/30 rounded-2xl border border-[#e5e8eb] dark:border-transparent transition flex items-center justify-between group">
-                                                <div class="min-w-0 pr-2">
-                                                    <h5 class="text-sm font-bold text-[#191f28] dark:text-white group-hover:text-brand-500 transition truncate">${l.title}</h5>
-                                                    <p class="text-xs text-[#8b95a1] truncate mt-0.5">${l.desc}</p>
-                                                </div>
-                                                <i data-lucide="arrow-up-right" class="w-4 h-4 text-[#8b95a1] group-hover:text-brand-500 shrink-0"></i>
-                                            </a>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-            if (window.lucide) lucide.createIcons();
-        }
-
         function renderMainContent() {
             const mainEl = document.getElementById('mainAppView');
             if (!mainEl) return;
-
-            if (state.viewMode === 'curation') {
-                renderCurationPageView();
-                return;
-            }
 
             mainEl.innerHTML = `
                 <!-- Quick Guide Banner (Enhanced size and clear titles: 1.로그인, 2.카테고리 설정, 3.링크 추가) -->
@@ -2525,13 +2405,11 @@
                     } else {
                         renderMainContent();
                         updateGamificationUI();
-                        fetchPublicPopularCuration();
                     }
                 });
             } else {
                 renderMainContent();
                 updateGamificationUI();
-                fetchPublicPopularCuration();
             }
 
             initDragScroll();
