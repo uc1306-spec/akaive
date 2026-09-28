@@ -182,7 +182,6 @@
                         </div>
                         <div class="min-w-0">
                             <h2 class="text-base font-extrabold text-[#191f28] dark:text-white tracking-tight truncate">링키지 이용 가이드</h2>
-                            <p class="text-xs text-[#8b95a1] font-medium truncate mt-0.5">처음 방문하셨나요? 3단계로 쉽게 시작하세요.</p>
                         </div>
                     </div>
                     <button id="guideToggleBtn" class="p-2 text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white transition shrink-0">
@@ -632,7 +631,7 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, deleteUser } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, deleteDoc, getDocs, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const OPERATOR_EMAIL = 'gimms2002@naver.com';
+        const OPERATOR_EMAILS = ['gimms2002@naver.com', 'uc1306@hanmail.net'];
 
         const PRODUCTION_CATEGORIES = ['전체', '자주가는곳', '뉴스', '기타'];
         const PRODUCTION_BOOKMARKS = [
@@ -1492,8 +1491,8 @@
             const adminDashboardBtn = document.getElementById('adminDashboardBtn');
 
             if (user) {
-                const userEmail = user.email || '';
-                state.isAdmin = (userEmail.toLowerCase() === OPERATOR_EMAIL.toLowerCase());
+                const userEmail = (user.email || '').toLowerCase();
+                state.isAdmin = OPERATOR_EMAILS.some(email => email.toLowerCase() === userEmail);
 
                 const displayName = state.userNickname || (user.email ? user.email.split('@')[0] : (user.displayName || '내 계정'));
                 authBtnText.textContent = displayName;
@@ -1967,7 +1966,6 @@
                             </div>
                             <div class="min-w-0">
                                 <h2 class="text-base font-extrabold text-[#191f28] dark:text-white tracking-tight truncate">링키지 이용 가이드</h2>
-                                <p class="text-xs text-[#8b95a1] font-medium truncate mt-0.5">처음 방문하셨나요? 3단계로 쉽게 시작하세요.</p>
                             </div>
                         </div>
                         <button id="guideToggleBtn" class="p-2 text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white transition shrink-0">
