@@ -58,12 +58,17 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
+        /* Prevent layout shift from vertical scrollbar appearance */
+        html {
+            overflow-y: scroll;
+            scrollbar-gutter: stable;
+        }
+
         .bm-card {
             transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s ease, border-color 0.2s ease;
             will-change: transform;
         }
 
-        /* Prevent auto-zoom on mobile inputs by ensuring text size is at least 16px */
         input, select, textarea {
             font-size: 16px !important;
         }
@@ -171,9 +176,9 @@
             </div>
         </aside>
 
-        <!-- Right Main Content Area -->
         <main id="mainAppView" class="flex-1 w-full min-w-0 space-y-6">
 
+            <!-- Guide Banner (Default Collapsed) -->
             <div id="guideWrapper" class="bg-white dark:bg-[#171c24] rounded-3xl p-6 shadow-sm border border-brand-500/30 dark:border-brand-500/20 transition-all duration-200">
                 <div class="flex items-center justify-between cursor-pointer select-none gap-3 pb-0" onclick="toggleGuideCollapse()">
                     <div class="flex items-center space-x-3 min-w-0">
@@ -182,6 +187,7 @@
                         </div>
                         <div class="min-w-0">
                             <h2 class="text-base font-extrabold text-[#191f28] dark:text-white tracking-tight truncate">링키지 이용 가이드</h2>
+                            <p class="text-xs text-[#8b95a1] mt-0.5">처음 방문하셨나요? 3단계로 쉽게 시작하세요.</p>
                         </div>
                     </div>
                     <button id="guideToggleBtn" class="p-2 text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white transition shrink-0">
@@ -214,6 +220,7 @@
                 </div>
             </div>
 
+            <!-- Operator Action Controls Row -->
             <div id="operatorActionRow" class="hidden flex items-center justify-end gap-2">
                 <button id="operatorRecManageBtn" onclick="openOperatorRecModal()" class="hidden flex items-center space-x-1.5 px-3.5 py-2.5 text-xs font-bold text-recommended-700 dark:text-recommended-300 bg-recommended-50 dark:bg-recommended-950/40 hover:bg-recommended-100 dark:hover:bg-recommended-900/50 rounded-2xl transition border border-recommended-200 dark:border-recommended-900/50 shrink-0">
                     <i data-lucide="sparkles" class="w-4 h-4 text-recommended-500"></i>
@@ -225,6 +232,7 @@
                 </button>
             </div>
 
+            <!-- Today's Discovery (Operator Picks) Section -->
             <div id="operatorRecommendedSection" class="space-y-3.5">
                 <div class="flex items-center justify-between pb-2 border-b border-[#e5e8eb] dark:border-[#202632]">
                     <div class="flex items-center space-x-2.5">
@@ -241,10 +249,10 @@
                     </button>
                 </div>
                 <p class="text-xs font-medium text-[#8b95a1] pl-0.5">운영자가 엄선한 유용한 웹사이트와 추천 콘텐츠를 만나보세요.</p>
-                
                 <div id="operatorRecommendedContainer" class="flex sm:grid sm:grid-cols-2 md:grid-cols-3 overflow-x-auto sm:overflow-x-visible no-scrollbar gap-4 sm:gap-5 pb-2 sm:pb-0"></div>
             </div>
 
+            <!-- Bookmarks Container -->
             <div id="bookmarkContainer" class="space-y-8"></div>
 
             <!-- Empty State -->
@@ -334,7 +342,7 @@
         </div>
     </div>
 
-    <!-- Personal Note Modal (View, Edit, Delete) -->
+    <!-- Personal Note Modal -->
     <div id="noteModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-[#171c24] rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 my-auto max-h-[85vh] flex flex-col">
             <input type="hidden" id="noteBookmarkId">
@@ -611,7 +619,7 @@
         </div>
     </div>
 
-    <!-- Login Required Modal for Recommended Restricted Sites -->
+    <!-- Login Required Modal -->
     <div id="recLoginModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-[#171c24] rounded-3xl max-w-sm w-full p-6 shadow-2xl text-center space-y-4">
             <div class="w-12 h-12 bg-recommended-50 dark:bg-recommended-500/10 text-recommended-500 rounded-full flex items-center justify-center mx-auto">
@@ -651,7 +659,7 @@
             currentCategory: '전체',
             bookmarks: [...PRODUCTION_BOOKMARKS],
             operatorRecommended: DEFAULT_RECOMMENDED_SITES,
-            isGuideOpen: false, // Default collapsed
+            isGuideOpen: false,
             isRecCollapsed: false,
             collapsedCategories: {},
             isSidebarCollapsed: false,
@@ -1957,7 +1965,7 @@
             if (!mainEl) return;
 
             mainEl.innerHTML = `
-                <!-- Wide 3-Step Guide Banner (Default Collapsed) -->
+                <!-- Guide Banner (Default Collapsed) -->
                 <div id="guideWrapper" class="bg-white dark:bg-[#171c24] rounded-3xl p-6 shadow-sm border border-brand-500/30 dark:border-brand-500/20 transition-all duration-200">
                     <div class="flex items-center justify-between cursor-pointer select-none gap-3 pb-0" onclick="toggleGuideCollapse()">
                         <div class="flex items-center space-x-3 min-w-0">
@@ -1966,6 +1974,7 @@
                             </div>
                             <div class="min-w-0">
                                 <h2 class="text-base font-extrabold text-[#191f28] dark:text-white tracking-tight truncate">링키지 이용 가이드</h2>
+                                <p class="text-xs text-[#8b95a1] mt-0.5">처음 방문하셨나요? 3단계로 쉽게 시작하세요.</p>
                             </div>
                         </div>
                         <button id="guideToggleBtn" class="p-2 text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white transition shrink-0">
@@ -1998,7 +2007,7 @@
                     </div>
                 </div>
 
-                <!-- Operator Action Controls Row (Visible ONLY if admin) -->
+                <!-- Operator Action Controls Row -->
                 <div id="operatorActionRow" class="hidden flex items-center justify-end gap-2">
                     <button id="operatorRecManageBtn" onclick="openOperatorRecModal()" class="hidden flex items-center space-x-1.5 px-3.5 py-2.5 text-xs font-bold text-recommended-700 dark:text-recommended-300 bg-recommended-50 dark:bg-recommended-950/40 hover:bg-recommended-100 dark:hover:bg-recommended-900/50 rounded-2xl transition border border-recommended-200 dark:border-recommended-900/50 shrink-0">
                         <i data-lucide="sparkles" class="w-4 h-4 text-recommended-500"></i>
@@ -2010,7 +2019,7 @@
                     </button>
                 </div>
 
-                <!-- Today's Discovery (Operator Picks) Section -->
+                <!-- Today's Discovery Section -->
                 <div id="operatorRecommendedSection" class="space-y-3.5">
                     <div class="flex items-center justify-between pb-2 border-b border-[#e5e8eb] dark:border-[#202632]">
                         <div class="flex items-center space-x-2.5">
