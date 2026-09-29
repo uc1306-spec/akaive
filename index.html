@@ -58,7 +58,7 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Prevent layout shift from vertical scrollbar appearance */
+        /* Prevent layout shift & horizontal jitter */
         html {
             overflow-y: scroll;
             scrollbar-gutter: stable;
@@ -187,7 +187,7 @@
                         </div>
                         <div class="min-w-0">
                             <h2 class="text-base font-extrabold text-[#191f28] dark:text-white tracking-tight truncate">링키지 이용 가이드</h2>
-                            <p class="text-xs text-[#8b95a1] mt-0.5">처음 방문하셨나요? 3단계로 쉽게 시작하세요.</p>
+                            <p class="text-xs text-[#8b95a1] mt-0.5 truncate">처음 방문하셨나요? 3단계로 쉽게 시작하세요.</p>
                         </div>
                     </div>
                     <button id="guideToggleBtn" class="p-2 text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white transition shrink-0">
@@ -286,6 +286,7 @@
         </div>
     </footer>
 
+    <!-- Modals -->
     <div id="infoModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-[#171c24] rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 my-auto max-h-[80vh] flex flex-col">
             <div class="flex justify-between items-center shrink-0 border-b border-[#e5e8eb] dark:border-[#202632] pb-3">
@@ -375,6 +376,28 @@
                     <button onclick="closeNoteModal()" class="px-4 py-2.5 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-2xl transition">취소</button>
                     <button onclick="handleSaveNote()" class="px-5 py-2.5 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-2xl transition shadow-sm">노트 저장</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Drawer View Modal (서랍) -->
+    <div id="mindmapModal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-50 hidden flex flex-col p-4 sm:p-8">
+        <div class="bg-white dark:bg-[#171c24] rounded-3xl w-full max-w-6xl mx-auto h-full flex flex-col shadow-2xl overflow-hidden border border-[#e5e8eb] dark:border-[#202632]">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-[#e5e8eb] dark:border-[#202632] shrink-0 bg-[#f9fafb] dark:bg-[#202632]">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-brand-50 dark:bg-brand-500/20 text-brand-500 rounded-2xl flex items-center justify-center font-bold shadow-sm">
+                        <i data-lucide="git-commit" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-lg text-[#191f28] dark:text-white">링키지 서랍</h3>
+                    </div>
+                </div>
+                <button onclick="closeMindmapModal()" class="p-2 text-[#b0b8c1] hover:text-[#191f28] dark:hover:text-white hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-2xl transition">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div id="mindmapCanvasContainer" class="flex-1 p-6 overflow-auto bg-[#f2f4f6] dark:bg-[#0f1217] flex flex-col items-center justify-center relative">
+                <div id="mindmapTree" class="w-full h-full flex flex-wrap gap-8 items-center justify-center"></div>
             </div>
         </div>
     </div>
@@ -854,6 +877,67 @@
                 saveData();
             }
         };
+
+        window.openMindmapModal = function() {
+            renderMindmapTree();
+            document.getElementById('mindmapModal').classList.remove('hidden');
+            if (window.lucide) lucide.createIcons();
+        };
+
+        window.closeMindmapModal = function() {
+            document.getElementById('mindmapModal').classList.add('hidden');
+        };
+
+        function renderMindmapTree() {
+            const container = document.getElementById('mindmapTree');
+            if (!container) return;
+
+            const userCategories = state.categories.filter(c => c !== '전체');
+            
+            let html = `
+                <div class="flex flex-col items-center justify-center p-6 bg-brand-500 text-white rounded-3xl shadow-xl min-w-[200px] mb-8 select-none">
+                    <span class="text-xs uppercase font-extrabold tracking-widest opacity-80">Drawer Hub</span>
+                    <h4 class="text-lg font-black mt-1">링키지 서랍</h4>
+                    <span class="text-[11px] mt-1 bg-white/20 px-2 py-0.5 rounded-lg">전체 링크 ${state.bookmarks.length}개</span>
+                </div>
+            `;
+
+            html += `<div class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">`;
+            
+            userCategories.forEach(cat => {
+                const catBms = state.bookmarks.filter(b => b.category === cat);
+                html += `
+                    <div class="bg-white dark:bg-[#1f2633] rounded-3xl p-5 shadow-sm border border-[#e5e8eb] dark:border-[#2c3442] space-y-3 flex flex-col">
+                        <div class="flex items-center justify-between pb-2 border-b border-[#e5e8eb] dark:border-[#2c3442]">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 bg-brand-500 rounded-full"></span>
+                                <h5 class="font-bold text-sm text-[#191f28] dark:text-white">${cat}</h5>
+                            </div>
+                            <span class="text-xs font-extrabold px-2 py-0.5 bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 rounded-lg">${catBms.length}개</span>
+                        </div>
+                        <div class="space-y-2 flex-1">
+                `;
+
+                if (catBms.length === 0) {
+                    html += `<p class="text-xs text-[#8b95a1] text-center py-4">등록된 링크 없음</p>`;
+                } else {
+                    catBms.forEach(bm => {
+                        html += `
+                            <div onclick="window.open('${bm.url}', '_blank')" class="p-3 bg-[#f9fafb] dark:bg-[#171c24] hover:bg-brand-50 dark:hover:bg-brand-950/30 rounded-2xl border border-[#e5e8eb] dark:border-[#2c3442] cursor-pointer transition flex items-center justify-between group">
+                                <span class="text-xs font-bold text-[#191f28] dark:text-white group-hover:text-brand-500 truncate pr-2">${bm.title}</span>
+                                <i data-lucide="external-link" class="w-3.5 h-3.5 text-[#8b95a1] group-hover:text-brand-500 shrink-0"></i>
+                            </div>
+                        `;
+                    });
+                }
+
+                html += `</div></div>`;
+            });
+
+            html += `</div>`;
+            container.innerHTML = html;
+            if (window.lucide) lucide.createIcons();
+        }
 
         window.openPublicShareModal = function(categoryName) {
             if (!state.currentUser) {
@@ -1649,6 +1733,13 @@
                     </span>
                     <span class="sidebar-badge px-2 py-0.5 text-[10px] rounded-lg ${state.currentCategory === '📌' ? 'bg-white/20 text-white' : 'bg-[#e5e8eb] dark:bg-[#2c3442] text-[#4e5968] dark:text-[#b0b8c1]'}">${pinnedCount}</span>
                 </button>
+                <button onclick="openMindmapModal()" class="w-full flex items-center justify-between px-3 py-2.5 rounded-2xl text-xs font-bold transition text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632]" title="서랍">
+                    <span class="flex items-center gap-2 truncate">
+                        <i data-lucide="git-commit" class="w-4 h-4 text-recommended-500 shrink-0"></i> 
+                        <span class="sidebar-label truncate">서랍</span>
+                    </span>
+                    <span class="sidebar-badge px-2 py-0.5 text-[10px] rounded-lg bg-recommended-50 dark:bg-recommended-500/10 text-recommended-600">2D</span>
+                </button>
             `;
 
             const userCategories = state.categories.filter(c => c !== '전체');
@@ -1974,7 +2065,7 @@
                             </div>
                             <div class="min-w-0">
                                 <h2 class="text-base font-extrabold text-[#191f28] dark:text-white tracking-tight truncate">링키지 이용 가이드</h2>
-                                <p class="text-xs text-[#8b95a1] mt-0.5">처음 방문하셨나요? 3단계로 쉽게 시작하세요.</p>
+                                <p class="text-xs text-[#8b95a1] mt-0.5 truncate">처음 방문하셨나요? 3단계로 쉽게 시작하세요.</p>
                             </div>
                         </div>
                         <button id="guideToggleBtn" class="p-2 text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white transition shrink-0">
