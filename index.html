@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <!-- SEO & Search Engine Optimization Meta Tags -->
-    <title>링키지 Linkage - 스마트 링크 아카이브</title>
+    <title>링키지 Linkage - 나만의 링크 도서관</title>
     <meta name="description" content="나만의 링크 도서관. 소중한 웹 링크와 지식을 모아두고 스마트하게 관리하는 아카이브 플랫폼">
     <meta name="keywords" content="링키지, Linkage, 북마크, 링크 관리, 웹 아카이브, 링크 모음, 망고컴패니">
     <meta name="author" content="망고컴패니">
@@ -22,6 +22,10 @@
     <!-- PWA Web App Manifest -->
     <link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22%EB%A7%81%ED%82%A4%EC%A7%80%22%2C%22short_name%22%3A%22Linkage%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f2f4f6%22%2C%22theme_color%22%3A%22%2310B981%22%7D">
     <meta name="theme-color" content="#10B981">
+    
+    <!-- Pretendard Font CDN -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Tailwind CSS -->
@@ -48,7 +52,8 @@
                         }
                     },
                     fontFamily: {
-                        sans: ['-apple-system', 'BlinkMacSystemFont', '"Apple SD Gothic Neo"', '"Pretendard"', '"Noto Sans KR"', 'sans-serif']
+                        sans: ['"Pretendard Variable"', 'Pretendard', '-apple-system', 'BlinkMacSystemFont', '"Apple SD Gothic Neo"', '"Noto Sans KR"', 'sans-serif'],
+                        display: ['"Pretendard Variable"', 'Pretendard', 'sans-serif'],
                     }
                 }
             }
@@ -58,12 +63,22 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
+        /* Prevent layout shift & horizontal jitter */
+        html {
+            overflow-y: scroll;
+            scrollbar-gutter: stable;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+        }
+
         .bm-card {
             transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s ease, border-color 0.2s ease;
             will-change: transform;
         }
 
-        /* Prevent auto-zoom on mobile inputs by ensuring text size is at least 16px */
         input, select, textarea {
             font-size: 16px !important;
         }
@@ -74,221 +89,221 @@
         }
     </style>
 </head>
-<body class="bg-[#f2f4f6] dark:bg-[#101318] text-[#191f28] dark:text-[#f9fafb] min-h-screen flex flex-col font-sans transition-colors duration-200 antialiased">
+<body class="bg-[#f2f4f6] dark:bg-[#101318] text-[#191f28] dark:text-[#f9fafb] min-h-screen flex flex-col antialiased transition-colors duration-200">
 
-    <header class="bg-white/85 dark:bg-[#171c24]/85 backdrop-blur-md sticky top-0 z-30 transition-colors duration-200 border-b border-[#e5e8eb] dark:border-[#202632]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-8 py-3.5 sm:py-4">
-            <div class="flex items-center justify-between gap-3">
-                <!-- Left: Mobile Hamburger & Logo -->
-                <div class="flex items-center space-x-3 min-w-0">
-                    <!-- Mobile Hamburger Button -->
-                    <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-xl transition shrink-0" title="메뉴 열기">
-                        <i data-lucide="menu" class="w-5 h-5"></i>
-                    </button>
-
-                    <!-- Logo & Title -->
-                    <div onclick="resetToHome()" class="flex items-center space-x-3 min-w-0 shrink cursor-pointer group select-none" title="메인 화면으로 새로고침">
-                        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl overflow-hidden shadow-sm shrink-0 border border-brand-500/20 bg-brand-50 flex items-center justify-center group-hover:scale-105 transition">
-                            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=120&h=120&fit=crop" class="w-full h-full object-cover" alt="Linkage Logo">
-                        </div>
-                        <div class="flex flex-col min-w-0">
-                            <span class="text-[10px] sm:text-xs font-bold text-brand-600 dark:text-brand-400 tracking-wider">나만의 링크 도서관</span>
-                            <h1 class="font-bold text-base sm:text-lg tracking-tight text-[#191f28] dark:text-white group-hover:text-brand-500 transition whitespace-nowrap">
-                                <span class="md:hidden">링키지</span>
-                                <span class="hidden md:inline">링키지 Linkage</span>
-                            </h1>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Controls -->
-                <div class="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
-                    <!-- Operator Badge if logged in as admin -->
-                    <div id="adminBadge" class="hidden items-center space-x-1 px-2.5 py-1.5 bg-recommended-500/10 text-recommended-600 dark:text-recommended-400 text-xs font-extrabold rounded-xl border border-recommended-500/20 shrink-0">
-                        <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
-                        <span class="hidden sm:inline">운영자</span>
-                    </div>
-
-                    <!-- Login / Account Button -->
-                    <button id="authBtn" onclick="openAuthModal()" class="flex items-center space-x-1 px-3 sm:px-3.5 py-1.5 sm:py-2 text-xs font-semibold rounded-2xl bg-[#f2f4f6] dark:bg-[#202632] text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] transition max-w-[120px] sm:max-w-none shrink-0">
-                        <i data-lucide="user" class="w-3.5 h-3.5 shrink-0"></i>
-                        <span id="authBtnText" class="truncate">로그인</span>
-                    </button>
-
-                    <!-- Logout Button -->
-                    <button id="logoutBtn" onclick="handleLogout()" class="hidden flex items-center space-x-1 px-3 sm:px-3.5 py-1.5 sm:py-2 text-xs font-semibold text-rose-500 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 rounded-2xl transition shrink-0" title="로그아웃">
-                        <i data-lucide="log-out" class="w-3.5 h-3.5 shrink-0"></i>
-                        <span class="hidden sm:inline">로그아웃</span>
-                    </button>
-
-                    <!-- Dark Mode Toggle -->
-                    <button onclick="toggleTheme()" class="p-2 text-[#8b95a1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-2xl transition shrink-0" title="테마 변경">
-                        <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
-                        <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <div id="mobileDrawerBackdrop" onclick="toggleMobileMenu()" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden md:hidden transition-opacity"></div>
-
-    <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-6 flex flex-col md:flex-row gap-6 items-start">
-        
-        <!-- Left Dashboard Sidebar (PC: Sticky & Rail Collapsible | Mobile: Slide-over Drawer) -->
-        <aside id="sidebarAside" class="fixed md:sticky top-0 md:top-20 left-0 h-full md:h-auto z-50 md:z-auto w-72 md:w-60 shrink-0 bg-white dark:bg-[#171c24] p-4 shadow-2xl md:shadow-sm border-r md:border border-[#e5e8eb] dark:border-[#202632] space-y-4 transition-all duration-300 transform -translate-x-full md:translate-x-0 overflow-y-auto md:overflow-visible rounded-r-3xl md:rounded-3xl">
-            <!-- Sidebar Header & Toggle Button -->
-            <div class="flex items-center justify-between px-1 pt-0.5">
-                <span id="sidebarTitle" class="text-xs font-bold text-[#8b95a1] tracking-wider uppercase">메뉴</span>
-                
-                <!-- Mobile Close Button inside Drawer -->
-                <button onclick="toggleMobileMenu()" class="md:hidden p-1.5 text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white rounded-xl">
-                    <i data-lucide="x" class="w-4 h-4"></i>
-                </button>
-
-                <!-- PC Collapse Toggle Button -->
-                <button onclick="toggleSidebarCollapse()" class="hidden md:flex p-1.5 text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-xl transition" title="메뉴 접기/펼치기">
-                    <i data-lucide="panel-left-close" id="sidebarToggleIcon" class="w-4 h-4 transition-transform duration-300"></i>
-                </button>
-            </div>
-
-            <!-- Vertical Dashboard Navigation List -->
-            <div id="sidebarAccordionWrapper" class="space-y-3 transition-all duration-300">
-                <nav id="sidebarNavList" class="space-y-1">
-                    <!-- Dynamically injected via JS -->
-                </nav>
-
-                <div id="sidebarBottomActions" class="pt-3 border-t border-[#e5e8eb] dark:border-[#202632] space-y-2 px-0.5">
-                    <button onclick="openCategoryModal()" class="w-full flex items-center justify-between px-3 py-2.5 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-2xl transition" title="카테고리 관리">
-                        <span class="sidebar-text flex items-center gap-2"><i data-lucide="folder-cog" class="w-4 h-4 text-brand-500 shrink-0"></i> <span class="sidebar-label">카테고리 관리</span></span>
-                        <i data-lucide="chevron-right" class="sidebar-arrow w-3.5 h-3.5"></i>
-                    </button>
-                    <button onclick="openAddModal()" class="w-full flex items-center justify-center gap-2 py-3 px-3 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-2xl shadow-md shadow-brand-500/20 transition active:scale-95" title="새 링크 추가">
-                        <i data-lucide="plus-circle" class="w-4 h-4 stroke-[2.5] shrink-0"></i>
-                        <span class="sidebar-text sidebar-label">새 링크 추가</span>
-                    </button>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Right Main Content Area -->
-        <main id="mainAppView" class="flex-1 w-full min-w-0 space-y-6">
-
-            <div id="guideWrapper" class="bg-white dark:bg-[#171c24] rounded-3xl p-6 shadow-sm border border-brand-500/30 dark:border-brand-500/20 transition-all duration-200">
-                <div class="flex items-center justify-between cursor-pointer select-none gap-3 pb-0" onclick="toggleGuideCollapse()">
+    <div id="serviceAppView" class="min-h-screen flex flex-col">
+        <header class="bg-white/85 dark:bg-[#171c24]/85 backdrop-blur-md sticky top-0 z-30 transition-colors duration-200 border-b border-[#e5e8eb] dark:border-[#202632]">
+            <div class="max-w-7xl mx-auto px-4 sm:px-8 py-3.5 sm:py-4">
+                <div class="flex items-center justify-between gap-3">
+                    <!-- Left: Mobile Hamburger & Logo -->
                     <div class="flex items-center space-x-3 min-w-0">
-                        <div class="w-10 h-10 bg-brand-50 dark:bg-brand-500/20 text-brand-500 rounded-2xl flex items-center justify-center font-bold shrink-0 shadow-sm">
-                            <i data-lucide="lightbulb" class="w-5 h-5 fill-brand-400 text-brand-500"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <h2 class="text-base font-extrabold text-[#191f28] dark:text-white tracking-tight truncate">링키지 이용 가이드</h2>
+                        <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-xl transition shrink-0 cursor-pointer" title="메뉴 열기">
+                            <i data-lucide="menu" class="w-5 h-5"></i>
+                        </button>
+                        <div onclick="resetToHome()" class="flex items-center space-x-3 min-w-0 shrink cursor-pointer group select-none" title="메인 화면으로 새로고침">
+                            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl overflow-hidden shadow-sm shrink-0 border border-brand-500/20 bg-brand-50 flex items-center justify-center group-hover:scale-105 transition">
+                                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=120&h=120&fit=crop" class="w-full h-full object-cover" alt="Linkage Logo">
+                            </div>
+                            <div class="flex flex-col min-w-0">
+                                <span class="text-[10px] sm:text-xs font-bold text-brand-600 dark:text-brand-400 tracking-wider">나만의 링크 도서관</span>
+                                <h1 class="font-bold text-base sm:text-lg tracking-tight text-[#191f28] dark:text-white group-hover:text-brand-500 transition whitespace-nowrap">
+                                    <span class="md:hidden">링키지</span>
+                                    <span class="hidden md:inline">링키지 Linkage</span>
+                                </h1>
+                            </div>
                         </div>
                     </div>
-                    <button id="guideToggleBtn" class="p-2 text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white transition shrink-0">
-                        <i data-lucide="chevron-down" id="guideChevron" class="w-5 h-5 transition-transform duration-200"></i>
+
+                    <!-- Right Controls -->
+                    <div class="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+                        <!-- Operator Badge if logged in as admin -->
+                        <div id="adminBadge" class="hidden items-center space-x-1 px-2.5 py-1.5 bg-recommended-50 dark:bg-recommended-500/10 text-recommended-600 dark:text-recommended-400 text-xs font-extrabold rounded-xl border border-recommended-500/20 shrink-0">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                            <span class="inline">운영자</span>
+                        </div>
+
+                        <!-- Login / Account Button -->
+                        <button id="authBtn" onclick="openAuthModal()" class="flex items-center space-x-1 px-3 sm:px-3.5 py-1.5 sm:py-2 text-xs font-semibold rounded-2xl bg-[#f2f4f6] dark:bg-[#202632] text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] transition max-w-[120px] sm:max-w-none shrink-0 cursor-pointer">
+                            <i data-lucide="user" class="w-3.5 h-3.5 shrink-0"></i>
+                            <span id="authBtnText" class="truncate">로그인</span>
+                        </button>
+
+                        <!-- Logout Button -->
+                        <button id="logoutBtn" onclick="handleLogout()" class="hidden flex items-center space-x-1 px-3 sm:px-3.5 py-1.5 sm:py-2 text-xs font-semibold text-rose-500 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 rounded-2xl transition shrink-0 cursor-pointer" title="로그아웃">
+                            <i data-lucide="log-out" class="w-3.5 h-3.5 shrink-0"></i>
+                            <span class="hidden sm:inline">로그아웃</span>
+                        </button>
+
+                        <!-- Dark Mode Toggle -->
+                        <button onclick="toggleTheme()" class="p-2 text-[#8b95a1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-2xl transition shrink-0 cursor-pointer" title="테마 변경">
+                            <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
+                            <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div id="mobileDrawerBackdrop" onclick="toggleMobileMenu()" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden md:hidden transition-opacity"></div>
+
+        <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-6 flex flex-col md:flex-row gap-6 items-start">
+            
+            <aside id="sidebarAside" class="fixed md:sticky top-0 md:top-20 left-0 h-full md:h-auto z-50 md:z-auto w-72 md:w-60 shrink-0 bg-white dark:bg-[#171c24] p-4 shadow-2xl md:shadow-sm border-r md:border border-[#e5e8eb] dark:border-[#202632] space-y-4 transition-all duration-300 transform -translate-x-full md:translate-x-0 overflow-y-auto md:overflow-visible rounded-r-3xl md:rounded-3xl">
+                <div class="flex items-center justify-between px-1 pt-0.5">
+                    <span id="sidebarTitle" class="text-xs font-bold text-[#8b95a1] tracking-wider uppercase">메뉴</span>
+                    
+                    <button onclick="toggleMobileMenu()" class="md:hidden p-1.5 text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white rounded-xl cursor-pointer">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+
+                    <button onclick="toggleSidebarCollapse()" class="hidden md:flex p-1.5 text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-xl transition cursor-pointer" title="메뉴 접기/펼치기">
+                        <i data-lucide="panel-left-close" id="sidebarToggleIcon" class="w-4 h-4 transition-transform duration-300"></i>
                     </button>
                 </div>
-                
-                <div id="guideContent" class="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-[#e5e8eb] dark:border-[#202632] hidden">
-                    <div class="p-4 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl space-y-2 border border-[#e5e8eb] dark:border-transparent">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-6 h-6 rounded-lg bg-brand-500 text-white font-extrabold text-xs flex items-center justify-center shadow-sm">1</span>
-                            <span class="text-sm font-black text-[#191f28] dark:text-white">로그인</span>
-                        </div>
-                        <p class="text-xs text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed">내 계정으로 안전하게 링크를 저장하고 클라우드 동기화하세요.</p>
-                    </div>
-                    <div class="p-4 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl space-y-2 border border-[#e5e8eb] dark:border-transparent">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-6 h-6 rounded-lg bg-brand-500 text-white font-extrabold text-xs flex items-center justify-center shadow-sm">2</span>
-                            <span class="text-sm font-black text-[#191f28] dark:text-white">카테고리 설정</span>
-                        </div>
-                        <p class="text-xs text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed">나만의 맞춤 폴더를 만들고 순서와 이름을 정리해보세요.</p>
-                    </div>
-                    <div class="p-4 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl space-y-2 border border-[#e5e8eb] dark:border-transparent">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-6 h-6 rounded-lg bg-brand-500 text-white font-extrabold text-xs flex items-center justify-center shadow-sm">3</span>
-                            <span class="text-sm font-black text-[#191f28] dark:text-white">링크 추가</span>
-                        </div>
-                        <p class="text-xs text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed">자주 찾는 웹사이트를 등록하고 상세한 노트를 기록하세요.</p>
+
+                <div id="sidebarAccordionWrapper" class="space-y-3 transition-all duration-300">
+                    <nav id="sidebarNavList" class="space-y-1">
+                        <!-- Injected via JS -->
+                    </nav>
+
+                    <div id="sidebarBottomActions" class="pt-3 border-t border-[#e5e8eb] dark:border-[#202632] space-y-2 px-0.5">
+                        <button onclick="openCategoryModal()" class="w-full flex items-center justify-between px-3 py-2.5 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-2xl transition cursor-pointer" title="카테고리 관리">
+                            <span class="sidebar-text flex items-center gap-2"><i data-lucide="folder-cog" class="w-4 h-4 text-brand-500 shrink-0"></i> <span class="sidebar-label">카테고리 관리</span></span>
+                            <i data-lucide="chevron-right" class="sidebar-arrow w-3.5 h-3.5"></i>
+                        </button>
+                        <button onclick="openAddModal()" class="w-full flex items-center justify-center gap-2 py-3 px-3 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-2xl shadow-md shadow-brand-500/20 transition active:scale-95 cursor-pointer" title="새 링크 추가">
+                            <i data-lucide="plus-circle" class="w-4 h-4 stroke-[2.5] shrink-0"></i>
+                            <span class="sidebar-text sidebar-label">새 링크 추가</span>
+                        </button>
                     </div>
                 </div>
-            </div>
+            </aside>
 
-            <div id="operatorActionRow" class="hidden flex items-center justify-end gap-2">
-                <button id="operatorRecManageBtn" onclick="openOperatorRecModal()" class="hidden flex items-center space-x-1.5 px-3.5 py-2.5 text-xs font-bold text-recommended-700 dark:text-recommended-300 bg-recommended-50 dark:bg-recommended-950/40 hover:bg-recommended-100 dark:hover:bg-recommended-900/50 rounded-2xl transition border border-recommended-200 dark:border-recommended-900/50 shrink-0">
-                    <i data-lucide="sparkles" class="w-4 h-4 text-recommended-500"></i>
-                    <span>오늘의 발견 관리</span>
-                </button>
-                <button id="adminDashboardBtn" onclick="openAdminDashboardModal()" class="hidden flex items-center space-x-1.5 px-3.5 py-2.5 text-xs font-bold text-brand-700 dark:text-brand-300 bg-brand-50 dark:bg-brand-950/40 hover:bg-brand-100 dark:hover:bg-brand-900/50 rounded-2xl transition border border-brand-200 dark:border-brand-900/50 shrink-0">
-                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-brand-500"></i>
-                    <span>관리자 통계</span>
-                </button>
-            </div>
+            <main id="mainAppView" class="flex-1 w-full min-w-0 space-y-6">
 
-            <div id="operatorRecommendedSection" class="space-y-3.5">
-                <div class="flex items-center justify-between pb-2 border-b border-[#e5e8eb] dark:border-[#202632]">
-                    <div class="flex items-center space-x-2.5">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="sparkles" class="w-5 h-5 text-recommended-500 fill-recommended-500/20"></i>
-                            <h3 class="font-bold text-base text-[#191f28] dark:text-white">오늘의 발견</h3>
+                <!-- Guide Banner -->
+                <div id="guideWrapper" class="bg-white dark:bg-[#171c24] rounded-3xl p-6 shadow-sm border border-brand-500/30 dark:border-brand-500/20 transition-all duration-200">
+                    <div class="flex items-center justify-between cursor-pointer select-none gap-3 pb-0" onclick="toggleGuideCollapse()">
+                        <div class="flex items-center space-x-3 min-w-0">
+                            <div class="w-10 h-10 bg-brand-50 dark:bg-brand-500/20 text-brand-500 rounded-2xl flex items-center justify-center font-bold shrink-0 shadow-sm">
+                                <i data-lucide="lightbulb" class="w-5 h-5 fill-brand-400 text-brand-500"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <h2 class="text-base font-extrabold text-[#191f28] dark:text-white tracking-tight truncate">링키지 이용 가이드</h2>
+                                <p class="text-xs text-[#8b95a1] mt-0.5">처음 방문하셨나요? 3단계로 쉽게 시작하세요.</p>
+                            </div>
                         </div>
-                        <span class="text-[11px] font-extrabold px-2.5 py-0.5 bg-recommended-50 dark:bg-recommended-500/10 text-recommended-600 dark:text-recommended-400 rounded-xl tracking-tight">OPERATOR PICKS</span>
-                        <span id="recCountBadge" class="text-xs font-semibold text-[#8b95a1]">(0)</span>
+                        <button id="guideToggleBtn" class="p-2 text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white transition shrink-0 cursor-pointer">
+                            <i data-lucide="chevron-down" id="guideChevron" class="w-5 h-5 transition-transform duration-200"></i>
+                        </button>
                     </div>
-                    <button onclick="toggleRecCollapse()" class="flex items-center space-x-1 text-xs font-semibold text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white transition p-1">
-                        <span id="recToggleText">접기</span>
-                        <i data-lucide="chevron-up" id="recChevron" class="w-4 h-4 transition-transform duration-200"></i>
+                    
+                    <div id="guideContent" class="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-[#e5e8eb] dark:border-[#202632] hidden">
+                        <div class="p-4 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl space-y-2 border border-[#e5e8eb] dark:border-transparent">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-6 h-6 rounded-lg bg-brand-500 text-white font-extrabold text-xs flex items-center justify-center shadow-sm">1</span>
+                                <span class="text-sm font-black text-[#191f28] dark:text-white">로그인</span>
+                            </div>
+                            <p class="text-xs text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed">내 계정으로 안전하게 링크를 저장하고 클라우드 동기화하세요.</p>
+                        </div>
+                        <div class="p-4 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl space-y-2 border border-[#e5e8eb] dark:border-transparent">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-6 h-6 rounded-lg bg-brand-500 text-white font-extrabold text-xs flex items-center justify-center shadow-sm">2</span>
+                                <span class="text-sm font-black text-[#191f28] dark:text-white">카테고리 설정</span>
+                            </div>
+                            <p class="text-xs text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed">나만의 맞춤 폴더를 만들고 순서와 이름을 정리해보세요.</p>
+                        </div>
+                        <div class="p-4 bg-[#f9fafb] dark:bg-[#202632] rounded-2xl space-y-2 border border-[#e5e8eb] dark:border-transparent">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-6 h-6 rounded-lg bg-brand-500 text-white font-extrabold text-xs flex items-center justify-center shadow-sm">3</span>
+                                <span class="text-sm font-black text-[#191f28] dark:text-white">링크 추가</span>
+                            </div>
+                            <p class="text-xs text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed">자주 찾는 웹사이트를 등록하고 상세한 노트를 기록하세요.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Operator Action Controls Row -->
+                <div id="operatorActionRow" class="hidden flex items-center justify-end gap-2">
+                    <button id="operatorRecManageBtn" onclick="openOperatorRecModal()" class="hidden flex items-center space-x-1.5 px-3.5 py-2.5 text-xs font-bold text-recommended-700 dark:text-recommended-300 bg-recommended-50 dark:bg-recommended-950/40 hover:bg-recommended-100 dark:hover:bg-recommended-900/50 rounded-2xl transition border border-recommended-200 dark:border-recommended-900/50 shrink-0 cursor-pointer">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-recommended-500"></i>
+                        <span>오늘의 발견 관리</span>
+                    </button>
+                    <button id="adminDashboardBtn" onclick="openAdminDashboardModal()" class="hidden flex items-center space-x-1.5 px-3.5 py-2.5 text-xs font-bold text-brand-700 dark:text-brand-300 bg-brand-50 dark:bg-brand-950/40 hover:bg-brand-100 dark:hover:bg-brand-900/50 rounded-2xl transition border border-brand-200 dark:border-brand-900/50 shrink-0 cursor-pointer">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4 text-brand-500"></i>
+                        <span>관리자 통계</span>
                     </button>
                 </div>
-                <p class="text-xs font-medium text-[#8b95a1] pl-0.5">운영자가 엄선한 유용한 웹사이트와 추천 콘텐츠를 만나보세요.</p>
-                
-                <div id="operatorRecommendedContainer" class="flex sm:grid sm:grid-cols-2 md:grid-cols-3 overflow-x-auto sm:overflow-x-visible no-scrollbar gap-4 sm:gap-5 pb-2 sm:pb-0"></div>
-            </div>
 
-            <div id="bookmarkContainer" class="space-y-8"></div>
-
-            <!-- Empty State -->
-            <div id="emptyState" class="hidden flex-col items-center justify-center py-20 text-center bg-white dark:bg-[#171c24] rounded-3xl shadow-sm">
-                <div class="w-16 h-16 bg-brand-50 dark:bg-brand-500/10 text-brand-500 rounded-full flex items-center justify-center mb-4">
-                    <i data-lucide="bookmark-x" class="w-8 h-8"></i>
+                <!-- Today's Discovery Section -->
+                <div id="operatorRecommendedSection" class="space-y-3.5">
+                    <div class="flex items-center justify-between pb-2 border-b border-[#e5e8eb] dark:border-[#202632]">
+                        <div class="flex items-center space-x-2.5">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="sparkles" class="w-5 h-5 text-recommended-500 fill-recommended-500/20"></i>
+                                <h3 class="font-bold text-base text-[#191f28] dark:text-white">오늘의 발견</h3>
+                            </div>
+                            <span class="text-[11px] font-extrabold px-2.5 py-0.5 bg-recommended-50 dark:bg-recommended-500/10 text-recommended-600 dark:text-recommended-400 rounded-xl tracking-tight">OPERATOR PICKS</span>
+                            <span id="recCountBadge" class="text-xs font-semibold text-[#8b95a1]">(0)</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="openPublicShareModal('오늘의 발견')" class="flex items-center space-x-1 text-xs font-semibold text-recommended-600 dark:text-recommended-400 hover:underline px-2.5 py-1 bg-recommended-50 dark:bg-recommended-500/10 rounded-lg cursor-pointer">
+                                <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+                                <span>공유</span>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-xs font-medium text-[#8b95a1] pl-0.5">운영자가 엄선한 유용한 웹사이트와 추천 콘텐츠를 만나보세요.</p>
+                    <div id="operatorRecommendedContainer" class="flex sm:grid sm:grid-cols-2 md:grid-cols-3 overflow-x-auto sm:overflow-x-visible no-scrollbar gap-4 sm:gap-5 pb-2 sm:pb-0"></div>
                 </div>
-                <h3 class="font-bold text-lg text-[#191f28] dark:text-white">등록된 링크가 없어요</h3>
-                <p class="text-sm text-[#8b95a1] mt-1">자주 사용하는 링크를 더하여 편리하게 이동해 보세요.</p>
+
+                <!-- Bookmarks Container -->
+                <div id="bookmarkContainer" class="space-y-8"></div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="hidden flex-col items-center justify-center py-20 text-center bg-white dark:bg-[#171c24] rounded-3xl shadow-sm">
+                    <div class="w-16 h-16 bg-brand-50 dark:bg-brand-500/10 text-brand-500 rounded-full flex items-center justify-center mb-4">
+                        <i data-lucide="bookmark-x" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-[#191f28] dark:text-white">등록된 링크가 없어요</h3>
+                    <p class="text-sm text-[#8b95a1] mt-1">자주 사용하는 링크를 더하여 편리하게 이동해 보세요.</p>
+                </div>
+            </main>
+        </div>
+
+        <footer class="bg-[#181d24] dark:bg-[#0b0e14] text-[#9ca3af] py-12 mt-auto border-t border-[#222934] dark:border-[#1a212c]">
+            <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                <div class="space-y-3">
+                    <span class="font-bold text-white text-base tracking-tight">망고컴패니</span>
+                    <div class="space-y-1.5 text-xs leading-relaxed text-[#9ca3af]">
+                        <p><strong class="text-gray-300 font-semibold">대표</strong> 김명선</p>
+                        <p><strong class="text-gray-300 font-semibold">문의</strong> uc1306@hanmail.net</p>
+                    </div>
+                </div>
+                <div class="flex flex-col md:items-end justify-start space-y-2 text-xs text-[#9ca3af]">
+                    <div class="flex flex-wrap gap-x-6 gap-y-2 font-medium text-[#d1d5db]">
+                        <button onclick="openInfoModal('about')" class="hover:text-white cursor-pointer transition text-left">회사소개</button>
+                        <button onclick="openInfoModal('terms')" class="hover:text-white cursor-pointer transition text-left">이용약관</button>
+                        <button onclick="openInfoModal('privacy')" class="hover:text-white cursor-pointer transition text-left">개인정보처리방침</button>
+                        <button onclick="openInfoModal('contact')" class="hover:text-white cursor-pointer transition text-left">제휴문의</button>
+                    </div>
+                </div>
             </div>
-        </main>
+        </footer>
     </div>
 
-    <footer class="bg-[#181d24] dark:bg-[#0b0e14] text-[#9ca3af] py-12 mt-auto border-t border-[#222934] dark:border-[#1a212c]">
-        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-            <div class="space-y-3">
-                <span class="font-bold text-white text-base tracking-tight">망고컴패니</span>
-                <div class="space-y-1.5 text-xs leading-relaxed text-[#9ca3af]">
-                    <p><strong class="text-gray-300 font-semibold">대표</strong> 김명선</p>
-                    <p><strong class="text-gray-300 font-semibold">문의</strong> uc1306@hanmail.net</p>
-                </div>
-            </div>
-            <div class="flex flex-col md:items-end justify-start space-y-2 text-xs text-[#9ca3af]">
-                <div class="flex flex-wrap gap-x-6 gap-y-2 font-medium text-[#d1d5db]">
-                    <button onclick="openInfoModal('about')" class="hover:text-white cursor-pointer transition text-left">회사소개</button>
-                    <button onclick="openInfoModal('terms')" class="hover:text-white cursor-pointer transition text-left">이용약관</button>
-                    <button onclick="openInfoModal('privacy')" class="hover:text-white cursor-pointer transition text-left">개인정보처리방침</button>
-                    <button onclick="openInfoModal('contact')" class="hover:text-white cursor-pointer transition text-left">제휴문의</button>
-                </div>
-            </div>
-        </div>
-    </footer>
-
+    <!-- Modals -->
     <div id="infoModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-[#171c24] rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 my-auto max-h-[80vh] flex flex-col">
             <div class="flex justify-between items-center shrink-0 border-b border-[#e5e8eb] dark:border-[#202632] pb-3">
                 <h3 id="infoModalTitle" class="font-bold text-xl text-[#191f28] dark:text-white">회사소개</h3>
-                <button onclick="closeInfoModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white">
+                <button onclick="closeInfoModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
             <div id="infoModalContent" class="space-y-3 overflow-y-auto pr-1 flex-1 text-xs sm:text-sm text-[#4e5968] dark:text-[#b0b8c1] leading-relaxed"></div>
             <div class="flex justify-end pt-2 shrink-0 border-t border-[#e5e8eb] dark:border-[#202632]">
-                <button onclick="closeInfoModal()" class="px-5 py-2.5 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-2xl transition shadow-sm">확인</button>
+                <button onclick="closeInfoModal()" class="px-5 py-2.5 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-2xl transition shadow-sm cursor-pointer">확인</button>
             </div>
         </div>
     </div>
@@ -298,7 +313,7 @@
         <div class="bg-white dark:bg-[#171c24] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div class="flex justify-between items-center">
                 <h3 id="modalTitle" class="font-bold text-xl text-[#191f28] dark:text-white">새 링크 추가</h3>
-                <button onclick="closeModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white transition">
+                <button onclick="closeModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white transition cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -327,14 +342,14 @@
                     <input type="text" id="bmDesc" placeholder="간단한 메모를 적어보세요" class="w-full px-4 py-2.5 text-sm bg-[#f9fafb] dark:bg-[#202632] border-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
                 </div>
                 <div class="flex justify-end space-x-2 pt-2">
-                    <button type="button" onclick="closeModal()" class="px-5 py-2.5 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-2xl transition">취소</button>
-                    <button type="submit" class="px-5 py-2.5 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-2xl transition shadow-sm">저장하기</button>
+                    <button type="button" onclick="closeModal()" class="px-5 py-2.5 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632] transition cursor-pointer">취소</button>
+                    <button type="submit" class="px-5 py-2.5 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-2xl transition shadow-sm cursor-pointer">저장하기</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Personal Note Modal (View, Edit, Delete) -->
+    <!-- Personal Note Modal -->
     <div id="noteModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-[#171c24] rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 my-auto max-h-[85vh] flex flex-col">
             <input type="hidden" id="noteBookmarkId">
@@ -343,7 +358,7 @@
                     <i data-lucide="file-text" class="w-5 h-5 text-brand-500"></i>
                     <span>나만의 아카이브 노트</span>
                 </h3>
-                <button onclick="closeNoteModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white">
+                <button onclick="closeNoteModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -359,14 +374,36 @@
                 </div>
             </div>
             <div class="flex justify-between items-center pt-2 shrink-0 border-t border-[#e5e8eb] dark:border-[#202632]">
-                <button onclick="handleDeleteNote()" type="button" class="px-4 py-2.5 text-xs font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-2xl transition flex items-center gap-1">
+                <button onclick="handleDeleteNote()" type="button" class="px-4 py-2.5 text-xs font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-2xl transition flex items-center gap-1 cursor-pointer">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                     <span>노트 삭제</span>
                 </button>
                 <div class="flex space-x-2">
-                    <button onclick="closeNoteModal()" class="px-4 py-2.5 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-2xl transition">취소</button>
-                    <button onclick="handleSaveNote()" class="px-5 py-2.5 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-2xl transition shadow-sm">노트 저장</button>
+                    <button onclick="closeNoteModal()" class="px-4 py-2.5 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-2xl transition cursor-pointer">취소</button>
+                    <button onclick="handleSaveNote()" class="px-5 py-2.5 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-2xl transition shadow-sm cursor-pointer">노트 저장</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Drawer Modal -->
+    <div id="mindmapModal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-50 hidden flex flex-col p-4 sm:p-8">
+        <div class="bg-white dark:bg-[#171c24] rounded-3xl w-full max-w-6xl mx-auto h-full flex flex-col shadow-2xl overflow-hidden border border-[#e5e8eb] dark:border-[#202632]">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-[#e5e8eb] dark:border-[#202632] shrink-0 bg-[#f9fafb] dark:bg-[#202632]">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-brand-50 dark:bg-brand-500/20 text-brand-500 rounded-2xl flex items-center justify-center font-bold shadow-sm">
+                        <i data-lucide="git-commit" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-lg text-[#191f28] dark:text-white">링키지 서랍</h3>
+                    </div>
+                </div>
+                <button onclick="closeMindmapModal()" class="p-2 text-[#b0b8c1] hover:text-[#191f28] dark:hover:text-white hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-2xl transition cursor-pointer">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div id="mindmapCanvasContainer" class="flex-1 p-6 overflow-auto bg-[#f2f4f6] dark:bg-[#0f1217] flex flex-col items-center justify-center relative">
+                <div id="mindmapTree" class="w-full h-full flex flex-wrap gap-8 items-center justify-center"></div>
             </div>
         </div>
     </div>
@@ -376,14 +413,14 @@
         <div class="bg-white dark:bg-[#171c24] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 my-auto max-h-[65vh] flex flex-col">
             <div class="flex justify-between items-center shrink-0">
                 <h3 class="font-bold text-xl text-[#191f28] dark:text-white">카테고리 관리</h3>
-                <button onclick="closeCategoryModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white">
+                <button onclick="closeCategoryModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
             <p class="text-xs text-[#8b95a1] shrink-0">순서 변경, 수정, 삭제 및 퍼블릭 공유 링크를 관리할 수 있습니다.</p>
             <div class="flex space-x-2 shrink-0">
                 <input type="text" id="newCategoryInput" placeholder="새 카테고리 이름" class="flex-1 px-4 py-2.5 text-sm bg-[#f9fafb] dark:bg-[#202632] border-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
-                <button onclick="handleAddCategory()" class="px-4 py-2.5 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-2xl transition">추가</button>
+                <button onclick="handleAddCategory()" class="px-4 py-2.5 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-2xl transition cursor-pointer">추가</button>
             </div>
             <div id="categoryManageList" class="space-y-1.5 overflow-y-auto pr-1 flex-1"></div>
         </div>
@@ -397,7 +434,7 @@
                     <i data-lucide="sparkles" class="w-5 h-5 text-recommended-500"></i>
                     <span>오늘의 발견 관리</span>
                 </h3>
-                <button onclick="closeOperatorRecModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white">
+                <button onclick="closeOperatorRecModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -426,8 +463,8 @@
                     </select>
                 </div>
                 <div class="flex justify-between items-center pt-1">
-                    <button type="button" id="opRecCancelBtn" onclick="resetOperatorRecForm()" class="hidden px-3 py-2 text-xs font-bold text-[#8b95a1] hover:bg-white dark:hover:bg-[#171c24] rounded-xl transition">취소</button>
-                    <button type="submit" id="opRecSubmitBtn" class="ml-auto px-4 py-2 text-xs font-bold text-white bg-recommended-500 hover:bg-recommended-600 rounded-xl transition shadow-sm flex items-center gap-1">
+                    <button type="button" id="opRecCancelBtn" onclick="resetOperatorRecForm()" class="hidden px-3 py-2 text-xs font-bold text-[#8b95a1] hover:bg-white dark:hover:bg-[#171c24] rounded-xl transition cursor-pointer">취소</button>
+                    <button type="submit" id="opRecSubmitBtn" class="ml-auto px-4 py-2 text-xs font-bold text-white bg-recommended-500 hover:bg-recommended-600 rounded-xl transition shadow-sm flex items-center gap-1 cursor-pointer">
                         <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                         <span id="opRecSubmitText">오늘의 발견 추가 등록</span>
                     </button>
@@ -448,7 +485,7 @@
                     <i data-lucide="bar-chart-3" class="w-5 h-5 text-brand-500"></i>
                     <span>관리자 통계 및 모니터링</span>
                 </h3>
-                <button onclick="closeAdminDashboardModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white">
+                <button onclick="closeAdminDashboardModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -468,7 +505,7 @@
                 <div id="adminUserListContainer" class="space-y-1.5"></div>
             </div>
             <div class="flex justify-end pt-2 shrink-0">
-                <button onclick="closeAdminDashboardModal()" class="px-5 py-2.5 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] bg-[#f2f4f6] dark:bg-[#202632] hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-2xl transition">닫기</button>
+                <button onclick="closeAdminDashboardModal()" class="px-5 py-2.5 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] bg-[#f2f4f6] dark:bg-[#202632] hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-2xl transition cursor-pointer">닫기</button>
             </div>
         </div>
     </div>
@@ -481,13 +518,13 @@
                     <i data-lucide="log-in" class="w-6 h-6 text-brand-500"></i>
                     <span id="authModalHeading">로그인 / 회원가입</span>
                 </h3>
-                <button onclick="closeAuthModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white">
+                <button onclick="closeAuthModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
             <div id="loggedOutView" class="space-y-4">
                 <div class="space-y-2">
-                    <button onclick="handleGoogleLogin()" class="w-full flex items-center justify-center space-x-2 py-3 px-4 text-xs font-bold bg-white dark:bg-[#202632] text-[#191f28] dark:text-white border border-[#e5e8eb] dark:border-[#2c3442] hover:bg-[#f9fafb] dark:hover:bg-[#2c3442] rounded-2xl transition shadow-sm">
+                    <button onclick="handleGoogleLogin()" class="w-full flex items-center justify-center space-x-2 py-3 px-4 text-xs font-bold bg-white dark:bg-[#202632] text-[#191f28] dark:text-white border border-[#e5e8eb] dark:border-[#2c3442] hover:bg-[#f9fafb] dark:hover:bg-[#2c3442] rounded-2xl transition shadow-sm cursor-pointer">
                         <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.18v3.15C3.17 21.32 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.61H1.18C.43 8.12 0 9.81 0 12s.43 3.88 1.18 5.39l4.09-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.17 2.68 1.18 6.61l4.09 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
                         <span>구글 계정으로 로그인</span>
                     </button>
@@ -506,8 +543,8 @@
                     <input type="password" id="authPassword" placeholder="••••••••" class="w-full px-4 py-2.5 text-sm bg-[#f9fafb] dark:bg-[#202632] border-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
                 </div>
                 <div class="flex space-x-2 pt-1">
-                    <button onclick="handleLogin()" class="flex-1 py-3 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-2xl transition shadow-sm">로그인</button>
-                    <button onclick="handleSignUp()" class="flex-1 py-3 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] bg-[#f2f4f6] dark:bg-[#202632] hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-2xl transition">회원가입</button>
+                    <button onclick="handleLogin()" class="flex-1 py-3 text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-2xl transition shadow-sm cursor-pointer">로그인</button>
+                    <button onclick="handleSignUp()" class="flex-1 py-3 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] bg-[#f2f4f6] dark:bg-[#202632] hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-2xl transition cursor-pointer">회원가입</button>
                 </div>
             </div>
             <div id="loggedInView" class="hidden space-y-4">
@@ -519,16 +556,16 @@
                     <label class="block text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] mb-1">내 닉네임 설정</label>
                     <div class="flex gap-2">
                         <input type="text" id="profileNicknameInput" placeholder="사용할 닉네임을 입력하세요" class="flex-1 px-4 py-2.5 text-sm bg-[#f9fafb] dark:bg-[#202632] border-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
-                        <button onclick="handleSaveNickname()" class="px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-2xl transition shadow-sm shrink-0">저장</button>
+                        <button onclick="handleSaveNickname()" class="px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-2xl transition shadow-sm shrink-0 cursor-pointer">저장</button>
                     </div>
                 </div>
                 <div class="space-y-2 pt-2">
-                    <button onclick="handleLogout()" class="w-full py-3 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] bg-[#f2f4f6] dark:bg-[#202632] hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-2xl transition">로그아웃</button>
-                    <button onclick="handleAccountDeletion()" class="w-full py-3 text-xs font-bold text-rose-500 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-900/40 rounded-2xl transition">회원탈퇴 및 데이터 삭제</button>
+                    <button onclick="handleLogout()" class="w-full py-3 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] bg-[#f2f4f6] dark:bg-[#202632] hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-2xl transition cursor-pointer">로그아웃</button>
+                    <button onclick="handleAccountDeletion()" class="w-full py-3 text-xs font-bold text-rose-500 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-900/40 rounded-2xl transition cursor-pointer">회원탈퇴 및 데이터 삭제</button>
                 </div>
             </div>
             <div class="flex justify-end pt-1">
-                <button onclick="closeAuthModal()" class="px-4 py-2 text-xs font-bold text-[#8b95a1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-xl">닫기</button>
+                <button onclick="closeAuthModal()" class="px-4 py-2 text-xs font-bold text-[#8b95a1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632] rounded-xl cursor-pointer">닫기</button>
             </div>
         </div>
     </div>
@@ -541,20 +578,20 @@
                     <i data-lucide="share-2" class="w-5 h-5 text-brand-500"></i>
                     <span>퍼블릭 공유 링크 복사</span>
                 </h3>
-                <button onclick="closePublicShareModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white">
+                <button onclick="closePublicShareModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
             <p class="text-xs text-[#8b95a1] shrink-0">아래의 공유 링크를 복사하여 친구나 커뮤니티에 공유해보세요. 로그인 없이도 해당 카테고리의 링크를 볼 수 있습니다.</p>
             <div class="flex gap-2 shrink-0">
                 <input type="text" id="publicShareUrlInput" readonly class="flex-1 px-4 py-2.5 text-xs bg-[#f9fafb] dark:bg-[#202632] border-0 rounded-2xl focus:outline-none dark:text-white select-all">
-                <button onclick="copyPublicShareUrl()" class="px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-2xl transition shadow-sm shrink-0 flex items-center gap-1">
+                <button onclick="copyPublicShareUrl()" class="px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-2xl transition shadow-sm shrink-0 flex items-center gap-1 cursor-pointer">
                     <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                     <span>복사하기</span>
                 </button>
             </div>
             <div class="flex justify-end pt-2 shrink-0">
-                <button onclick="closePublicShareModal()" class="px-5 py-2.5 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] bg-[#f2f4f6] dark:hover:bg-[#2c3442] rounded-2xl transition">닫기</button>
+                <button onclick="closePublicShareModal()" class="px-5 py-2.5 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] bg-[#f2f4f6] dark:hover:bg-[#2c3442] rounded-2xl transition cursor-pointer">닫기</button>
             </div>
         </div>
     </div>
@@ -567,20 +604,20 @@
                     <i data-lucide="share-2" class="w-5 h-5 text-brand-500"></i>
                     <span>개별 링크 공유</span>
                 </h3>
-                <button onclick="closeBookmarkShareModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white">
+                <button onclick="closeBookmarkShareModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
             <p class="text-xs text-[#8b95a1] shrink-0">이 웹사이트 링크를 복사하여 공유하세요.</p>
             <div class="flex gap-2 shrink-0">
                 <input type="text" id="bookmarkShareUrlInput" readonly class="flex-1 px-4 py-2.5 text-xs bg-[#f9fafb] dark:bg-[#202632] border-0 rounded-2xl focus:outline-none dark:text-white select-all">
-                <button onclick="copyBookmarkShareUrl()" class="px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-2xl transition shadow-sm shrink-0 flex items-center gap-1">
+                <button onclick="copyBookmarkShareUrl()" class="px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-2xl transition shadow-sm shrink-0 flex items-center gap-1 cursor-pointer">
                     <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                     <span>복사하기</span>
                 </button>
             </div>
             <div class="flex justify-end pt-2 shrink-0">
-                <button onclick="closeBookmarkShareModal()" class="px-5 py-2.5 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] bg-[#f2f4f6] dark:hover:bg-[#2c3442] rounded-2xl transition">닫기</button>
+                <button onclick="closeBookmarkShareModal()" class="px-5 py-2.5 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] bg-[#f2f4f6] dark:hover:bg-[#2c3442] rounded-2xl transition cursor-pointer">닫기</button>
             </div>
         </div>
     </div>
@@ -593,25 +630,25 @@
                     <i data-lucide="share-2" class="w-5 h-5 text-recommended-500"></i>
                     <span>오늘의 발견 공유</span>
                 </h3>
-                <button onclick="closeRecShareModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white">
+                <button onclick="closeRecShareModal()" class="p-1 text-[#b0b8c1] hover:text-[#4e5968] dark:hover:text-white cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
             <p class="text-xs text-[#8b95a1] shrink-0">이 오늘의 발견 추천 사이트 링크를 복사하여 공유하세요.</p>
             <div class="flex gap-2 shrink-0">
                 <input type="text" id="recShareUrlInput" readonly class="flex-1 px-4 py-2.5 text-xs bg-[#f9fafb] dark:bg-[#202632] border-0 rounded-2xl focus:outline-none dark:text-white select-all">
-                <button onclick="copyRecShareUrl()" class="px-4 py-2.5 bg-recommended-500 hover:bg-recommended-600 text-white text-xs font-bold rounded-2xl transition shadow-sm shrink-0 flex items-center gap-1">
+                <button onclick="copyRecShareUrl()" class="px-4 py-2.5 bg-recommended-500 hover:bg-recommended-600 text-white text-xs font-bold rounded-2xl transition shadow-sm shrink-0 flex items-center gap-1 cursor-pointer">
                     <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                     <span>복사하기</span>
                 </button>
             </div>
             <div class="flex justify-end pt-2 shrink-0">
-                <button onclick="closeRecShareModal()" class="px-5 py-2.5 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] bg-[#f2f4f6] dark:hover:bg-[#2c3442] rounded-2xl transition">닫기</button>
+                <button onclick="closeRecShareModal()" class="px-5 py-2.5 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] bg-[#f2f4f6] dark:hover:bg-[#2c3442] rounded-2xl transition cursor-pointer">닫기</button>
             </div>
         </div>
     </div>
 
-    <!-- Login Required Modal for Recommended Restricted Sites -->
+    <!-- Login Required Modal -->
     <div id="recLoginModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-[#171c24] rounded-3xl max-w-sm w-full p-6 shadow-2xl text-center space-y-4">
             <div class="w-12 h-12 bg-recommended-50 dark:bg-recommended-500/10 text-recommended-500 rounded-full flex items-center justify-center mx-auto">
@@ -620,8 +657,8 @@
             <h3 class="font-bold text-lg text-[#191f28] dark:text-white">회원 전용 콘텐츠</h3>
             <p class="text-xs text-[#8b95a1] leading-relaxed">이 오늘의 발견 링크는 로그인한 회원만 이용할 수 있습니다. 로그인 후 이용해 주세요!</p>
             <div class="flex space-x-2 pt-2">
-                <button onclick="closeRecLoginModal()" class="flex-1 py-2.5 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] bg-[#f2f4f6] dark:hover:bg-[#2c3442] rounded-xl transition">닫기</button>
-                <button onclick="closeRecLoginModal(); openAuthModal();" class="flex-1 py-2.5 text-xs font-bold text-white bg-recommended-500 hover:bg-recommended-600 rounded-xl transition shadow-sm">로그인하기</button>
+                <button onclick="closeRecLoginModal()" class="flex-1 py-2.5 text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] bg-[#f2f4f6] dark:hover:bg-[#2c3442] rounded-xl transition cursor-pointer">닫기</button>
+                <button onclick="closeRecLoginModal(); openAuthModal();" class="flex-1 py-2.5 text-xs font-bold text-white bg-recommended-500 hover:bg-recommended-600 rounded-xl transition shadow-sm cursor-pointer">로그인하기</button>
             </div>
         </div>
     </div>
@@ -631,7 +668,7 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, deleteUser } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, deleteDoc, getDocs, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const OPERATOR_EMAILS = ['gimms2002@naver.com', 'uc1306@hanmail.net'];
+        const OPERATOR_EMAILS = ['uc1306@hanmail.net', 'gimms2002@naver.com'];
 
         const PRODUCTION_CATEGORIES = ['전체', '자주가는곳', '뉴스', '기타'];
         const PRODUCTION_BOOKMARKS = [
@@ -651,9 +688,7 @@
             currentCategory: '전체',
             bookmarks: [...PRODUCTION_BOOKMARKS],
             operatorRecommended: DEFAULT_RECOMMENDED_SITES,
-            isGuideOpen: false, // Default collapsed
-            isRecCollapsed: false,
-            collapsedCategories: {},
+            isGuideOpen: false,
             isSidebarCollapsed: false,
             isMobileMenuOpen: false
         };
@@ -847,6 +882,67 @@
             }
         };
 
+        window.openMindmapModal = function() {
+            renderMindmapTree();
+            document.getElementById('mindmapModal').classList.remove('hidden');
+            if (window.lucide) lucide.createIcons();
+        };
+
+        window.closeMindmapModal = function() {
+            document.getElementById('mindmapModal').classList.add('hidden');
+        };
+
+        function renderMindmapTree() {
+            const container = document.getElementById('mindmapTree');
+            if (!container) return;
+
+            const userCategories = state.categories.filter(c => c !== '전체');
+            
+            let html = `
+                <div class="flex flex-col items-center justify-center p-6 bg-brand-500 text-white rounded-3xl shadow-xl min-w-[200px] mb-8 select-none">
+                    <span class="text-xs uppercase font-extrabold tracking-widest opacity-80">Root Hub</span>
+                    <h4 class="text-lg font-black mt-1">링키지 도서관</h4>
+                    <span class="text-[11px] mt-1 bg-white/20 px-2 py-0.5 rounded-lg">전체 링크 ${state.bookmarks.length}개</span>
+                </div>
+            `;
+
+            html += `<div class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">`;
+            
+            userCategories.forEach(cat => {
+                const catBms = state.bookmarks.filter(b => b.category === cat);
+                html += `
+                    <div class="bg-white dark:bg-[#1f2633] rounded-3xl p-5 shadow-sm border border-[#e5e8eb] dark:border-[#2c3442] space-y-3 flex flex-col">
+                        <div class="flex items-center justify-between pb-2 border-b border-[#e5e8eb] dark:border-[#2c3442]">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 bg-brand-500 rounded-full"></span>
+                                <h5 class="font-bold text-sm text-[#191f28] dark:text-white">${cat}</h5>
+                            </div>
+                            <span class="text-xs font-extrabold px-2 py-0.5 bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 rounded-lg">${catBms.length}개</span>
+                        </div>
+                        <div class="space-y-2 flex-1">
+                `;
+
+                if (catBms.length === 0) {
+                    html += `<p class="text-xs text-[#8b95a1] text-center py-4">등록된 링크 없음</p>`;
+                } else {
+                    catBms.forEach(bm => {
+                        html += `
+                            <div onclick="window.open('${bm.url}', '_blank')" class="p-3 bg-[#f9fafb] dark:bg-[#171c24] hover:bg-brand-50 dark:hover:bg-brand-950/30 rounded-2xl border border-[#e5e8eb] dark:border-[#2c3442] cursor-pointer transition flex items-center justify-between group">
+                                <span class="text-xs font-bold text-[#191f28] dark:text-white group-hover:text-brand-500 truncate pr-2">${bm.title}</span>
+                                <i data-lucide="external-link" class="w-3.5 h-3.5 text-[#8b95a1] group-hover:text-brand-500 shrink-0"></i>
+                            </div>
+                        `;
+                    });
+                }
+
+                html += `</div></div>`;
+            });
+
+            html += `</div>`;
+            container.innerHTML = html;
+            if (window.lucide) lucide.createIcons();
+        }
+
         window.openPublicShareModal = function(categoryName) {
             if (!state.currentUser) {
                 alert('퍼블릭 공유 링크를 생성하려면 로그인이 필요합니다.');
@@ -922,16 +1018,6 @@
                 content.classList.add('hidden');
                 chevron.classList.remove('rotate-180');
             }
-        };
-
-        window.toggleRecCollapse = function() {
-            state.isRecCollapsed = !state.isRecCollapsed;
-            renderOperatorRecommended();
-        };
-
-        window.toggleCategoryCollapse = function(catName) {
-            state.collapsedCategories[catName] = !state.collapsedCategories[catName];
-            renderBookmarks();
         };
 
         window.handleSaveNickname = async function() {
@@ -1040,7 +1126,6 @@
             document.getElementById('loginWarningNotice').classList.add('hidden');
             document.getElementById('loginWarningNotice').classList.remove('flex');
 
-            document.getElementById('bookmarkModal').classList.add('hidden');
             document.getElementById('bookmarkModal').classList.remove('hidden');
         };
 
@@ -1449,8 +1534,8 @@
                 unsubscribeFirestore = onSnapshot(docRef, (docSnap) => {
                     if (docSnap.exists()) {
                         const data = docSnap.data();
-                        if (data.bookmarks) state.bookmarks = data.bookmarks;
-                        if (data.categories) state.categories = data.categories;
+                        if (data.bookmarks && data.bookmarks.length > 0) state.bookmarks = data.bookmarks;
+                        if (data.categories && data.categories.length > 0) state.categories = data.categories;
                         renderSidebarNav();
                         renderBookmarks();
                     } else {
@@ -1548,22 +1633,22 @@
                             <span class="text-[10px] font-extrabold px-2 py-0.5 bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 rounded-lg shrink-0">${count}개</span>
                         </div>
                         <div class="flex items-center space-x-1 shrink-0">
-                            <button onclick="openPublicShareModal('${cat}')" class="p-1 text-[#8b95a1] hover:text-brand-500 hover:bg-brand-50 dark:hover:bg-brand-950/30 rounded-lg transition" title="퍼블릭 공유 링크">
+                            <button onclick="openPublicShareModal('${cat}')" class="p-1 text-[#8b95a1] hover:text-brand-500 hover:bg-brand-50 dark:hover:bg-brand-950/30 rounded-lg transition cursor-pointer" title="퍼블릭 공유 링크">
                                 <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
                             </button>
                             <div class="w-[1px] h-3 bg-[#b0b8c1]/30 mx-0.5"></div>
                             <div class="flex items-center space-x-0.5 mr-1 border-r border-[#e5e8eb] dark:border-[#2c3442] pr-1.5">
-                                <button onclick="moveCategory(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="p-1 text-[#8b95a1] hover:text-brand-500 disabled:opacity-30 transition" title="위로">
+                                <button onclick="moveCategory(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="p-1 text-[#8b95a1] hover:text-brand-500 disabled:opacity-30 transition cursor-pointer" title="위로">
                                     <i data-lucide="chevron-up" class="w-3.5 h-3.5"></i>
                                 </button>
-                                <button onclick="moveCategory(${idx}, 1)" ${idx === userCategories.length - 1 ? 'disabled' : ''} class="p-1 text-[#8b95a1] hover:text-brand-500 disabled:opacity-30 transition" title="아래로">
+                                <button onclick="moveCategory(${idx}, 1)" ${idx === userCategories.length - 1 ? 'disabled' : ''} class="p-1 text-[#8b95a1] hover:text-brand-500 disabled:opacity-30 transition cursor-pointer" title="아래로">
                                     <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
-                            <button onclick="renameCategory('${cat}')" class="p-1 text-[#8b95a1] hover:text-brand-500 hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-lg transition" title="이름 수정">
+                            <button onclick="renameCategory('${cat}')" class="p-1 text-[#8b95a1] hover:text-brand-500 hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-lg transition cursor-pointer" title="이름 수정">
                                 <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                             </button>
-                            <button onclick="deleteCategory('${cat}')" class="p-1 text-[#8b95a1] hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition" title="삭제">
+                            <button onclick="deleteCategory('${cat}')" class="p-1 text-[#8b95a1] hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition cursor-pointer" title="삭제">
                                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                             </button>
                         </div>
@@ -1596,18 +1681,18 @@
                         </div>
                         <div class="flex items-center space-x-1 shrink-0">
                             <div class="flex items-center space-x-0.5 mr-1 border-r border-[#e5e8eb] dark:border-[#2c3442] pr-1.5">
-                                <button onclick="moveOperatorRec(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="p-1 text-[#8b95a1] hover:text-recommended-500 disabled:opacity-30 transition" title="위로">
+                                <button onclick="moveOperatorRec(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} class="p-1 text-[#8b95a1] hover:text-recommended-500 disabled:opacity-30 transition cursor-pointer" title="위로">
                                     <i data-lucide="chevron-up" class="w-3.5 h-3.5"></i>
                                 </button>
-                                <button onclick="moveOperatorRec(${idx}, 1)" ${idx === state.operatorRecommended.length - 1 ? 'disabled' : ''} class="p-1 text-[#8b95a1] hover:text-recommended-500 disabled:opacity-30 transition" title="아래로">
+                                <button onclick="moveOperatorRec(${idx}, 1)" ${idx === state.operatorRecommended.length - 1 ? 'disabled' : ''} class="p-1 text-[#8b95a1] hover:text-recommended-500 disabled:opacity-30 transition cursor-pointer" title="아래로">
                                     <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
-                            <button onclick="editOperatorRec('${rec.id}')" class="p-1 text-[#8b95a1] hover:text-recommended-500 hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-lg transition" title="수정">
+                            <button onclick="editOperatorRec('${rec.id}')" class="p-1 text-[#8b95a1] hover:text-recommended-500 hover:bg-[#e5e8eb] dark:hover:bg-[#2c3442] rounded-lg transition cursor-pointer" title="수정">
                                 <i data-lucide="pencil" class="w-4 h-4"></i>
                             </button>
                             <div class="w-[1px] h-3 bg-[#b0b8c1]/30 mx-0.5"></div>
-                            <button onclick="deleteOperatorRec('${rec.id}')" class="p-1 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition" title="삭제">
+                            <button onclick="deleteOperatorRec('${rec.id}')" class="p-1 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition cursor-pointer" title="삭제">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -1627,19 +1712,26 @@
             const pinnedCount = state.bookmarks.filter(b => b.pinned).length;
 
             let html = `
-                <button onclick="selectCategory('전체')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-2xl text-xs font-bold transition ${state.currentCategory === '전체' ? 'bg-brand-500 text-white shadow-sm shadow-brand-500/20' : 'text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632]'}" title="홈 (전체)">
+                <button onclick="selectCategory('전체')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-2xl text-xs font-bold transition cursor-pointer ${state.currentCategory === '전체' ? 'bg-brand-500 text-white shadow-sm shadow-brand-500/20' : 'text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632]'}" title="홈 (전체)">
                     <span class="flex items-center gap-2 truncate">
                         <i data-lucide="home" class="w-4 h-4 shrink-0"></i> 
                         <span class="sidebar-label truncate">홈 (전체)</span>
                     </span>
                     <span class="sidebar-badge px-2 py-0.5 text-[10px] rounded-lg ${state.currentCategory === '전체' ? 'bg-white/20 text-white' : 'bg-[#e5e8eb] dark:bg-[#2c3442] text-[#4e5968] dark:text-[#b0b8c1]'}">${totalCount}</span>
                 </button>
-                <button onclick="selectCategory('📌')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-2xl text-xs font-bold transition ${state.currentCategory === '📌' ? 'bg-amber-500 text-white shadow-sm shadow-amber-500/20' : 'text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632]'}" title="즐겨찾기">
+                <button onclick="selectCategory('📌')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-2xl text-xs font-bold transition cursor-pointer ${state.currentCategory === '📌' ? 'bg-amber-500 text-white shadow-sm shadow-amber-500/20' : 'text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632]'}" title="즐겨찾기">
                     <span class="flex items-center gap-2 truncate">
                         <i data-lucide="pin" class="w-4 h-4 shrink-0"></i> 
                         <span class="sidebar-label truncate">즐겨찾기</span>
                     </span>
                     <span class="sidebar-badge px-2 py-0.5 text-[10px] rounded-lg ${state.currentCategory === '📌' ? 'bg-white/20 text-white' : 'bg-[#e5e8eb] dark:bg-[#2c3442] text-[#4e5968] dark:text-[#b0b8c1]'}">${pinnedCount}</span>
+                </button>
+                <button onclick="openMindmapModal()" class="w-full flex items-center justify-between px-3 py-2.5 rounded-2xl text-xs font-bold transition cursor-pointer text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632]" title="서랍 보기">
+                    <span class="flex items-center gap-2 truncate">
+                        <i data-lucide="git-commit" class="w-4 h-4 text-recommended-500 shrink-0"></i> 
+                        <span class="sidebar-label truncate">서랍</span>
+                    </span>
+                    <span class="sidebar-badge px-2 py-0.5 text-[10px] rounded-lg bg-recommended-50 dark:bg-recommended-500/10 text-recommended-600">2D</span>
                 </button>
             `;
 
@@ -1650,7 +1742,7 @@
                     const catCount = state.bookmarks.filter(b => b.category === cat).length;
                     const isActive = state.currentCategory === cat;
                     return `
-                        <button onclick="selectCategory('${cat}')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-2xl text-xs font-bold transition ${isActive ? 'bg-brand-500 text-white shadow-sm shadow-brand-500/20' : 'text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632]'}" title="${cat}">
+                        <button onclick="selectCategory('${cat}')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-2xl text-xs font-bold transition cursor-pointer ${isActive ? 'bg-brand-500 text-white shadow-sm shadow-brand-500/20' : 'text-[#4e5968] dark:text-[#b0b8c1] hover:bg-[#f2f4f6] dark:hover:bg-[#202632]'}" title="${cat}">
                             <span class="flex items-center gap-2 truncate pr-2">
                                 <i data-lucide="folder" class="w-4 h-4 shrink-0"></i> 
                                 <span class="sidebar-label truncate">${cat}</span>
@@ -1701,35 +1793,6 @@
                     let catBookmarks = state.bookmarks.filter(b => b.category === cat);
                     catBookmarks.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
 
-                    const isCollapsed = state.collapsedCategories[cat] || false;
-
-                    if (catBookmarks.length === 0) {
-                        return `
-                            <div class="space-y-4">
-                                <div class="flex items-center justify-between pb-2 border-b border-[#e5e8eb] dark:border-[#202632]">
-                                    <div class="flex items-center space-x-2.5 cursor-pointer group select-none" onclick="selectCategory('${cat}')" title="'${cat}' 카테고리로 이동">
-                                        <span class="w-3 h-3 bg-brand-500 rounded-full group-hover:scale-125 transition"></span>
-                                        <h3 class="font-bold text-base text-[#191f28] dark:text-white group-hover:text-brand-500 transition">${cat}</h3>
-                                        <span class="text-xs text-[#8b95a1] font-medium">(0)</span>
-                                    </div>
-                                    <div class="flex items-center space-x-2">
-                                        <button onclick="openPublicShareModal('${cat}')" class="flex items-center space-x-1 text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline px-2.5 py-1 bg-brand-50 dark:bg-brand-500/10 rounded-lg">
-                                            <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
-                                            <span>공유</span>
-                                        </button>
-                                        <button onclick="toggleCategoryCollapse('${cat}')" class="flex items-center space-x-1 text-xs font-semibold text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white transition p-1">
-                                            <span>${isCollapsed ? '펼치기' : '접기'}</span>
-                                            <i data-lucide="chevron-${isCollapsed ? 'down' : 'up'}" class="w-4 h-4"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="${isCollapsed ? 'hidden' : ''} py-6 px-4 bg-white dark:bg-[#171c24] rounded-3xl border border-dashed border-[#e5e8eb] dark:border-[#202632] text-center text-xs text-[#8b95a1]">
-                                    등록된 링크가 없습니다.
-                                </div>
-                            </div>
-                        `;
-                    }
-
                     return `
                         <div class="space-y-4">
                             <div class="flex items-center justify-between pb-2 border-b border-[#e5e8eb] dark:border-[#202632]">
@@ -1739,18 +1802,14 @@
                                     <span class="text-xs text-[#8b95a1] font-medium">(${catBookmarks.length})</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
-                                    <button onclick="openPublicShareModal('${cat}')" class="flex items-center space-x-1 text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline px-2.5 py-1 bg-brand-50 dark:bg-brand-500/10 rounded-lg">
+                                    <button onclick="openPublicShareModal('${cat}')" class="flex items-center space-x-1 text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline px-2.5 py-1 bg-brand-50 dark:bg-brand-500/10 rounded-lg cursor-pointer">
                                         <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
                                         <span>공유</span>
                                     </button>
-                                    <button onclick="toggleCategoryCollapse('${cat}')" class="flex items-center space-x-1 text-xs font-semibold text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white transition p-1">
-                                        <span>${isCollapsed ? '펼치기' : '접기'}</span>
-                                        <i data-lucide="chevron-${isCollapsed ? 'down' : 'up'}" class="w-4 h-4"></i>
-                                    </button>
                                 </div>
                             </div>
-                            <div class="${isCollapsed ? 'hidden' : ''} flex sm:grid sm:grid-cols-2 md:grid-cols-3 overflow-x-auto sm:overflow-x-visible no-scrollbar gap-4 sm:gap-5 pb-2 sm:pb-0">
-                                ${catBookmarks.map((bm, idx) => renderCardHtml(bm, idx, catBookmarks.length, isTouchDevice)).join('')}
+                            <div class="${catBookmarks.length === 0 ? 'py-6 px-4 bg-white dark:bg-[#171c24] rounded-3xl border border-dashed border-[#e5e8eb] dark:border-[#202632] text-center text-xs text-[#8b95a1]' : 'flex sm:grid sm:grid-cols-2 md:grid-cols-3 overflow-x-auto sm:overflow-x-visible no-scrollbar gap-4 sm:gap-5 pb-2 sm:pb-0'}">
+                                ${catBookmarks.length === 0 ? '등록된 링크가 없습니다.' : catBookmarks.map((bm, idx) => renderCardHtml(bm, idx, catBookmarks.length, isTouchDevice)).join('')}
                             </div>
                         </div>
                     `;
@@ -1763,28 +1822,6 @@
                 });
 
                 filtered.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
-
-                if (filtered.length === 0) {
-                    container.innerHTML = `
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between pb-2 border-b border-[#e5e8eb] dark:border-[#202632]">
-                                <div class="flex items-center space-x-2.5">
-                                    <span class="w-3 h-3 bg-brand-500 rounded-full"></span>
-                                    <h3 class="font-bold text-base text-[#191f28] dark:text-white">${state.currentCategory}</h3>
-                                    <span class="text-xs text-[#8b95a1] font-medium">(0)</span>
-                                </div>
-                            </div>
-                            <div class="py-12 px-4 bg-white dark:bg-[#171c24] rounded-3xl border border-dashed border-[#e5e8eb] dark:border-[#202632] text-center text-xs text-[#8b95a1]">
-                                해당 카테고리에 등록된 링크가 없습니다.
-                            </div>
-                        </div>
-                    `;
-                    if (empty) {
-                        empty.classList.add('hidden');
-                        empty.classList.remove('flex');
-                    }
-                    return;
-                }
 
                 if (empty) {
                     empty.classList.add('hidden');
@@ -1801,14 +1838,14 @@
                             </div>
                             <div class="flex items-center space-x-2">
                                 ${state.currentCategory !== '📌' ? `
-                                <button onclick="openPublicShareModal('${state.currentCategory}')" class="flex items-center space-x-1 text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline px-2.5 py-1 bg-brand-50 dark:bg-brand-500/10 rounded-lg">
+                                <button onclick="openPublicShareModal('${state.currentCategory}')" class="flex items-center space-x-1 text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline px-2.5 py-1 bg-brand-50 dark:bg-brand-500/10 rounded-lg cursor-pointer">
                                     <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
                                     <span>공유</span>
                                 </button>` : ''}
                             </div>
                         </div>
                         <div class="flex sm:grid sm:grid-cols-2 md:grid-cols-3 overflow-x-auto sm:overflow-x-visible no-scrollbar gap-4 sm:gap-5 pb-2 sm:pb-0">
-                            ${filtered.map((bm, idx) => renderCardHtml(bm, idx, filtered.length, isTouchDevice)).join('')}
+                            ${filtered.length === 0 ? '<div class="col-span-3 py-12 px-4 bg-white dark:bg-[#171c24] rounded-3xl border border-dashed border-[#e5e8eb] dark:border-[#202632] text-center text-xs text-[#8b95a1]">해당 카테고리에 등록된 링크가 없습니다.</div>' : filtered.map((bm, idx) => renderCardHtml(bm, idx, filtered.length, isTouchDevice)).join('')}
                         </div>
                     </div>
                 `;
@@ -1839,19 +1876,6 @@
                 recSection.classList.remove('hidden');
             }
 
-            const recToggleText = document.getElementById('recToggleText');
-            const recChevron = document.getElementById('recChevron');
-
-            if (state.isRecCollapsed) {
-                recContainer.classList.add('hidden');
-                recToggleText.textContent = '펼치기';
-                recChevron.classList.add('rotate-180');
-            } else {
-                recContainer.classList.remove('hidden');
-                recToggleText.textContent = '접기';
-                recChevron.classList.remove('rotate-180');
-            }
-
             if (recCountBadge) {
                 recCountBadge.textContent = `(${state.operatorRecommended.length})`;
             }
@@ -1878,7 +1902,7 @@
                             </span>
                             <div class="flex items-center space-x-1.5">
                                 ${isLoginReq ? '<span class="text-[10px] font-bold px-2 py-0.5 bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300 rounded-lg flex items-center gap-1"><i data-lucide="lock" class="w-3 h-3"></i>회원 전용</span>' : ''}
-                                <button onclick="openRecShareModal('${rec.url}', '${rec.title}')" class="p-1.5 text-recommended-600 dark:text-recommended-400 hover:bg-recommended-50 dark:hover:bg-recommended-950/40 rounded-xl transition" title="공유하기">
+                                <button onclick="openRecShareModal('${rec.url}', '${rec.title}')" class="p-1.5 text-recommended-600 dark:text-recommended-400 hover:bg-recommended-50 dark:hover:bg-recommended-950/40 rounded-xl transition cursor-pointer" title="공유하기">
                                     <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
@@ -1889,7 +1913,7 @@
                         </div>
                         <p class="text-xs font-medium text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-4 min-h-[2.5rem] leading-relaxed">${rec.desc || '오늘의 발견 추천 링크'}</p>
                     </div>
-                    <button onclick="handleRecommendedClick('${rec.url}', '${rec.access || 'public'}')" class="w-full py-3 ${isLocked ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 hover:bg-amber-100' : 'bg-recommended-50 dark:bg-recommended-950/30 text-recommended-700 dark:text-recommended-300 hover:bg-recommended-500 hover:text-white'} text-xs font-bold rounded-2xl flex items-center justify-center space-x-2 transition active:scale-[0.98]">
+                    <button onclick="handleRecommendedClick('${rec.url}', '${rec.access || 'public'}')" class="w-full py-3 ${isLocked ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 hover:bg-amber-100' : 'bg-recommended-50 dark:bg-recommended-950/30 text-recommended-700 dark:text-recommended-300 hover:bg-recommended-500 hover:text-white'} text-xs font-bold rounded-2xl flex items-center justify-center space-x-2 transition active:scale-[0.98] cursor-pointer">
                         <span>${isLocked ? '로그인 후 이용 가능' : '방문하기'}</span>
                         <i data-lucide="${isLocked ? 'lock' : 'arrow-up-right'}" class="w-3.5 h-3.5"></i>
                     </button>
@@ -1919,16 +1943,16 @@
                             ${bm.category}
                         </span>
                         <div class="flex items-center space-x-1 shrink-0">
-                            <button onclick="openBookmarkShareModal('${bm.url}', '${bm.title}')" class="p-1.5 text-[#b0b8c1] hover:text-brand-500 transition rounded-xl hover:bg-[#f2f4f6] dark:hover:bg-[#202632]" title="공유하기">
+                            <button onclick="openBookmarkShareModal('${bm.url}', '${bm.title}')" class="p-1.5 text-[#b0b8c1] hover:text-brand-500 transition rounded-xl hover:bg-[#f2f4f6] dark:hover:bg-[#202632] cursor-pointer" title="공유하기">
                                 <i data-lucide="share-2" class="w-4 h-4"></i>
                             </button>
-                            <button onclick="togglePin('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-amber-500 transition rounded-xl hover:bg-[#f2f4f6] dark:hover:bg-[#202632]" title="즐겨찾기">
+                            <button onclick="togglePin('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-amber-500 transition rounded-xl hover:bg-[#f2f4f6] dark:hover:bg-[#202632] cursor-pointer" title="즐겨찾기">
                                 <i data-lucide="pin" class="w-4 h-4 ${bm.pinned ? 'fill-amber-500 text-amber-500' : ''}"></i>
                             </button>
-                            <button onclick="openEditModal('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-brand-500 transition rounded-xl hover:bg-[#f2f4f6] dark:hover:bg-[#202632]" title="수정">
+                            <button onclick="openEditModal('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-brand-500 transition rounded-xl hover:bg-[#f2f4f6] dark:hover:bg-[#202632] cursor-pointer" title="수정">
                                 <i data-lucide="pencil" class="w-4 h-4"></i>
                             </button>
-                            <button onclick="deleteBookmark('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-rose-500 transition rounded-xl hover:bg-[#f2f4f6] dark:hover:bg-[#202632]" title="삭제">
+                            <button onclick="deleteBookmark('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-rose-500 transition rounded-xl hover:bg-[#f2f4f6] dark:hover:bg-[#202632] cursor-pointer" title="삭제">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -1939,7 +1963,7 @@
                     </div>
                     <p class="text-xs font-medium text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-3 min-h-[2rem] leading-relaxed pointer-events-none">${bm.desc || '메모 없음'}</p>
                     
-                    <button onclick="openNoteModal('${bm.id}')" class="mb-4 w-full py-2 px-3 ${hasNotes ? 'bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 hover:bg-brand-100' : 'bg-[#f9fafb] dark:bg-[#202632] text-[#8b95a1] hover:bg-[#e5e8eb]'} text-xs font-bold rounded-xl flex items-center justify-between transition">
+                    <button onclick="openNoteModal('${bm.id}')" class="mb-4 w-full py-2 px-3 ${hasNotes ? 'bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 hover:bg-brand-100' : 'bg-[#f9fafb] dark:bg-[#202632] text-[#8b95a1] hover:bg-[#e5e8eb]'} text-xs font-bold rounded-xl flex items-center justify-between transition cursor-pointer">
                         <span class="flex items-center gap-1.5"><i data-lucide="${hasNotes ? 'file-text' : 'file-plus'}" class="w-3.5 h-3.5"></i> ${hasNotes ? '노트 보기/수정' : '노트 입력'}</span>
                         <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
                     </button>
@@ -1957,7 +1981,7 @@
             if (!mainEl) return;
 
             mainEl.innerHTML = `
-                <!-- Wide 3-Step Guide Banner (Default Collapsed) -->
+                <!-- Guide Banner -->
                 <div id="guideWrapper" class="bg-white dark:bg-[#171c24] rounded-3xl p-6 shadow-sm border border-brand-500/30 dark:border-brand-500/20 transition-all duration-200">
                     <div class="flex items-center justify-between cursor-pointer select-none gap-3 pb-0" onclick="toggleGuideCollapse()">
                         <div class="flex items-center space-x-3 min-w-0">
@@ -1966,9 +1990,10 @@
                             </div>
                             <div class="min-w-0">
                                 <h2 class="text-base font-extrabold text-[#191f28] dark:text-white tracking-tight truncate">링키지 이용 가이드</h2>
+                                <p class="text-xs text-[#8b95a1] mt-0.5">처음 방문하셨나요? 3단계로 쉽게 시작하세요.</p>
                             </div>
                         </div>
-                        <button id="guideToggleBtn" class="p-2 text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white transition shrink-0">
+                        <button id="guideToggleBtn" class="p-2 text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white transition shrink-0 cursor-pointer">
                             <i data-lucide="chevron-down" id="guideChevron" class="w-5 h-5 transition-transform duration-200"></i>
                         </button>
                     </div>
@@ -1998,19 +2023,19 @@
                     </div>
                 </div>
 
-                <!-- Operator Action Controls Row (Visible ONLY if admin) -->
+                <!-- Operator Action Controls Row -->
                 <div id="operatorActionRow" class="hidden flex items-center justify-end gap-2">
-                    <button id="operatorRecManageBtn" onclick="openOperatorRecModal()" class="hidden flex items-center space-x-1.5 px-3.5 py-2.5 text-xs font-bold text-recommended-700 dark:text-recommended-300 bg-recommended-50 dark:bg-recommended-950/40 hover:bg-recommended-100 dark:hover:bg-recommended-900/50 rounded-2xl transition border border-recommended-200 dark:border-recommended-900/50 shrink-0">
+                    <button id="operatorRecManageBtn" onclick="openOperatorRecModal()" class="hidden flex items-center space-x-1.5 px-3.5 py-2.5 text-xs font-bold text-recommended-700 dark:text-recommended-300 bg-recommended-50 dark:bg-recommended-950/40 hover:bg-recommended-100 dark:hover:bg-recommended-900/50 rounded-2xl transition border border-recommended-200 dark:border-recommended-900/50 shrink-0 cursor-pointer">
                         <i data-lucide="sparkles" class="w-4 h-4 text-recommended-500"></i>
                         <span>오늘의 발견 관리</span>
                     </button>
-                    <button id="adminDashboardBtn" onclick="openAdminDashboardModal()" class="hidden flex items-center space-x-1.5 px-3.5 py-2.5 text-xs font-bold text-brand-700 dark:text-brand-300 bg-brand-50 dark:bg-brand-950/40 hover:bg-brand-100 dark:hover:bg-brand-900/50 rounded-2xl transition border border-brand-200 dark:border-brand-900/50 shrink-0">
+                    <button id="adminDashboardBtn" onclick="openAdminDashboardModal()" class="hidden flex items-center space-x-1.5 px-3.5 py-2.5 text-xs font-bold text-brand-700 dark:text-brand-300 bg-brand-50 dark:bg-brand-950/40 hover:bg-brand-100 dark:hover:bg-brand-900/50 rounded-2xl transition border border-brand-200 dark:border-brand-900/50 shrink-0 cursor-pointer">
                         <i data-lucide="bar-chart-3" class="w-4 h-4 text-brand-500"></i>
                         <span>관리자 통계</span>
                     </button>
                 </div>
 
-                <!-- Today's Discovery (Operator Picks) Section -->
+                <!-- Today's Discovery Section -->
                 <div id="operatorRecommendedSection" class="space-y-3.5">
                     <div class="flex items-center justify-between pb-2 border-b border-[#e5e8eb] dark:border-[#202632]">
                         <div class="flex items-center space-x-2.5">
@@ -2021,10 +2046,12 @@
                             <span class="text-[11px] font-extrabold px-2.5 py-0.5 bg-recommended-50 dark:bg-recommended-500/10 text-recommended-600 dark:text-recommended-400 rounded-xl tracking-tight">OPERATOR PICKS</span>
                             <span id="recCountBadge" class="text-xs font-semibold text-[#8b95a1]">(0)</span>
                         </div>
-                        <button onclick="toggleRecCollapse()" class="flex items-center space-x-1 text-xs font-semibold text-[#8b95a1] hover:text-[#191f28] dark:hover:text-white transition p-1">
-                            <span id="recToggleText">접기</span>
-                            <i data-lucide="chevron-up" id="recChevron" class="w-4 h-4 transition-transform duration-200"></i>
-                        </button>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="openPublicShareModal('오늘의 발견')" class="flex items-center space-x-1 text-xs font-semibold text-recommended-600 dark:text-recommended-400 hover:underline px-2.5 py-1 bg-recommended-50 dark:bg-recommended-500/10 rounded-lg cursor-pointer">
+                                <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+                                <span>공유</span>
+                            </button>
+                        </div>
                     </div>
                     <p class="text-xs font-medium text-[#8b95a1] pl-0.5">운영자가 엄선한 유용한 웹사이트와 추천 콘텐츠를 만나보세요.</p>
                     <div id="operatorRecommendedContainer" class="flex sm:grid sm:grid-cols-2 md:grid-cols-3 overflow-x-auto sm:overflow-x-visible no-scrollbar gap-4 sm:gap-5 pb-2 sm:pb-0"></div>
