@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <title>링키지 Linkage - 나만의 링크 도서관</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="https://api.iconify.design/lucide:bookmark.svg?color=%2310B981">
+    
     <meta name="description" content="나만의 링크 도서관. 소중한 웹 링크와 지식을 모아두고 스마트하게 관리하는 아카이브 플랫폼">
     <meta name="author" content="망고컴패니">
 
@@ -878,7 +881,7 @@
                 <div class="flex flex-col items-center justify-center p-6 bg-brand-500 text-white rounded-3xl shadow-xl min-w-[200px] mb-8 select-none">
                     <span class="text-xs uppercase font-extrabold tracking-widest opacity-80">Root Hub</span>
                     <h4 class="text-lg font-black mt-1">링키지 도서관</h4>
-                    <span class="text-[11px] mt-1 bg-white/20 px-2 py-0.5 rounded-lg">전체 링크 ${state.bookmarks.length}개</span>
+                    <span class="text-[11px] mt-1 bg-white/20 px-2 py-0.5 rounded-lg">전체 링크 ${state.bookmarks.length + state.operatorRecommended.length}개</span>
                 </div>
             `;
 
@@ -1264,6 +1267,7 @@
             saveOperatorRecommendations();
             renderOperatorRecommended();
             renderOperatorRecManageList();
+            renderSidebarNav();
         };
 
         window.editOperatorRec = function(id) {
@@ -1292,6 +1296,7 @@
                 saveOperatorRecommendations();
                 renderOperatorRecommended();
                 renderOperatorRecManageList();
+                renderSidebarNav();
             }
         };
 
@@ -1475,6 +1480,7 @@
                         if (data.recommendations) {
                             state.operatorRecommended = data.recommendations;
                             renderOperatorRecommended();
+                            renderSidebarNav();
                         }
                     } else {
                         saveOperatorRecommendations();
@@ -1690,7 +1696,8 @@
             const select = document.getElementById('bmCategory');
             if (!navList) return;
 
-            const totalCount = state.bookmarks.length;
+            // Total count includes user bookmarks + operator recommendations
+            const totalCount = state.bookmarks.length + state.operatorRecommended.length;
             const pinnedCount = state.bookmarks.filter(b => b.pinned).length;
 
             let html = `
@@ -1756,9 +1763,9 @@
 
             if (state.currentCategory === '전체') {
                 const userCategories = state.categories.filter(c => c !== '전체');
-                let hasAnyBookmarks = state.bookmarks.length > 0;
+                let hasAnyBookmarks = state.bookmarks.length > 0 || state.operatorRecommended.length > 0;
 
-                if (!hasAnyBookmarks && state.operatorRecommended.length === 0) {
+                if (!hasAnyBookmarks) {
                     container.innerHTML = '';
                     if (empty) {
                         empty.classList.remove('hidden');
@@ -1926,16 +1933,16 @@
                             ${bm.category}
                         </span>
                         <div class="flex items-center space-x-1 shrink-0">
-                            <button onclick="openBookmarkShareModal('${bm.url}', '${bm.title}')" class="p-1.5 text-[#b0b8c1] hover:text-brand-500 transition rounded-xl hover:bg-[#f2f4f6] dark:hover:bg-[#202632] cursor-pointer" title="공유하기">
+                            <button type="button" onclick="openBookmarkShareModal('${bm.url}', '${bm.title}')" class="p-1.5 text-[#b0b8c1] hover:text-brand-500 transition rounded-xl hover:bg-[#f2f4f6] dark:hover:bg-[#202632] cursor-pointer" title="공유하기">
                                 <i data-lucide="share-2" class="w-4 h-4"></i>
                             </button>
-                            <button onclick="togglePin('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-amber-500 transition rounded-xl hover:bg-[#f2f4f6] dark:hover:bg-[#202632] cursor-pointer" title="즐겨찾기">
+                            <button type="button" onclick="togglePin('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-amber-500 transition rounded-xl hover:bg-[#f2f4f6] dark:hover:bg-[#202632] cursor-pointer" title="즐겨찾기">
                                 <i data-lucide="pin" class="w-4 h-4 ${bm.pinned ? 'fill-amber-500 text-amber-500' : ''}"></i>
                             </button>
-                            <button onclick="openEditModal('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-brand-500 transition rounded-xl hover:bg-[#f2f4f6] dark:hover:bg-[#202632] cursor-pointer" title="수정">
+                            <button type="button" onclick="openEditModal('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-brand-500 transition rounded-xl hover:bg-[#f2f4f6] dark:hover:bg-[#202632] cursor-pointer" title="수정">
                                 <i data-lucide="pencil" class="w-4 h-4"></i>
                             </button>
-                            <button onclick="deleteBookmark('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-rose-500 transition rounded-xl hover:bg-[#f2f4f6] dark:hover:bg-[#202632] cursor-pointer" title="삭제">
+                            <button type="button" onclick="deleteBookmark('${bm.id}')" class="p-1.5 text-[#b0b8c1] hover:text-rose-500 transition rounded-xl hover:bg-[#f2f4f6] dark:hover:bg-[#202632] cursor-pointer" title="삭제">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -1946,7 +1953,7 @@
                     </div>
                     <p class="text-xs font-medium text-[#4e5968] dark:text-[#d1d5db] line-clamp-2 mb-3 min-h-[2rem] leading-relaxed pointer-events-none">${bm.desc || '메모 없음'}</p>
                     
-                    <button onclick="openNoteModal('${bm.id}')" class="mb-4 w-full py-2 px-3 ${hasNotes ? 'bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 hover:bg-brand-100' : 'bg-[#f9fafb] dark:bg-[#202632] text-[#8b95a1] hover:bg-[#e5e8eb]'} text-xs font-bold rounded-xl flex items-center justify-between transition cursor-pointer">
+                    <button type="button" onclick="openNoteModal('${bm.id}')" class="mb-4 w-full py-2 px-3 ${hasNotes ? 'bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 hover:bg-brand-100' : 'bg-[#f9fafb] dark:bg-[#202632] text-[#8b95a1] hover:bg-[#e5e8eb]'} text-xs font-bold rounded-xl flex items-center justify-between transition cursor-pointer">
                         <span class="flex items-center gap-1.5"><i data-lucide="${hasNotes ? 'file-text' : 'file-plus'}" class="w-3.5 h-3.5"></i> ${hasNotes ? '노트 보기/수정' : '노트 입력'}</span>
                         <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
                     </button>
