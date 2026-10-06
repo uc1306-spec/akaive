@@ -676,6 +676,14 @@
         let unsubscribeFirestore = null;
         let unsubscribeGlobalRecs = null;
 
+        // Firebase 데이터 안전장치
+        // true가 되기 전에는 사용자 데이터를 Firestore에 쓰지 않습니다.
+        // 로그인 직후 Firestore 읽기가 완료되기 전에 기본값이 기존 데이터를 덮어쓰는 사고를 방지합니다.
+        let cloudDataReady = false;
+        let cloudDataExists = false;
+        let cloudSaveInProgress = false;
+        let cloudSaveQueued = false;
+
         try {
             if (firebaseConfig.apiKey) {
                 app = initializeApp(firebaseConfig);
@@ -1439,7 +1447,51 @@
         };
 
         function saveData() {
-            if (isFirebaseActive && db && state.currentUser) saveToCloud();
+            if (!isFirebaseActive || !db || !state.currentUser) return false;
+
+            // Firestore 원본을 아직 읽지 않았다면 절대 저장하지 않습니다.
+            // 로그인 직후의 기본 state가 기존 사용자 데이터를 덮어쓰는 것을 방지합니다.
+            if (!cloudDataReady) {
+                console.warn('Cloud Save blocked: Firestore data has not finished loading.');
+                alert('데이터를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.');
+                return false;
+            }
+
+            saveToCloud();
+            return true;
+        }
+
+        async function saveToCloud() {
+            if (!state.currentUser || !db || !cloudDataReady) return false;
+
+            // 여러 UI 이벤트가 연속으로 발생해도 마지막 상태를 저장합니다.
+            if (cloudSaveInProgress) {
+                cloudSaveQueued = true;
+                return false;
+            }
+
+            cloudSaveInProgress = true;
+            try {
+                const docRef = doc(db, 'user_archives', state.currentUser.uid);
+                await setDoc(docRef, {
+                    bookmarks: state.bookmarks,
+                    categories: state.categories,
+                    email: state.currentUser.email || '',
+                    updatedAt: new Date().toISOString()
+                }, { merge: true });
+                cloudDataExists = true;
+                return true;
+            } catch (e) {
+                console.error('Cloud Save Error:', e.message);
+                alert('저장에 실패했습니다. 인터넷 연결과 Firebase 상태를 확인해 주세요.\n변경사항은 현재 화면에 남아 있지만 서버에 저장되지 않았을 수 있습니다.');
+                return false;
+            } finally {
+                cloudSaveInProgress = false;
+                if (cloudSaveQueued) {
+                    cloudSaveQueued = false;
+                    saveToCloud();
+                }
+            }
         }
 
         async function saveOperatorRecommendations() {
@@ -1480,53 +1532,58 @@
             }
         }
 
-        async function saveToCloud() {
-            if (!state.currentUser || !db) return;
-            try {
-                const docRef = doc(db, 'user_archives', state.currentUser.uid);
-                await setDoc(docRef, {
-                    bookmarks: state.bookmarks,
-                    categories: state.categories,
-                    email: state.currentUser.email || '',
-                    updatedAt: new Date().toISOString()
-                }, { merge: true });
-            } catch (e) {
-                console.error("Cloud Save Error:", e.message);
-            }
-        }
-
         function listenToCloudData(uid) {
             if (!db) return;
             if (unsubscribeFirestore) unsubscribeFirestore();
             try {
                 const docRef = doc(db, 'user_archives', uid);
+                cloudDataReady = false;
+                cloudDataExists = false;
+
                 unsubscribeFirestore = onSnapshot(docRef, (docSnap) => {
                     if (docSnap.exists()) {
                         const data = docSnap.data();
-                        if (data.bookmarks && data.bookmarks.length > 0) state.bookmarks = data.bookmarks;
-                        if (data.categories && data.categories.length > 0) state.categories = data.categories;
+                        cloudDataExists = true;
+
+                        // 배열이 비어 있어도 정상적인 사용자 데이터입니다.
+                        // length > 0 조건을 사용하면 사용자가 모든 데이터를 삭제한 경우
+                        // 이전 기본값이 다시 살아나는 문제가 생길 수 있습니다.
+                        if (Array.isArray(data.bookmarks)) state.bookmarks = data.bookmarks;
+                        if (Array.isArray(data.categories) && data.categories.length > 0) {
+                            state.categories = data.categories;
+                        }
+
+                        cloudDataReady = true;
                         renderSidebarNav();
                         renderBookmarks();
                     } else {
+                        // 신규 사용자일 수 있으므로 빈 사용자 아카이브를 한 번만 생성합니다.
+                        // 기존 문서가 사라진 경우에도 기존 데이터로 덮어쓰지는 않습니다.
+                        state.bookmarks = [];
+                        state.categories = [...PRODUCTION_CATEGORIES];
+                        cloudDataExists = false;
+                        cloudDataReady = true;
                         saveToCloud();
+                        renderSidebarNav();
+                        renderBookmarks();
                     }
                 }, (err) => {
+                    cloudDataReady = false;
                     console.warn("Cloud Sync Listener Notice:", err.message);
+                    alert('클라우드 데이터를 불러오지 못했습니다. 안전을 위해 저장 기능을 잠시 중지합니다.');
                 });
 
                 const userDocRef = doc(db, 'users', uid);
-                getDocs(collection(db, 'users')).then(() => {
-                    onSnapshot(userDocRef, (uSnap) => {
-                        if (uSnap.exists()) {
-                            const uData = uSnap.data();
-                            if (uData.nickname) {
-                                state.userNickname = uData.nickname;
-                                document.getElementById('profileNicknameInput').value = uData.nickname;
-                                updateAuthUI(auth.currentUser);
-                            }
+                onSnapshot(userDocRef, (uSnap) => {
+                    if (uSnap.exists()) {
+                        const uData = uSnap.data();
+                        if (uData.nickname) {
+                            state.userNickname = uData.nickname;
+                            document.getElementById('profileNicknameInput').value = uData.nickname;
+                            updateAuthUI(auth.currentUser);
                         }
-                    });
-                }).catch(e => console.warn("Profile fetch notice:", e));
+                    }
+                }, (e) => console.warn("Profile fetch notice:", e));
 
             } catch (e) {
                 console.warn("Cloud listener error:", e.message);
@@ -2110,6 +2167,10 @@
                 listenToGlobalRecommendations();
                 onAuthStateChanged(auth, (user) => {
                     state.currentUser = user;
+                    cloudDataReady = false;
+                    cloudDataExists = false;
+                    cloudSaveInProgress = false;
+                    cloudSaveQueued = false;
                     updateAuthUI(user);
                     if (user) {
                         listenToCloudData(user.uid);
