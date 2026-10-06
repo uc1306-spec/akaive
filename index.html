@@ -629,10 +629,25 @@
     </div>
 
     <!-- Application Logic Script -->
+    <div id="publicShareView" class="hidden fixed inset-0 z-[100] overflow-y-auto bg-[#f2f4f6] dark:bg-[#101318]">
+        <div class="min-h-screen w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <p class="text-xs font-bold text-brand-500 tracking-wide uppercase">LINKAGE PUBLIC SHARE</p>
+                    <h1 id="publicShareTitle" class="text-2xl sm:text-3xl font-black text-[#191f28] dark:text-white mt-1">공유된 링크</h1>
+                    <p id="publicShareMeta" class="text-xs text-[#8b95a1] mt-2"></p>
+                </div>
+                <a href="./" class="px-4 py-2.5 bg-white dark:bg-[#171c24] border border-[#e5e8eb] dark:border-[#2c3442] rounded-2xl text-xs font-bold text-[#4e5968] dark:text-[#b0b8c1] hover:text-brand-500 transition">링키지로 이동</a>
+            </div>
+            <div id="publicShareContent" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            <div id="publicShareStatus" class="text-center py-20 text-sm text-[#8b95a1]">공유 데이터를 불러오는 중입니다...</div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, deleteUser } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, deleteDoc, getDocs, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, deleteDoc, getDoc, getDocs, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const OPERATOR_EMAILS = ['uc1306@hanmail.net', 'gimms2002@naver.com'];
 
@@ -917,20 +932,91 @@
             if (window.lucide) lucide.createIcons();
         }
 
-        window.openPublicShareModal = function(categoryName) {
+        window.openPublicShareModal = async function(categoryName) {
             if (!state.currentUser) {
                 alert('퍼블릭 공유 링크를 생성하려면 로그인이 필요합니다.');
                 openAuthModal();
                 return;
             }
-            const uid = state.currentUser.uid;
-            const origin = window.location.origin + window.location.pathname;
-            const shareUrl = `${origin}?share=${uid}:${encodeURIComponent(categoryName)}`;
+            if (!cloudDataReady) {
+                alert('데이터를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.');
+                return;
+            }
 
-            document.getElementById('publicShareUrlInput').value = shareUrl;
-            document.getElementById('publicShareModal').classList.remove('hidden');
-            if (window.lucide) lucide.createIcons();
+            const categoryBookmarks = state.bookmarks.filter(b => b.category === categoryName);
+            const shareId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+            try {
+                await setDoc(doc(db, 'public_shares', shareId), {
+                    ownerUid: state.currentUser.uid,
+                    category: categoryName,
+                    title: categoryName,
+                    bookmarks: categoryBookmarks,
+                    isPublic: true,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                });
+
+                const origin = window.location.origin + window.location.pathname;
+                const shareUrl = `${origin}?share=${encodeURIComponent(shareId)}`;
+                document.getElementById('publicShareUrlInput').value = shareUrl;
+                document.getElementById('publicShareModal').classList.remove('hidden');
+                if (window.lucide) lucide.createIcons();
+            } catch (e) {
+                console.error('Public Share Create Error:', e.message);
+                alert('공개 공유 링크 생성에 실패했습니다. Firebase 보안 규칙을 확인해 주세요.');
+            }
         };
+
+        async function loadPublicShare(shareId) {
+            const appView = document.getElementById('mainAppView');
+            const publicView = document.getElementById('publicShareView');
+            const content = document.getElementById('publicShareContent');
+            const status = document.getElementById('publicShareStatus');
+            if (!publicView || !content || !status || !db || !shareId) return false;
+
+            if (appView) appView.classList.add('hidden');
+            publicView.classList.remove('hidden');
+            status.classList.remove('hidden');
+            content.innerHTML = '';
+
+            try {
+                const shareSnap = await getDoc(doc(db, 'public_shares', shareId));
+                if (!shareSnap.exists() || shareSnap.data().isPublic !== true) {
+                    status.textContent = '존재하지 않거나 비공개 처리된 공유 링크입니다.';
+                    return true;
+                }
+
+                const data = shareSnap.data();
+                const bookmarks = Array.isArray(data.bookmarks) ? data.bookmarks : [];
+                document.getElementById('publicShareTitle').textContent = data.title || data.category || '공유된 링크';
+                document.getElementById('publicShareMeta').textContent = `${bookmarks.length}개의 링크 · 공개 공유`;
+
+                if (!bookmarks.length) {
+                    status.textContent = '공유된 링크가 없습니다.';
+                    return true;
+                }
+
+                content.innerHTML = bookmarks.map(bm => `
+                    <a href="${bm.url}" target="_blank" rel="noopener noreferrer" class="block p-5 bg-white dark:bg-[#171c24] rounded-3xl border border-[#e5e8eb] dark:border-[#2c3442] shadow-sm hover:border-brand-400 hover:shadow-md transition group">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <h3 class="font-bold text-sm text-[#191f28] dark:text-white group-hover:text-brand-500 truncate">${bm.title || '제목 없음'}</h3>
+                                <p class="text-[11px] text-[#8b95a1] mt-2 truncate">${bm.url || ''}</p>
+                            </div>
+                            <i data-lucide="external-link" class="w-4 h-4 text-[#8b95a1] group-hover:text-brand-500 shrink-0"></i>
+                        </div>
+                    </a>
+                `).join('');
+                status.classList.add('hidden');
+                if (window.lucide) lucide.createIcons();
+                return true;
+            } catch (e) {
+                console.error('Public Share Load Error:', e.message);
+                status.textContent = '공유 데이터를 불러오지 못했습니다.';
+                return true;
+            }
+        }
 
         window.closePublicShareModal = function() {
             document.getElementById('publicShareModal').classList.add('hidden');
@@ -2163,6 +2249,12 @@
         }
 
         window.addEventListener('DOMContentLoaded', async () => {
+            const shareId = new URLSearchParams(window.location.search).get('share');
+            if (shareId && isFirebaseActive && db) {
+                await loadPublicShare(shareId);
+                return;
+            }
+
             if (isFirebaseActive && auth) {
                 listenToGlobalRecommendations();
                 onAuthStateChanged(auth, (user) => {
